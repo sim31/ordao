@@ -1,0 +1,53 @@
+{
+  "name": "@ordao/respect1155",
+  "version": "1.0.0",
+  "description": "Solidity smart contract for Respect non-transferrable token. Based on ERC1155 standard.",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist"
+  ],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./utils/*": {
+      "default": "./dist/utils/*"
+    },
+    "./typechain-types": {
+      "default": "./dist/index.js"
+    },
+    "./typechain-types/*": {
+      "default": "./dist/typechain-types/*"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist/*",
+    "build-clean": "npm run clean && npx hardhat compile && tsc",
+    "build": "npx hardhat compile && tsc",
+    "build-watch": "npx hardhat compile && tsc --watch",
+    "test": "npx hardhat test"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.7",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.11",
+    "@typechain/hardhat": "^9.1.0",
+    "hardhat": "^2.22.3",
+    "hardhat-gas-reporter": "^1.0.10",
+    "solidity-coverage": "^0.8.13"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.1.0",
+    "@ordao/orec": "1.0.0"
+  }
+}

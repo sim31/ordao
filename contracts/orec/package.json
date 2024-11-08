@@ -1,0 +1,61 @@
+{
+  "name": "@ordao/orec",
+  "version": "1.0.0",
+  "description": "Optimistic Executive Respect-based Contract",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "/dist",
+    "/contracts"
+  ],
+  "exports": {
+    ".": {
+      "default": "./dist/index.js"
+    },
+    "./utils": {
+      "default": "./dist/utils/index.js"
+    },
+    "./utils/*": {
+      "default": "./dist/utils/*"
+    },
+    "./typechain-types": {
+      "default": "./dist/typechain-types/index.js"
+    },
+    "./typechain-types/*": {
+      "default": "./dist/typechain-types/*"
+    },
+    "./contracts/*": {
+      "default": "./contracts/*"
+    }
+  },
+  "scripts": {
+    "clean": "rm -rf dist/*",
+    "build-clean": "npm run clean && npx hardhat compile && tsc",
+    "build": "npx hardhat compile && tsc",
+    "build-watch": "npx hardhat compile && tsc --watch",
+    "test": "npx hardhat test",
+    "test-gas": "REPORT_GAS=true npx hardhat test"
+  },
+  "keywords": [
+    "solidity",
+    "ethereum"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-chai-matchers": "^2.0.8",
+    "@nomicfoundation/hardhat-ethers": "^3.0.8",
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.7",
+    "@nomicfoundation/hardhat-network-helpers": "^1.0.12",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "@nomicfoundation/hardhat-verify": "^2.0.11",
+    "@typechain/hardhat": "^9.1.0",
+    "hardhat": "^2.22.3",
+    "hardhat-gas-reporter": "^1.0.10",
+    "solidity-coverage": "^0.8.13"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "dotenv": "^16.4.5"
+  }
+}
