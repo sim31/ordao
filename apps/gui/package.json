@@ -41,5 +41,9 @@
     "shelljs": "^0.8.5",
     "typescript": "^5.2.2",
     "vite": "^5.2.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   }
 }

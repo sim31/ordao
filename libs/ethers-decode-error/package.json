@@ -64,6 +64,10 @@
     "prettier": "prettier --config .prettierrc --write .",
     "semantic-release:dry-run": "semantic-release --dry-run --no-ci --plugins @semantic-release/commit-analyzer,@semantic-release/release-notes-generator"
   },
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
   "keywords": [
     "blockchain",
     "ethers",
