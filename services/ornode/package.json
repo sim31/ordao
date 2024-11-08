@@ -38,8 +38,8 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.0.0",
-    "@ordao/ts-utils": "^1.0.0",
     "@ordao/ortypes": "^1.0.0",
+    "@ordao/ts-utils": "^1.0.0",
     "@types/jsonfile": "^6.1.4",
     "dotenv": "^16.4.5",
     "ethers": "^6.13.1",

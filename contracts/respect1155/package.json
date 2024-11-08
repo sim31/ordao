@@ -48,6 +48,6 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",
-    "@ordao/orec": "1.0.0"
+    "@ordao/orec": "^1.0.0"
   }
 }
