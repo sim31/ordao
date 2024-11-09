@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/superical/ethers-decode-error.git"
+    "url": "https://github.com/sim31/ordao"
   },
   "license": "Apache-2.0",
   "files": [
