@@ -1,7 +1,7 @@
 {
   "name": "@ordao/ethers-decode-error",
   "description": "Decode ethers.js smart contract errors into human-readable messages",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "author": {
     "name": "superical",
     "url": "https://github.com/superical"
