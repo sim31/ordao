@@ -2,13 +2,11 @@
   "name": "@ordao/ethers-decode-error",
   "description": "Decode ethers.js smart contract errors into human-readable messages",
   "version": "1.0.2",
-  "author": {
-    "name": "superical",
-    "url": "https://github.com/superical"
-  },
+  "contributors": ["superical https://github.com/superical", "sim31"],
   "repository": {
     "type": "git",
-    "url": "https://github.com/sim31/ordao"
+    "url": "https://github.com/sim31/ordao.git",
+    "directory": "libs/ethers-decode-error"
   },
   "license": "Apache-2.0",
   "files": [
