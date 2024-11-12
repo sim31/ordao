@@ -42,9 +42,11 @@
     "@ordao/respect1155": "^1.0.3",
     "@ordao/ts-utils": "^1.0.3",
     "chai": "^5.1.1",
-    "ethers": "^6.13.0",
     "op-fractal-sc": "github:Optimystics/op-fractal-sc#main",
-    "utility-types": "^3.11.0",
+    "utility-types": "^3.11.0"
+  },
+  "peerDependencies": {
+    "ethers": "^6.13.0",
     "zod": "^3.23.8"
   },
   "publishConfig": {

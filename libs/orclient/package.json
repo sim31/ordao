@@ -30,12 +30,14 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@ordao/ortypes": "^1.0.3",
     "@ordao/ts-utils": "^1.0.3",
     "chai": "^5.1.1",
-    "ethers": "^6.13.0",
-    "zod": "^3.23.8",
     "zod-to-json-schema": "^3.23.1"
+  },
+  "peerDependencies": {
+    "@ordao/ortypes": "^1.0.3",
+    "ethers": "^6.13.0",
+    "zod": "^3.23.8"
   },
   "publishConfig": {
     "access": "public",
