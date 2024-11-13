@@ -60,7 +60,7 @@
       },
       "import": {
         "types": "./dist/esm/typechain-types/index.d.ts",
-        "default": "./dist/esm/typechain-types/index.js"
+        "default": "./dist/cjs/typechain-types/index.js"
       }
     },
     "./typechain-types/*": {

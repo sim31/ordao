@@ -50,17 +50,17 @@
       },
       "import": {
         "types": "./dist/esm/typechain-types/index.d.ts",
-        "default": "./dist/esm/typechain-types/index.js"
+        "default": "./dist/cjs/typechain-types/index.js"
       }
     },
     "./typechain-types/*": {
       "require": {
-        "types": "./dist/dts/typechain-types/*",
+        "types": "./dist/cjs/typechain-types/*",
         "default": "./dist/cjs/typechain-types/*"
       },
       "import": {
-        "types": "./dist/dts/typechain-types/*",
-        "default": "./dist/esm/typechain-types/*"
+        "types": "./dist/esm/typechain-types/*",
+        "default": "./dist/cjs/typechain-types/*"
       }
     },
     "./contracts/*": {
