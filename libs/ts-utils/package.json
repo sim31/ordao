@@ -1,22 +1,40 @@
 {
   "name": "@ordao/ts-utils",
   "version": "1.0.4",
-  "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "module": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
   "scripts": {
-    "clean": "rm -rf dist/*",
-    "build-clean": "npm run clean && tsc",
-    "build": "tsc",
-    "build-watch": "tsc --watch"
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "to-dual-package": "tsconfig-to-dual-package tsconfig.esm.json tsconfig.cjs.json",
+    "build": "npm run build:cjs && npm run build:esm && npm run to-dual-package",
+    "clean": "rimraf dist",
+    "build-clean": "npm run clean && npm run build",
+    "prepack": "npm run build-clean"
   },
   "author": "sim31",
   "license": "GPL-3.0",
   "description": "",
   "files": [
-    "/dist"
+    "/dist/**/*",
+    "README.md"
   ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    }
+  },
   "devDependencies": {
+    "tsconfig-to-dual-package": "^1.2.0",
     "typescript": "^5.4.5"
   },
   "publishConfig": {
@@ -25,7 +43,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sim31/ordao.git",
+    "url": "git+https://github.com/sim31/ordao.git",
     "directory": "libs/ts-utils"
   }
 }

@@ -2,39 +2,80 @@
   "name": "@ordao/orec",
   "version": "1.0.3",
   "description": "Optimistic Executive Respect-based Contract",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "type": "commonjs",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "module": "dist/esm/index.js",
   "files": [
     "/dist",
     "/contracts"
   ],
+  "scripts": {
+    "clean": "rimraf dist && npx hardhat --tsconfig tsconfig.cjs.json clean",
+    "build-contracts": "npx hardhat --tsconfig tsconfig.cjs.json compile",
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "to-dual-package": "tsconfig-to-dual-package tsconfig.esm.json tsconfig.cjs.json",
+    "build": "npm run build-contracts && npm run build:cjs && npm run build:esm && npm run to-dual-package",
+    "build-clean": "npm run clean && npm run build",
+    "prepack": "npm run build-clean",
+    "test": "npx hardhat --tsconfig tsconfig.cjs.json test",
+    "test-gas": "REPORT_GAS=true npx --tsconfig tsconfig.cjs.json hardhat test"
+  },
   "exports": {
     ".": {
-      "default": "./dist/index.js"
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
     },
     "./utils": {
-      "default": "./dist/utils/index.js"
+      "require": {
+        "types": "./dist/cjs/utils/index.d.ts",
+        "default": "./dist/cjs/utils/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/utils/index.d.ts",
+        "default": "./dist/esm/utils/index.js"
+      }
     },
     "./utils/*": {
-      "default": "./dist/utils/*"
+      "require": {
+        "types": "./dist/cjs/utils/*",
+        "default": "./dist/cjs/utils/*"
+      },
+      "import": {
+        "types": "./dist/esm/utils/*",
+        "default": "./dist/esm/utils/*"
+      }
     },
     "./typechain-types": {
-      "default": "./dist/typechain-types/index.js"
+      "require": {
+        "types": "./dist/cjs/typechain-types/index.d.ts",
+        "default": "./dist/cjs/typechain-types/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/typechain-types/index.d.ts",
+        "default": "./dist/esm/typechain-types/index.js"
+      }
     },
     "./typechain-types/*": {
-      "default": "./dist/typechain-types/*"
+      "require": {
+        "types": "./dist/dts/typechain-types/*",
+        "default": "./dist/cjs/typechain-types/*"
+      },
+      "import": {
+        "types": "./dist/dts/typechain-types/*",
+        "default": "./dist/esm/typechain-types/*"
+      }
     },
     "./contracts/*": {
       "default": "./contracts/*"
     }
-  },
-  "scripts": {
-    "clean": "rm -rf dist/*",
-    "build-clean": "npm run clean && npx hardhat compile && tsc",
-    "build": "npx hardhat compile && tsc",
-    "build-watch": "npx hardhat compile && tsc --watch",
-    "test": "npx hardhat test",
-    "test-gas": "REPORT_GAS=true npx hardhat test"
   },
   "keywords": [
     "solidity",
@@ -52,6 +93,7 @@
     "@typechain/hardhat": "^9.1.0",
     "hardhat": "^2.22.3",
     "hardhat-gas-reporter": "^1.0.10",
+    "rimraf": "^6.0.1",
     "solidity-coverage": "^0.8.13"
   },
   "dependencies": {
@@ -64,7 +106,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/sim31/ordao",
+    "url": "git+https://github.com/sim31/ordao",
     "directory": "contracts/orec"
   }
 }

@@ -1,5 +1,5 @@
 
-import { FractalRespect__factory, FractalRespect } from "op-fractal-sc/dist/index.js";
+import { FractalRespect__factory, FractalRespect } from "op-fractal-sc"
 
 export const Factory = FractalRespect__factory;
 export type Contract = FractalRespect;

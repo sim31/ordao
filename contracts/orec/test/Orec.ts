@@ -3,7 +3,7 @@ import {
   loadFixture,
 } from "@nomicfoundation/hardhat-toolbox/network-helpers.js";
 import { expect } from "chai";
-import hre, { ethers } from "hardhat";
+import hre from "hardhat";
 import { 
   AddressLike,
   BigNumberish,
@@ -11,7 +11,7 @@ import {
   isBytesLike,
   toUtf8Bytes, hexlify
 } from "ethers";
-import { MintableRespectToken, MintableToken, Orec } from "../typechain-types/index.js";
+import { MintableRespectToken, MintableToken, Orec } from "../typechain-types";
 import {
   isPropId, propId, PropId,
   MIN_1, DAY_1, HOUR_1, DAY_6,

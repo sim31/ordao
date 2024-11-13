@@ -15,6 +15,7 @@
     "@openzeppelin/contracts": "^5.1.0"
   },
   "devDependencies": {
-    "lerna": "^8.1.9"
+    "lerna": "^8.1.9",
+    "rimraf": "^6.0.1"
   }
 }

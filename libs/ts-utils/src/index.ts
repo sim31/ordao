@@ -1,4 +1,3 @@
-
 /**
  * Like Record but forces you to check if entry you're trying to access exists.
  * Alternative for noUcheckedIndexedAccess.
