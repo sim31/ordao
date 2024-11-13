@@ -13,7 +13,7 @@
     "build": "npm run build:cjs && npm run build:esm && npm run to-dual-package",
     "clean": "rimraf dist",
     "build-clean": "npm run clean && npm run build",
-    "prepack": "npm run clean"
+    "prepack": "npm run build-clean"
   },
   "author": "sim31",
   "license": "GPL-3.0",
