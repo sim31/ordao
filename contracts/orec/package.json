@@ -65,12 +65,12 @@
     },
     "./typechain-types/*": {
       "require": {
-        "types": "./dist/dts/typechain-types/*",
+        "types": "./dist/cjs/typechain-types/*",
         "default": "./dist/cjs/typechain-types/*"
       },
       "import": {
-        "types": "./dist/dts/typechain-types/*",
-        "default": "./dist/esm/typechain-types/*"
+        "types": "./dist/esm/typechain-types/*",
+        "default": "./dist/cjs/typechain-types/*"
       }
     },
     "./contracts/*": {
