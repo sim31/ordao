@@ -1,7 +1,7 @@
 {
   "name": "@ordao/orclient",
   "description": "Library for client-side Ordao apps / frontends, that abstracts all the communication with the backend and blockchain.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "type": "commonjs",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
@@ -49,7 +49,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@ordao/ts-utils": "^1.0.4",
+    "@ordao/ts-utils": "^1.0.5",
     "chai": "^5.1.1",
     "tsconfig-to-dual-package": "^1.2.0",
     "zod-to-json-schema": "^3.23.1"
