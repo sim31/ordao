@@ -3,9 +3,6 @@
   "version": "1.0.8",
   "description": "Optimistic Executive Respect-based Contract",
   "type": "commonjs",
-  "main": "dist/cjs/index.js",
-  "types": "dist/cjs/index.d.ts",
-  "module": "dist/esm/index.js",
   "files": [
     "/dist",
     "/contracts"
@@ -23,16 +20,6 @@
     "test-gas": "REPORT_GAS=true npx --tsconfig tsconfig.cjs.json hardhat test"
   },
   "exports": {
-    ".": {
-      "require": {
-        "types": "./dist/cjs/index.d.ts",
-        "default": "./dist/cjs/index.js"
-      },
-      "import": {
-        "types": "./dist/esm/index.d.ts",
-        "default": "./dist/esm/index.js"
-      }
-    },
     "./utils": {
       "require": {
         "types": "./dist/cjs/utils/index.d.ts",
