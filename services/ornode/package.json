@@ -1,6 +1,6 @@
 {
   "name": "@ordao/ornode",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Helper node for OREC (optimistic respect-based executive contract) based DAO",
   "main": "dist/index.js",
   "module": "dist/index.js",
@@ -38,7 +38,7 @@
   },
   "dependencies": {
     "@chainsafe/libp2p-gossipsub": "^13.0.0",
-    "@ordao/ortypes": "^1.0.8",
+    "@ordao/ortypes": "^1.0.9",
     "@ordao/ts-utils": "^1.0.5",
     "@types/jsonfile": "^6.1.4",
     "dotenv": "^16.4.5",
