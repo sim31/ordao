@@ -1,7 +1,7 @@
 {
   "name": "@ordao/orclient",
   "description": "Library for client-side Ordao apps / frontends, that abstracts all the communication with the backend and blockchain.",
-  "version": "1.0.10",
+  "version": "1.0.11",
   "type": "commonjs",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
