@@ -1,0 +1,52 @@
+{
+  "name": "@ordao/privy-react-orclient",
+  "version": "1.0.0",
+  "description": "\"Helpers for using orclient with privy and react\"",
+  "scripts": {
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "to-dual-package": "tsconfig-to-dual-package tsconfig.esm.json tsconfig.cjs.json",
+    "build": "npm run build:cjs && npm run build:esm && npm run to-dual-package",
+    "clean": "rimraf dist",
+    "build-clean": "npm run clean && npm run build",
+    "prepack": "npm run build-clean"
+  },
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git",
+    "directory": "libs/privy-react-orclient"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.5"
+  },
+  "peerDependencies": {
+    "@ordao/orclient": "^1.0.6",
+    "react": "^18.3.1",
+    "@privy-io/react-auth": "^1.93.0"
+  },
+  "keywords": [
+    "ordao",
+    "orclient",
+    "fractals",
+    "react",
+    "privy"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme"
+}

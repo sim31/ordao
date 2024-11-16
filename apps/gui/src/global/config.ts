@@ -2,6 +2,7 @@ import { zEthAddress, zUrl } from "@ordao/ortypes";
 import { zChainInfo } from "@ordao/ortypes/chainInfo.js";
 import { z } from "zod";
 
+// TODO: Use types from createOrclient
 export const zContractsAddrs = z.object({
   oldRespect: zEthAddress.optional(),
   newRespect: zEthAddress,
