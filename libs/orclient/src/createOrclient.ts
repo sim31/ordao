@@ -2,8 +2,8 @@ import { z } from "zod";
 import { ORContext, zEthAddress, zUrl } from "@ordao/ortypes";
 import { zChainInfo, ChainInfo, ethCurrency } from "@ordao/ortypes/chainInfo.js";
 import { BrowserProvider, Eip1193Provider } from "ethers";
-import { Config, ORClient } from "./orclient";
-import { RemoteOrnode } from "./remoteOrnode";
+import { Config, ORClient } from "./orclient.js";
+import { RemoteOrnode } from "./remoteOrnode.js";
 
 export const zContractsAddrs = z.object({
   oldRespect: zEthAddress.optional(),

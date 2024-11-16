@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "moduleResolution": "Node16",
-    "module": "Node16",
+    "moduleResolution": "NodeNext",
+    "module": "NodeNext",
     "declaration": true,
     "declarationMap": true,
     "strict": true,
