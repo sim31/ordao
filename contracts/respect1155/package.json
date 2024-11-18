@@ -76,7 +76,8 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",
-    "@ordao/orec": "^1.0.9"
+    "@ordao/orec": "^1.0.9",
+    "ethers": "^6.13.4"
   },
   "publishConfig": {
     "access": "public",

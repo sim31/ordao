@@ -50,6 +50,9 @@
   },
   "dependencies": {
     "@ordao/ts-utils": "^1.0.5",
+    "@ordao/ortypes": "^1.0.3",
+    "ethers": "^6.13.0",
+    "zod": "^3.23.8",
     "chai": "^5.1.1",
     "tsconfig-to-dual-package": "^1.2.0",
     "zod-to-json-schema": "^3.23.1"
