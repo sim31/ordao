@@ -1,6 +1,6 @@
 {
   "name": "@ordao/privy-react-orclient",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "\"Helpers for using orclient with privy and react\"",
   "scripts": {
     "build:cjs": "tsc -p tsconfig.cjs.json",
