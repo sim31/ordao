@@ -23,6 +23,10 @@
       }
     }
   },
+  "files": [
+    "/dist/**/*",
+    "README.md"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/sim31/ordao.git",
