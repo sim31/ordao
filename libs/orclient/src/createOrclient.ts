@@ -21,17 +21,17 @@ export const zDeploymentInfo = z.object({
 export type DeploymentInfo = z.infer<typeof zDeploymentInfo>;
 
 export type DeploymentKey = 
-  "op-sepolia-1" | "oh" | "of2-candidate-1"
+  "op-sepolia" | "oh" | "of2-candidate-1"
 
 export const deployments: Record<DeploymentKey, DeploymentInfo> = {
-  "op-sepolia-1": {
-    title: "Optimism Sepolia test deployment 1",
+  "op-sepolia": {
+    title: "Optimism Sepolia test deployment",
     contracts: {
       oldRespect: "0x6b11FC2cec86edeEd1F3705880deB9010F0D584B",
-      newRespect: "0xF7640995eAffAf5dB5ABEa7cE1F06Be968BFF5e5",
-      orec: "0x430f3F482831898Bc83c7Fe11948b3ADBE025B66"
+      newRespect: "0x3449C30fF5191b9FC1A1eCD8EC90C4EbF54b1204",
+      orec: "0x4f778568eCf156bee61825e152864D44C37167Fb"
     },
-    ornodeUrl: "https://test2-ornode.frapps.xyz",
+    ornodeUrl: "https://op-sepolia-ornode.frapps.xyz",
     chainInfo: {
       chainId: "0xAA37DC",
       rpcUrls: [

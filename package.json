@@ -11,7 +11,7 @@
   "scripts": {
     "gen-ornode-client": "npm run gen-client -w ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",
     "publish": "lerna publish --no-private",
-    "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
+    "local-publish": "lerna publish --no-git-tag-version --no-push --no-private --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
     "local-unpublish-all": "lerna exec -- npm unpublish -f --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}\""
   },
