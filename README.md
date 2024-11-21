@@ -51,6 +51,7 @@ Based on suggestion from [here](https://github.com/lerna/lerna/issues/2363).
   * Run `npm run publish` to publish changes to public npmjs registry;
   * In the external project
     * Merge changes from the test branch into the main branch except for package-lock.json;
+    * Comment out registry setting in .npmrc
     * Do `npm update <pkg>...`;
     * Test again;
     * Commit and push if needed;

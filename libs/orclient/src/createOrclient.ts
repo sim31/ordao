@@ -21,7 +21,7 @@ export const zDeploymentInfo = z.object({
 export type DeploymentInfo = z.infer<typeof zDeploymentInfo>;
 
 export type DeploymentKey = 
-  "op-sepolia" | "oh" | "of2-candidate-1"
+  "op-sepolia" | "oh" | "of2-candidate-1" | "of";
 
 export const deployments: Record<DeploymentKey, DeploymentInfo> = {
   "op-sepolia": {
@@ -66,6 +66,24 @@ export const deployments: Record<DeploymentKey, DeploymentInfo> = {
       oldRespect: "0x53C9E3a44B08E7ECF3E8882996A500eb06c0C5CC",
       newRespect: "0xAA76B4397b0F79D5a16093c3040d8cf95951b9Ee",
       orec: "0x7Abe89De9172b3F8F122AA8756b0F9Ee989686b7"
+    },
+    ornodeUrl: "https://of2-ornode.frapps.xyz",
+    chainInfo: {
+      chainId: "0xA",
+      rpcUrls: [
+        "https://mainnet.optimism.io/"
+      ],
+      chainName: "Optimism",
+      blockExplorerUrl: "https://optimism.blockscout.com",
+      nativeCurrency: ethCurrency
+    }
+  },
+  "of": {
+    title: "Optimism Fractal",
+    contracts: {
+      oldRespect: "0x53C9E3a44B08E7ECF3E8882996A500eb06c0C5CC",
+      newRespect: "0x07418B51196045EB360F31d8881326858Ed25121",
+      orec: "0x73eb8B61E6Eb65aFAAE972874bB4EB5689d1cCE3"
     },
     ornodeUrl: "https://of2-ornode.frapps.xyz",
     chainInfo: {
