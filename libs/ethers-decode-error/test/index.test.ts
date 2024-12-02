@@ -591,7 +591,8 @@ describe('ErrorDecoder', () => {
       })
 
       it('should return the error reason', async () => {
-        expect(decodedError.reason).to.contain("sender doesn't have enough funds to send tx")
+        console.log("decodedError.reason: ", decodedError.reason);
+        expect(decodedError.reason).to.contain("Sender doesn't have enough funds to send tx")
       })
 
       it('should return data as null', async () => {
