@@ -27,10 +27,10 @@ import {
 } from "@ordao/ortypes/respect1155.js";
 import { Erc1155Mt, zErc1155Mt } from "@ordao/ortypes/erc1155.js";
 import { join } from "path";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 // In case of "type": "module"
+// import { fileURLToPath } from 'url';
+// import { dirname } from 'path';
 // const __filename = fileURLToPath(import.meta.url);
 // const __dirname = dirname(__filename);
 

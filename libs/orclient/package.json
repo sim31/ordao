@@ -49,9 +49,10 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@ordao/ortypes": "^1.0.12",
+    "@ordao/ornode": "^1.0.12",
+    "@ordao/ortypes": "^1.0.3",
     "@ordao/ts-utils": "^1.0.5",
-    "chai": "^5.1.1",
+    "chai": "^4.3.0",
     "ethers": "^6.13.0",
     "tsconfig-to-dual-package": "^1.2.0",
     "zod": "^3.23.8",
