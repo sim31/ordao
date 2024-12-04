@@ -17,16 +17,16 @@ export const zConfig = z.object({
 });
 export type Config = z.infer<typeof zConfig>;
 
-const oldRespect = import.meta.env.VITE_OLD_RESPECT_ADDR;
-const newRespect = import.meta.env.VITE_NEW_RESPECT_ADDR;
-const orec = import.meta.env.VITE_OREC_ADDR;
-const ornodeUrl = import.meta.env.VITE_ORNODE_URL;
-const appTitle = import.meta.env.VITE_APP_TITLE;
+const oldRespect = process.env.OLD_RESPECT_ADDR;
+const newRespect = process.env.NEW_RESPECT_ADDR;
+const orec = process.env.OREC_ADDR;
+const ornodeUrl = process.env.ORNODE_URL;
+const appTitle = process.env.APP_TITLE;
 
-const chainId = import.meta.env.VITE_CHAIN_ID;
-const rpcUrls = JSON.parse(import.meta.env.VITE_RPC_URLS);
-const chainName = import.meta.env.VITE_CHAIN_NAME;
-const blockExplorerUrl = import.meta.env.VITE_BLOCKEXP_URL;
+const chainId = process.env.CHAIN_ID;
+const rpcUrls = JSON.parse(process.env.RPC_URLS as string);
+const chainName = process.env.CHAIN_NAME;
+const blockExplorerUrl = process.env.BLOCKEXP_URL;
 
 const cfgValues = {
   contracts: { oldRespect, newRespect, orec },

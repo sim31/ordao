@@ -25,7 +25,8 @@ async function main() {
 
     await sleep(3000); 
 
-    shelljs.exec("npm run hh-test-ordao");
+    const { code, stdout, stderr } = shelljs.exec("npm run hh-test-ordao");
+    process.exitCode = code;
 
     hhNode.on("exit", (code, signal) => {
       console.log("hhNode process exiting with code: ", code, ", signal: ", signal);
@@ -45,6 +46,8 @@ async function main() {
   } catch (err) {
     console.error(err);
   }
+
+
 }
 
 main();

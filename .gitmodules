@@ -1,3 +1,0 @@
-[submodule "examples/privy-nextjs-orclient"]
-	path = examples/privy-nextjs-orclient
-	url = git@github.com:sim31/privy-nextjs-orclient.git

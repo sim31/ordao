@@ -6,7 +6,7 @@
     "libs/*",
     "services/*",
     "apps/*",
-    "tests"
+    "dev/*"
   ],
   "scripts": {
     "gen-ornode-client": "npm run gen-client -w ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",

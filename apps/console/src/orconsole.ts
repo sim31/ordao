@@ -1,4 +1,4 @@
-import { ORClient, ORContext, defaultConfig, Config } from "orclient/index.js";
+import { ORClient, ORContext, defaultConfig, Config } from "@ordao/orclient/index.js";
 
 function _getPublicFunctions(): string[] {
   return Object.getOwnPropertyNames(ORClient.prototype)

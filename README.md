@@ -16,6 +16,8 @@ More specifically these are currently the main components of ORDAO:
 * [Apps](./apps/)
   * [gui](./apps/gui) - ORDAO frontend (currently only breakout-result submission frontend for fractals is implemented);
   * [console](./apps/console/) - documentation plus console interface for orclient (allows you to interface with ORDAO through browser console).
+* [Dev](./dev/) - tools, scripts and tests for development, deployment and system administration of ordao;
+* [Docs](./docs/) - documentation;
 
 ```mermaid
 ---
