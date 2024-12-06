@@ -1,5 +1,5 @@
-import { zContractMetadata } from "src/erc7572";
-import { zRespectFungibleMt } from "src/respect1155";
+import { zContractMetadata } from "../erc7572";
+import { zRespectFungibleMt } from "../respect1155";
 import z from "zod";
 
 export const zTokenMtCfg = z.object({

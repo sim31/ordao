@@ -1,5 +1,5 @@
-import { zChainInfo } from "src/chainInfo";
-import { zEthAddress } from "src/eth";
+import { zChainInfo } from "../chainInfo";
+import { zEthAddress } from "../eth";
 import { z } from "zod";
 
 export const zContractsAddrs = z.object({

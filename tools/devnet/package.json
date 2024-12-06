@@ -1,0 +1,27 @@
+{
+  "name": "@ordao/devnet",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Development network with blockchain and mongodb for ORDAO development",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git"
+  },
+  "keywords": [
+    "ordao",
+    "dev"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme",
+  "devDependencies": {
+    "hardhat": "^2.22.17"
+  }
+}
