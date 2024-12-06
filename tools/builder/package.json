@@ -1,0 +1,42 @@
+{
+  "name": "@ordao/builder",
+  "version": "1.0.0",
+  "description": "Tool to create and manage ORDAO deployments",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/src/main.js"
+  },
+  "main": "dist/src/main.js",
+  "types": "dist/src/",
+  "files": [
+    "/dist"
+  ],
+  "bin": {
+    "ordao-builder": "dist/src/main.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git"
+  },
+  "keywords": [
+    "ordao",
+    "dao",
+    "blockchain"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme",
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "@ordao/ortypes": "^1.0.12",
+    "@ordao/ts-utils": "^1.0.5",
+    "commander": "^12.1.0",
+    "zod": "^3.23.8"
+  }
+}

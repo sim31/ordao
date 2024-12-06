@@ -45,6 +45,16 @@
         "default": "./dist/esm/orContext.js"
       }
     },
+    "./config": {
+      "require": {
+        "types": "./dist/cjs/config/index.d.ts",
+        "default": "./dist/cjs/config/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/config/index.d.ts",
+        "default": "./dist/esm/config/index.js"
+      }
+    },
     "./*": {
       "require": {
         "types": "./dist/cjs/*",
