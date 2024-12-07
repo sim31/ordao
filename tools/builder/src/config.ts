@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zEthAddress } from "@ordao/ortypes";
+import { zEthAddress, zEthPrivateKey } from "@ordao/ortypes";
 import { zMongoConfig, zOrnodeCfg, zSwaggerUICfg, zTokenMtCfg } from "@ordao/ortypes/config";
 
 export const zOldRespectSetup = z.object({
@@ -11,15 +11,36 @@ export const zOldRespectSetup = z.object({
   }))
 });
 
-// TODO: add options for host and port of apps
-// TODO: deployer
-export const zBuildConfig = z.object({
+export const zNetwork = z.object({
+  name: z.string(),
+  url: z.string().url(),
+  deployerKey: zEthPrivateKey,
+  etherscanAPIKey: z.string().optional()
+});
+
+export const zEtherscanCustomChain = z.object({
+  networkName: z.string(),
+  chainId: z.number().int(),
+  urls: z.object({
+    apiURL: z.string().url(),
+    browserURL: z.string().url()
+  })
+});
+
+export const zContractDeployment = z.object({
+  network: zNetwork,
+  etherscanCustomChain: zEtherscanCustomChain.optional(),
   oldRespect: z.union([zEthAddress, zOldRespectSetup]),
   voteLength: z.number(),
   vetoLength: z.number(),
   voteThreshold: z.number(),
   maxLiveYesVotes: z.number(),
   ornodeOrigin: z.string().url(),
+})
+
+// TODO: add options for host and port of apps
+export const zBuildConfig = z.object({
+  contractDeployment: zContractDeployment,
   token: zTokenMtCfg,
   ornodeService: z.object({
     providerUrl: z.string().url(),

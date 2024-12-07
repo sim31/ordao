@@ -6,6 +6,7 @@ import { z } from "zod";
 import { readFileSync } from "fs";
 import { stringify } from "@ordao/ts-utils";
 import { BuildConfig, zBuildConfig } from "./config";
+import merge from "lodash/merge";
 
 const zBuildArgs = z.union([z.string().array(), z.string()])
   .transform((arg, ctx) => {
@@ -33,20 +34,25 @@ program.command('build')
   .argument("<config-files...>", "One or more configuration files. All of them are merged into one.")
   .action((args) => {
     const configPaths = zBuildArgs.parse(args);
-    let fullConfig: any = {};
+    const configObjs: any[] = [];
     for (const cpath of configPaths) {
       try {
         const configObj = JSON.parse(readFileSync(cpath, 'utf-8'));
         if (globalOpts.debug) {
           console.debug(`Read config object: ${stringify(configObj)}`)
         }
-        fullConfig = { ...fullConfig, ...configObj };
+        // TODO: do a deep merge: https://lodash.com/docs/4.17.15#merge
+        configObjs.push(configObj);
       } catch(err) {
         console.error(`Error reading file ${cpath}: ${err}`);
         process.exitCode = 1;
         return;
       }     
     }
+
+    let fullConfig = {};
+    merge(fullConfig, ...configObjs);
+
 
     if (globalOpts.debug) {
       console.debug(`Merged config file: ${stringify(fullConfig)}`);

@@ -31,12 +31,15 @@
   "homepage": "https://github.com/sim31/ordao#readme",
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "hardhat": "^2.22.17",
     "typescript": "^5.7.2"
   },
   "dependencies": {
     "@ordao/ortypes": "^1.0.12",
     "@ordao/ts-utils": "^1.0.5",
     "commander": "^12.1.0",
+    "harhat": "^1.0.1",
+    "lodash": "^4.17.21",
     "zod": "^3.23.8"
   }
 }

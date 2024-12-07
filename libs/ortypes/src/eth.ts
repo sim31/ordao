@@ -1,4 +1,4 @@
-import { getAddress, getBigInt, hexlify, isBytesLike, isHexString, toBeHex, ZeroAddress } from 'ethers';
+import { getAddress, getBigInt, hexlify, isBytesLike, isHexString, SigningKey, toBeHex, ZeroAddress } from 'ethers';
 import { z } from "zod";
 import { addCustomIssue } from './zErrorHandling.js';
 
@@ -37,6 +37,17 @@ export const zEthAddress = z.string().transform((val) => {
 });
 export type EthAddress = z.infer<typeof zEthAddress>;
 export type Account = EthAddress
+
+export const zEthPrivateKey = z.string().superRefine((val, ctx) => {
+  try {
+    SigningKey.computePublicKey(val);
+  } catch (err) {
+    ctx.addIssue({
+      code: z.ZodIssueCode.custom,
+      message: 'Failed to derive public key from private'
+    });
+  }
+})
 
 export const EthZeroAddress = ZeroAddress;
 
