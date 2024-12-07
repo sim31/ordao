@@ -54,6 +54,13 @@ export const zBreakoutMintType = z.literal(0);
 export type BreakoutMintType = z.infer<typeof zBreakoutMintType>;
 
 export const zUnspecifiedMintType = z.literal(1);
+export type UnspecifiedMintType = z.infer<typeof zUnspecifiedMintType>;
+
+export const zInitialMintType = z.literal(2);
+export type InitialMintType = z.infer<typeof zInitialMintType>;
+
+export const zMigrationMintType = z.literal(3);
+export type MigrationMintType = z.infer<typeof zMigrationMintType>;
 
 export const zTokenIdData = z.object({
   periodNumber: zPeriodNum,

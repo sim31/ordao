@@ -3,17 +3,21 @@ import fs from "fs";
 import path from "path";
 import shelljs from "shelljs";
 import { ChildProcError } from "./childProcError";
+import { stringify } from "@ordao/ts-utils";
 
 export class Builder {
   private _cfg: BuildConfig;
   private _buildsPath: string;
   private _buildDir: string;
-  private _contractsSrcPath: string;
-  private _orecSrcPath: string;
-  private _respectSrcPath: string;
+  private _contractsBuildSrc: string;
+  private _orecBuildSrc: string;
+  private _respectBuildSrc: string;
   private _origContractsSrc: string;
   private _tsConfigSrc: string;
   private _gitignoreSrc: string;
+  private _ignitionSrc: string;
+  private _ignitionBuildSrc: string;
+  private _ignitionBuildParams: string;
 
   constructor(cfg: BuildConfig, buildsPath: string) {
     this._cfg = cfg;
@@ -23,15 +27,17 @@ export class Builder {
       throw new Error("Build updates not implemented");
     } else {
       this._buildDir = buildDir;
-      this._contractsSrcPath = path.join(this._buildDir, "contracts");
-      this._orecSrcPath = path.join(this._contractsSrcPath, "orec");
-      this._respectSrcPath = path.join(this._contractsSrcPath, "respect1155");
-
+      this._contractsBuildSrc = path.join(this._buildDir, "contracts");
+      this._orecBuildSrc = path.join(this._contractsBuildSrc, "orec");
+      this._respectBuildSrc = path.join(this._contractsBuildSrc, "respect1155");
     }
 
     this._origContractsSrc = path.join(__dirname, "../contracts-src/");
     this._tsConfigSrc = path.join(__dirname, "../tsconfig.json");
     this._gitignoreSrc = path.join(__dirname, "./gitignoreSrc.txt");
+    this._ignitionSrc = path.join(__dirname, "../ignition");
+    this._ignitionBuildSrc = path.join(this._buildDir, "ignition/");
+    this._ignitionBuildParams = path.join(this._ignitionBuildSrc, "params.json");
   }
 
   build() {
@@ -54,7 +60,9 @@ export class Builder {
       "license": "GPL-3.0",
       "devDependencies": {
         "hardhat": "^2.22.17",
-        "typescript": "^5.7.2"
+        "typescript": "^5.7.2",
+        "@ordao/builder": "^1.0.0",
+        "@ordao/ortypes": "^1.0.0"
       }
     }
     `
@@ -113,7 +121,7 @@ export class Builder {
   }
 
   private _mkContractsDir() {
-    fs.cpSync(this._origContractsSrc, this._contractsSrcPath, { recursive: true });
+    fs.cpSync(this._origContractsSrc, this._contractsBuildSrc, { recursive: true });
   }
   
   private _mkTsConfig() {
@@ -141,6 +149,31 @@ export class Builder {
     }
   }
 
+  private _mkIgnitionModules() {
+    fs.cpSync(this._ignitionSrc, this._ignitionBuildSrc, { recursive: true });
+  }
+
+  private _mkIgnitionParams() {
+    const deplCfg = this._cfg.contractDeployment;
+    const params = {
+      OldRespect: {
+        oldRespect: deplCfg.oldRespect
+      },
+      Orec: {
+        votePeriod: deplCfg.voteLength,
+        vetoPeriod: deplCfg.vetoLength,
+        voteThreshold: deplCfg.voteThreshold,
+        maxLiveYesVotes: deplCfg.maxLiveYesVotes
+      },
+      OrecRespect1155: {
+        uri: new URL("/v1/token/{id}", deplCfg.ornodeOrigin).href,
+        contractURI: new URL("/v1/respectContractMetadata", deplCfg.ornodeOrigin).href
+      }
+    };
+    
+    fs.writeFileSync(this._ignitionBuildParams, stringify(params));
+  }
+
   private _initialBuild() {
     this._mkBuildDir();
     this._mkPackageJson();
@@ -148,7 +181,8 @@ export class Builder {
     this._mkTsConfig()
     this._mkContractsDir();
     this._mkGitignore();
-    // this._mkIgnitionModules();
+    this._mkIgnitionModules();
+    this._mkIgnitionParams();
 
     this._setupPackage();
     this._buildContracts();

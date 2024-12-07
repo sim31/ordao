@@ -5,6 +5,7 @@ import { zMongoConfig, zOrnodeCfg, zSwaggerUICfg, zTokenMtCfg } from "@ordao/ort
 export const zOldRespectSetup = z.object({
   uri: z.string().url(),
   contractURI: z.string().url(),
+  setOwnerTo: zEthAddress.optional(),
   respectHolders: z.array(z.object({
     address: zEthAddress,
     amount: z.number().int().gt(0)

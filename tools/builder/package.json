@@ -7,12 +7,13 @@
     "respect_src": "../../contracts/respect1155/contracts"
   },
   "scripts": {
-    "mk-contracts-src": "rm -r dist/contracts-src && mkdir dist/contracts-src",
+    "mk-contracts-src": "rm -rf dist/contracts-src && mkdir dist/contracts-src",
     "cp-orec-src": "cp -r $npm_package_config_orec_src dist/contracts-src/orec",
     "cp-respect-src": "cp -r $npm_package_config_respect_src dist/contracts-src/respect1155",
-    "cp-ts-config": "cp ./tsconfig.json dist/",
+    "cp-ts-config": "cp ./src/tsconfig.src.json dist/tsconfig.json",
     "cp-gitignore": "cp src/gitignoreSrc.txt dist/src",
-    "build": "tsc && npm run mk-contracts-src && npm run cp-orec-src && npm run cp-respect-src && npm run cp-ts-config && npm run cp-gitignore",
+    "cp-ignition": "rm -rf dist/ignition && cp -r ignition dist/ignition",
+    "build": "tsc && npm run mk-contracts-src && npm run cp-orec-src && npm run cp-respect-src && npm run cp-ts-config && npm run cp-gitignore && npm run cp-ignition",
     "start": "node dist/src/main.js"
   },
   "main": "dist/src/main.js",
@@ -22,6 +23,12 @@
   ],
   "bin": {
     "ordao-builder": "dist/src/main.js"
+  },
+  "exports": {
+    "./config": {
+      "import": "./dist/src/config.js",
+      "require": "./dist/src/config.js"
+    }
   },
   "repository": {
     "type": "git",

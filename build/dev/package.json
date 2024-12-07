@@ -8,7 +8,9 @@
       "license": "GPL-3.0",
       "devDependencies": {
         "hardhat": "^2.22.17",
-        "typescript": "^5.7.2"
+        "typescript": "^5.7.2",
+        "@ordao/builder": "^1.0.0",
+        "@ordao/ortypes": "^1.0.0"
       }
     }
     

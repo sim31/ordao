@@ -16,6 +16,7 @@
     "build": "lerna run build",
     "watch": "lerna watch -- lerna run build",
     "publish": "lerna publish --no-private",
+    "hh-devnet": "npx -w @ordao/devnet hardhat node",
     "ordao-builder": "npm run start -w @ordao/builder -- ",
     "ordao-build:dev": "npx -w @ordao/builder ordao-builder build ../../build ../../build-configs/dev/{base,oldRespect,token}.json -d",
     "ordao-build-clean:dev": "rm -r build/dev && npx -w @ordao/builder ordao-builder build ../../build ../../build-configs/dev/{base,oldRespect,token}.json -d",
