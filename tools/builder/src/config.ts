@@ -15,7 +15,10 @@ export const zNetwork = z.object({
   name: z.string(),
   url: z.string().url(),
   deployerKey: zEthPrivateKey,
-  etherscanAPIKey: z.string().optional()
+  etherscan: z.object({
+    etherscanNetworkName: z.string(),
+    etherscanAPIKey: z.string()
+  }).optional()
 });
 
 export const zEtherscanCustomChain = z.object({
@@ -28,6 +31,7 @@ export const zEtherscanCustomChain = z.object({
 });
 
 export const zContractDeployment = z.object({
+  solidityVersion: z.string(),
   network: zNetwork,
   etherscanCustomChain: zEtherscanCustomChain.optional(),
   oldRespect: z.union([zEthAddress, zOldRespectSetup]),
@@ -40,6 +44,7 @@ export const zContractDeployment = z.object({
 
 // TODO: add options for host and port of apps
 export const zBuildConfig = z.object({
+  name: z.string(),
   contractDeployment: zContractDeployment,
   token: zTokenMtCfg,
   ornodeService: z.object({

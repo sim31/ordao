@@ -6,7 +6,8 @@
     "libs/*",
     "services/*",
     "apps/*",
-    "tools/*"
+    "tools/*",
+    "build/*"
   ],
   "scripts": {
     "gen-ornode-client": "npm run gen-client -w ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",
@@ -16,7 +17,8 @@
     "watch": "lerna watch -- lerna run build",
     "publish": "lerna publish --no-private",
     "ordao-builder": "npm run start -w @ordao/builder -- ",
-    "ordao-build:dev": "npx -w @ordao/builder ordao-builder build ../../build-configs/dev/{base,oldRespect,token}.json -d",
+    "ordao-build:dev": "npx -w @ordao/builder ordao-builder build ../../build ../../build-configs/dev/{base,oldRespect,token}.json -d",
+    "ordao-build-clean:dev": "rm -r build/dev && npx -w @ordao/builder ordao-builder build ../../build ../../build-configs/dev/{base,oldRespect,token}.json -d",
     "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
     "local-unpublish-all": "lerna exec -- npm unpublish -f --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}\""

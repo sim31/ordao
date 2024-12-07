@@ -2,8 +2,17 @@
   "name": "@ordao/builder",
   "version": "1.0.0",
   "description": "Tool to create and manage ORDAO deployments",
+  "config": {
+    "orec_src": "../../contracts/orec/contracts",
+    "respect_src": "../../contracts/respect1155/contracts"
+  },
   "scripts": {
-    "build": "tsc",
+    "mk-contracts-src": "rm -r dist/contracts-src && mkdir dist/contracts-src",
+    "cp-orec-src": "cp -r $npm_package_config_orec_src dist/contracts-src/orec",
+    "cp-respect-src": "cp -r $npm_package_config_respect_src dist/contracts-src/respect1155",
+    "cp-ts-config": "cp ./tsconfig.json dist/",
+    "cp-gitignore": "cp src/gitignoreSrc.txt dist/src",
+    "build": "tsc && npm run mk-contracts-src && npm run cp-orec-src && npm run cp-respect-src && npm run cp-ts-config && npm run cp-gitignore",
     "start": "node dist/src/main.js"
   },
   "main": "dist/src/main.js",
@@ -31,6 +40,7 @@
   "homepage": "https://github.com/sim31/ordao#readme",
   "devDependencies": {
     "@types/node": "^22.10.1",
+    "@types/shelljs": "^0.8.15",
     "hardhat": "^2.22.17",
     "typescript": "^5.7.2"
   },
@@ -40,6 +50,7 @@
     "commander": "^12.1.0",
     "harhat": "^1.0.1",
     "lodash": "^4.17.21",
+    "shelljs": "^0.8.5",
     "zod": "^3.23.8"
   }
 }

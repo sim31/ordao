@@ -1,5 +1,7 @@
 {
+  "name": "dev",
   "contractDeployment": {
+    "solidityVersion": "0.8.24",
     "network": {
       "name": "localhost",
       "url": "http://localhost:8545/",

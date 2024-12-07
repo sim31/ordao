@@ -7,6 +7,7 @@ import { readFileSync } from "fs";
 import { stringify } from "@ordao/ts-utils";
 import { BuildConfig, zBuildConfig } from "./config";
 import merge from "lodash/merge";
+import { Builder } from "./builder";
 
 const zBuildArgs = z.union([z.string().array(), z.string()])
   .transform((arg, ctx) => {
@@ -29,11 +30,14 @@ program
 
 const globalOpts = program.opts();
 
+// TODO: options to build only onchain or only off-chain parts
 program.command('build')
   .description("Build ordao deployment")
+  .argument("<builds-path>", "Where to put build output. Will look for directory by the name of a build (see BuildConfig type) there or create one if it does not exit")
   .argument("<config-files...>", "One or more configuration files. All of them are merged into one.")
-  .action((args) => {
+  .action((buildsPath, args) => {
     const configPaths = zBuildArgs.parse(args);
+    console.log("config paths: ", configPaths);
     const configObjs: any[] = [];
     for (const cpath of configPaths) {
       try {
@@ -53,7 +57,6 @@ program.command('build')
     let fullConfig = {};
     merge(fullConfig, ...configObjs);
 
-
     if (globalOpts.debug) {
       console.debug(`Merged config file: ${stringify(fullConfig)}`);
     }
@@ -68,6 +71,14 @@ program.command('build')
     }
     if (globalOpts.debug) {
       console.debug(`Parsed full config: ${stringify(buildConfig)}`);
+    }
+
+    try {
+      const builder = new Builder(buildConfig, buildsPath);
+      builder.build();
+    } catch(err) {
+      console.error("Error building: ", err);
+      process.exitCode = 1;
     }
   })
 

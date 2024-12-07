@@ -1,0 +1,14 @@
+
+    {
+      "name": "dev",
+      "private": true,
+      "version": "1.0.0",
+      "description": "Contract deployment project for dev ORDAO",
+      "author": "ordao-builder",
+      "license": "GPL-3.0",
+      "devDependencies": {
+        "hardhat": "^2.22.17",
+        "typescript": "^5.7.2"
+      }
+    }
+    
