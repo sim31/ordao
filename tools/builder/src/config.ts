@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { zEthAddress, zEthPrivateKey } from "@ordao/ortypes";
+import { zBytes, zEthAddress, zEthPrivateKey } from "@ordao/ortypes";
 import { zMongoConfig, zOrnodeCfg, zSwaggerUICfg, zTokenMtCfg } from "@ordao/ortypes/config";
 
 export const zOldRespectSetup = z.object({
@@ -9,8 +9,10 @@ export const zOldRespectSetup = z.object({
   respectHolders: z.array(z.object({
     address: zEthAddress,
     amount: z.number().int().gt(0)
-  }))
+  })),
+  mintData: zBytes.optional()
 });
+export type OldRespectSetup = z.infer<typeof zOldRespectSetup>;
 
 export const zNetwork = z.object({
   name: z.string(),

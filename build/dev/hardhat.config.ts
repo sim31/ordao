@@ -1,7 +1,7 @@
 
     import { HardhatUserConfig } from "hardhat/config";
     import "@nomicfoundation/hardhat-toolbox";
-    import "dotenv/config";
+    import "@nomicfoundation/hardhat-ignition-ethers";
 
     const config: HardhatUserConfig = {
       solidity: "0.8.24",

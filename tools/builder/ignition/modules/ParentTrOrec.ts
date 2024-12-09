@@ -1,20 +1,20 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-import OldRespectModule from "./OldRespect.js";
+import ParentOwnershipTransferred from "./ParentOwnershipTransferred";
 
 export default buildModule("Orec", (m) => {
-  const oldRespect = m.useModule(OldRespectModule);
+  const { parentRespect } = m.useModule(ParentOwnershipTransferred);
   const votePeriod = m.getParameter("votePeriod");
   const vetoPeriod = m.getParameter("vetoPeriod");
   const voteThreshold = m.getParameter("voteThreshold");
   const maxLiveYesVotes = m.getParameter("maxLiveYesVotes");
 
   const orec = m.contract("Orec", [
-    oldRespect,
+    parentRespect,
     votePeriod,
     vetoPeriod,
     voteThreshold,
     maxLiveYesVotes
   ]);
 
-  return { orec };
+  return { orec, parentRespect };
 });

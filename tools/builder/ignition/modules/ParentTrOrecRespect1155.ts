@@ -1,8 +1,8 @@
 import { buildModule } from "@nomicfoundation/hardhat-ignition/modules";
-import OrecModule from "./Orec";
+import ParentTrOrec from "./ParentTrOrec";
 
 export default buildModule("OrecRespect1155", (m) => {
-  const { orec } = m.useModule(OrecModule)
+  const { parentRespect, orec } = m.useModule(ParentTrOrec)
 
   const uri = m.getParameter("uri");
   const contractURI = m.getParameter("contractURI");
@@ -13,5 +13,5 @@ export default buildModule("OrecRespect1155", (m) => {
     contractURI
   ]);
 
-  return { respect1155, orec };
+  return { parentRespect, respect1155, orec };
 });

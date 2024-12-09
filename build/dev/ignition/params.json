@@ -1,40 +1,4 @@
 {
-  "OldRespect": {
-    "oldRespect": {
-      "uri": "http://localhost",
-      "contractURI": "http://localhost",
-      "respectHolders": [
-        {
-          "address": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
-          "amount": 100
-        },
-        {
-          "address": "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
-          "amount": 80
-        },
-        {
-          "address": "0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC",
-          "amount": 60
-        },
-        {
-          "address": "0xcd3B766CCDd6AE721141F452C550Ca635964ce71",
-          "amount": 55
-        },
-        {
-          "address": "0x2546BcD3c84621e976D8185a91A922aE77ECEc30",
-          "amount": 13
-        },
-        {
-          "address": "0xbDA5747bFD65F08deb54cb465eB87D40e51B197E",
-          "amount": 8
-        },
-        {
-          "address": "0xdD2FD4581271e230360230F9337D5c0430Bf44C0",
-          "amount": 5
-        }
-      ]
-    }
-  },
   "Orec": {
     "votePeriod": 240,
     "vetoPeriod": 240,
@@ -44,5 +8,39 @@
   "OrecRespect1155": {
     "uri": "http://localhost:8090/v1/token/%7Bid%7D",
     "contractURI": "http://localhost:8090/v1/respectContractMetadata"
+  },
+  "ParentRespect": {
+    "uri": "http://localhost",
+    "contractURI": "http://localhost",
+    "mintRequests": [
+      {
+        "value": "100",
+        "id": "53919893334301279590724879469825333115550669795319820045815866008166"
+      },
+      {
+        "value": "80",
+        "id": "53919893334301279589976859733347112310289761353843207898123453888968"
+      },
+      {
+        "value": "60",
+        "id": "53919893334301279589678104004426007914702267277159980099487500768188"
+      },
+      {
+        "value": "55",
+        "id": "53919893334301279590505699342298703760518149051276501092766633479793"
+      },
+      {
+        "value": "13",
+        "id": "53919893334301279589546840333899184892288747897890831460350907182128"
+      },
+      {
+        "value": "8",
+        "id": "53919893334301279590416719199899447769575351457230044557919146154366"
+      },
+      {
+        "value": "5",
+        "id": "53919893334301279590596783767189644064745719676726002154326699492544"
+      }
+    ]
   }
 }
