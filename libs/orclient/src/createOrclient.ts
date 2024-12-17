@@ -4,6 +4,7 @@ import { zChainInfo, ChainInfo, ethCurrency } from "@ordao/ortypes/chainInfo.js"
 import { BrowserProvider, Eip1193Provider } from "ethers";
 import { Config, ORClient } from "./orclient.js";
 import { RemoteOrnode } from "./remoteOrnode.js";
+import { consoleInitialized, initConsole, ORConsole } from "./orconsole.js";
 
 export const zContractsAddrs = z.object({
   oldRespect: zEthAddress.optional(),
@@ -132,10 +133,17 @@ async function switchChain(
 
 export type DeploymentSpec = DeploymentKey | DeploymentInfo;
 
+export type CreateOrclientConfig = Config & {
+  consoleConfig?: {
+    enabled: boolean,
+    docsOrigin: string
+  }
+}
+
 export async function createOrclient(
   deployment: DeploymentSpec,
   provider: Eip1193Provider,
-  orclientConfig?: Config 
+  config?: CreateOrclientConfig
 ): Promise<ORClient> {
   const depl = typeof deployment === 'string'
     ? deployments[deployment] : deployment;
@@ -155,11 +163,16 @@ export async function createOrclient(
   }
   const ctx = await ORContext.ORContext.create<ORContext.ConfigWithOrnode>(ctxCfg);
 
-  const orclient = new ORClient(ctx, orclientConfig);
-
-  // If you want to be able to use through console
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  (window as any).c = orclient;
+  let orclient: ORClient;
+  if (config?.consoleConfig?.enabled) {
+    if (!consoleInitialized) {
+      initConsole(config.consoleConfig.docsOrigin);
+    }
+    orclient = new ORConsole(ctx, config);
+    (window as any).c = orclient;
+  } else {
+    orclient = new ORClient(ctx, config);
+  }
 
   return orclient;
 }

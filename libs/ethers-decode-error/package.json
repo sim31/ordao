@@ -1,7 +1,7 @@
 {
   "name": "@ordao/ethers-decode-error",
   "description": "Decode ethers.js smart contract errors into human-readable messages",
-  "version": "1.0.5",
+  "version": "1.0.16",
   "contributors": [
     "superical https://github.com/superical",
     "sim31"
@@ -84,5 +84,6 @@
     "ethersjs",
     "rpc-error",
     "json-rpc"
-  ]
+  ],
+  "gitHead": "822ef6b3d3026a915b19d3c1903f4386e1e304bb"
 }

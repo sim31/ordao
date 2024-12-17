@@ -1,6 +1,6 @@
 {
   "name": "@ordao/privy-react-orclient",
-  "version": "1.0.15",
+  "version": "1.0.16",
   "description": "\"Helpers for using orclient with privy and react\"",
   "scripts": {
     "build:cjs": "tsc -p tsconfig.cjs.json",
@@ -41,7 +41,7 @@
     "react": "^18.3.1"
   },
   "dependencies": {
-    "@ordao/orclient": "^1.0.15"
+    "@ordao/orclient": "^1.0.16"
   },
   "keywords": [
     "ordao",
@@ -56,5 +56,5 @@
     "url": "https://github.com/sim31/ordao/issues"
   },
   "homepage": "https://github.com/sim31/ordao#readme",
-  "gitHead": "f3807c350d1d8ce0df7bdd6670752cba38d92765"
+  "gitHead": "822ef6b3d3026a915b19d3c1903f4386e1e304bb"
 }

@@ -40,7 +40,7 @@ ORDAO came about as an upgrade to Optimism Fractal. [Here](./docs/OF_ORDAO_UPGRA
 ## Workflow for testing packages locally before publishing
 Based on suggestion from [here](https://github.com/lerna/lerna/issues/2363).
 
-1. Setup [verdaccio](https://verdaccio.org/docs/installation) (standard setup, no need to change defaults);
+1. Setup [verdaccio](https://verdaccio.org/docs/installation) (standard setup, no need to change defaults. Once set up, just need to run `verdaccio`);
 2. In a project in which you want to test the packages add .npmrc file with this line: `registry=http://localhost:4873`;
 3. Run `npm run local-publish` script from ordao root; 
 4. Test the packages in external project

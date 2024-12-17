@@ -1,6 +1,6 @@
 {
   "name": "@ordao/ortypes",
-  "version": "1.0.12",
+  "version": "1.0.16",
   "description": "Types for Optimistic Respect Based DAO and its components",
   "type": "commonjs",
   "module": "dist/esm/index.js",
@@ -73,7 +73,7 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@ordao/ethers-decode-error": "^1.0.5",
+    "@ordao/ethers-decode-error": "^1.0.16",
     "@ordao/orec": "^1.0.12",
     "@ordao/respect1155": "^1.0.12",
     "@ordao/ts-utils": "^1.0.5",
@@ -96,5 +96,6 @@
     "type": "git",
     "url": "git+https://github.com/sim31/ordao.git",
     "directory": "libs/ortypes"
-  }
+  },
+  "gitHead": "822ef6b3d3026a915b19d3c1903f4386e1e304bb"
 }
