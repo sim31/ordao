@@ -1,0 +1,22 @@
+
+    {
+      "name": "@ordao/dev-op-sepolia",
+      "private": true,
+      "version": "1.0.0",
+      "description": "Contract deployment project for dev-op-sepolia ORDAO",
+      "author": "ordao-builder",
+      "license": "GPL-3.0",
+      "scripts": {
+        "deploy": "npx hardhat ignition deploy ../../seeds/dev-op-sepolia/ignition/modules/ParentOrecRespect1155.ts --parameters ../../seeds/dev-op-sepolia/ignition/params.json --deployment-id dev-op-sepolia --network opSepolia",
+        "verify": "npx hardhat verify dev-op-sepolia",
+        "status": "npx hardhat status dev-op-sepolia"
+      },
+      "devDependencies": {
+        "hardhat": "^2.22.17",
+        "@nomicfoundation/hardhat-ignition-ethers": "^0.15.8",
+        "typescript": "^5.7.2",
+        "@ordao/seeder": "^1.0.0",
+        "@ordao/ortypes": "^1.0.0"
+      }
+    }
+    

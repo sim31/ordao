@@ -1,0 +1,19 @@
+{
+  "contractDeployment": {
+    "oldRespect": {
+      "uri": "http://localhost",
+      "contractURI": "http://localhost",
+      "respectHolders": [
+        {
+          "address": "0x0806dF7DCB21B50EFfd790c105Ee57E58F76379e",
+          "amount": 50
+        },
+        {
+          "address": "0x8319C20eF4Dd5f08b34957B29BA5Ce5F19a50Ef2",
+          "amount": 20
+        }
+      ]
+    }
+
+  }
+}

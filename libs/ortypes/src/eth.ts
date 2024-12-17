@@ -1,6 +1,7 @@
 import { getAddress, getBigInt, hexlify, isBytesLike, isHexString, SigningKey, toBeHex, ZeroAddress } from 'ethers';
 import { z } from "zod";
 import { addCustomIssue } from './zErrorHandling.js';
+import { stringify } from '@ordao/ts-utils';
 
 export const zTxHash = z.string();
 export type TxHash = z.infer<typeof zTxHash>;
@@ -40,11 +41,11 @@ export type Account = EthAddress
 
 export const zEthPrivateKey = z.string().superRefine((val, ctx) => {
   try {
-    SigningKey.computePublicKey(val);
+    SigningKey.computePublicKey('0x' + val);
   } catch (err) {
     ctx.addIssue({
       code: z.ZodIssueCode.custom,
-      message: 'Failed to derive public key from private'
+      message: `Failed to derive public key from private. Exception: ${stringify(err)}`
     });
   }
 })

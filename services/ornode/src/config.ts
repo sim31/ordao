@@ -14,24 +14,6 @@ export const zMongoConfig = z.object({
   dbName: z.string()
 });
 
-export const zContractsAddrs = z.object({
-  oldRespect: zEthAddress.optional(),
-  newRespect: zEthAddress,
-  orec: zEthAddress
-});
-export type ContractsAddrs = z.infer<typeof zContractsAddrs>;
-
-export const zTokenMtCfg = z.object({
-  award: z.object({
-    name: z.string(),
-    description: z.string().optional(),
-    image: z.string().url().optional(),
-  }),
-  fungible: zRespectFungibleMt,
-  contract: zContractMetadata
-});
-export type TokenMtCfg = z.infer<typeof zTokenMtCfg>;
-
 export const zSwaggerUICfg = z.object({
   ornodeEndpoint: z.string().url().default("http://localhost:8090"),
   host: z.string().default("localhost"),
@@ -61,9 +43,8 @@ export const zOrnodeCfg = z.object({
 export type OrnodeCfg = z.infer<typeof zOrnodeCfg>;
 
 export const zConfig = z.object({
-  contracts: zContractsAddrs,
   providerUrl: z.string().url(),
-  tokenMetadataCfg: zTokenMtCfg,
+  seedsPath: z.string(),
   mongoCfg: zMongoConfig,
   swaggerUI: zSwaggerUICfg.default({}), // Defaults used
   ornode: zOrnodeCfg.default({}) // Defaults used

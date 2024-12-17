@@ -1,0 +1,23 @@
+{
+  "id": "dev",
+  "fullName": "Dev fractal",
+  "contractDeployment": {
+    "solidityVersion": "0.8.24",
+    "network": {
+      "name": "localhost",
+      "url": "http://localhost:8545/",
+      "deployerKey": "0xdbda1821b80551c9d65939329250298aa3472ba22feea921c0cf5d620ea67b97"
+    },
+    "voteLength": 240,
+    "vetoLength": 240,
+    "voteThreshold": 8,
+    "maxLiveYesVotes": 6,
+    "ornodeOrigin": "http://localhost:8090"
+  },
+  "contractConnection": {
+    "chainId": "0x7a69",
+    "rpcUrls": ["http://localhost:8545/"],
+    "chainName": "localhost",
+    "blockExplorerUrl": "https://optimism.blockscout.com"
+  }
+}
