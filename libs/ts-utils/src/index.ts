@@ -47,3 +47,4 @@ export function withoutProperty<T extends object, K extends keyof T>(
 
 export { ErrorWithCause } from "./ErrorWithCause.js";
 
+export * from "./version.js";

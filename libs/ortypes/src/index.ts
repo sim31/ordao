@@ -15,3 +15,5 @@ export * from "./erc1155.js";
 export * from "./erc7572.js";
 
 export * from "./common.js";
+
+export * from "./version.js";

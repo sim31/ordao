@@ -6,6 +6,8 @@
     "build:cjs": "tsc -p tsconfig.cjs.json",
     "build:esm": "tsc -p tsconfig.esm.json",
     "to-dual-package": "tsconfig-to-dual-package tsconfig.esm.json tsconfig.cjs.json",
+    "export-version": "node -p \"'export const PACKAGE_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
+    "prebuild": "npm run export-version",
     "build": "npm run build:cjs && npm run build:esm && npm run to-dual-package",
     "clean": "rimraf dist",
     "build-clean": "npm run clean && npm run build",

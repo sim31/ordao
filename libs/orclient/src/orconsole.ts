@@ -1,4 +1,7 @@
+import { stringify } from "@ordao/ts-utils";
+import { ordaoLibVersions } from "./libVersions.js";
 import { ORClient, ORContext, Config, defaultConfig } from "./orclient.js";
+import { PACKAGE_VERSION } from "./version.js";
 
 function _getPublicFunctions(): string[] {
   return Object.getOwnPropertyNames(ORClient.prototype)
@@ -15,6 +18,7 @@ function _printHelp() {
   console.log("Use c.<method>.help() to get further help on any of the methods.")
   console.log("Example: c.proposeRespectTo.help()")
   console.log("         c.vote.help()")
+  console.log ("Use c.version() to print version information");
 }
 
 // TODO: add intro to documentation and about how to use the console.
@@ -47,6 +51,10 @@ export function initConsole(docOrigin: string) {
     const url = new URL(docOrigin);
     url.pathname = _indexPath;
     window.open(url, "_blank")?.focus();
+  }
+
+  (ORClient.prototype as any)['version'] = () => {
+    console.log("versions: ", stringify(ordaoLibVersions));
   }
 
   consoleInitialized = true;

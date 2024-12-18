@@ -1,6 +1,7 @@
 {
   "name": "@ordao/ornode",
   "version": "1.0.17",
+  "private": true,
   "description": "Helper node for OREC (optimistic respect-based executive contract) based DAO",
   "main": "dist/index.js",
   "module": "dist/index.js",

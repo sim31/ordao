@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { zBytes, zEthAddress, zEthPrivateKey } from "@ordao/ortypes";
-import { zMongoConfig, zOrnodeCfg, zSwaggerUICfg, zTokenMtCfg } from "@ordao/ortypes/config";
+import { zTokenMtCfg } from "@ordao/ortypes/orseed.js";
 import { zChainInfo } from "@ordao/ortypes/chainInfo.js";
 
 export const zOldRespectSetup = z.object({
