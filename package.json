@@ -15,7 +15,7 @@
     "test": "lerna run test",
     "build": "lerna run build",
     "build-no-ornode": "lerna run build --ignore=\"@ordao/ornode\"",
-    "clean-build": "npm run clean && lerna run build --skip-nx-cache",
+    "build-clean": "npm run clean && lerna run build --skip-nx-cache",
     "clean": "lerna run clean",
     "watch": "lerna watch -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
     "publish": "lerna publish --no-private",

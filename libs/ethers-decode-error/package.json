@@ -60,6 +60,8 @@
     "export-version": "node -p \"'export const PACKAGE_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
     "prebuild": "npm run export-version && npm run lint",
     "build": "npm run clean && microbundle src/*.ts --tsconfig tsconfig.release.json",
+    "build-clean": "npm run clean && npm run build",
+    "prepack": "npm run build-clean",
     "build:watch": "tsc -w -p tsconfig.json",
     "lint": "eslint . --ext .ts --ext .mts",
     "test": "hardhat test",
