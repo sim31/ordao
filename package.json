@@ -7,7 +7,8 @@
     "libs/*",
     "services/*",
     "apps/*",
-    "tests"
+    "tests",
+    "scripts/"
   ],
   "scripts": {
     "gen-ornode-client": "npm run gen-client -w ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",
@@ -18,18 +19,13 @@
     "build-clean": "npm run clean && lerna run build --skip-nx-cache",
     "clean": "lerna run clean",
     "watch": "lerna watch -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
+
+    "hh-devnet": "npx -w @ordao/c-deployment hardhat node",
+    "dev:mkIgnitionParams": "npm run -w @ordao/scripts mkIgnitionParams ../dev-contracts-cfg.json ParentOrecRespect1155 ../contracts/deployment/ignition/dev-ParentOrecRespect1155.json",
+    "dev:cdeploy": "npx -w @ordao/c-deployment hardhat ignition deploy --deployment-id dev-ParentOrecRespect1155 --parameters ./ignition/dev-ParentOrecRespect1155.json ignition/modules/ParentOrecRespect1155.ts --network localhost",
+    "ignition-visualize": "npx -w @ordao/c-deployment hardhat ignition visualize", 
+
     "publish": "lerna publish --no-private",
-    "hh-devnet": "npx -w @ordao/devnet hardhat node",
-    "ordao-seeder": "npm run start -w @ordao/seeder -- ",
-
-    "ordao-seed:dev": "npm run start -w @ordao/seeder -- -dceo ../../seeds ../../seed-configs/dev/{base,oldRespect,token}.json -d",
-    "ordao-seed-clean:dev": "rm -r seeds/dev && npm run start -w @ordao/seeder -- -dceo ../../seeds ../../seed-configs/dev/{base,oldRespect,token}.json",
-    "ordao-seed-stat:dev": "npx -w @ordao/seeder ordao-seeder -s ../../seeds ../../seed-configs/dev/{base,oldRespect,token}.json -d",
-
-    "ordao-seed:dev-op-sepolia": "npm run start -w @ordao/seeder -- -da ../../seeds ../../seed-configs/dev-op-sepolia/{base,deploymentKeys.private,oldRespect,token}.json -d",
-    "ordao-seed-clean:dev-op-sepolia": "rm -r seeds/dev && npm run ordao-seed:dev-op-sepolia",
-    "ordao-seed-stat:dev-op-sepolia": "npx -w @ordao/seeder ordao-seeder -s ../../seeds ../../seed-configs/dev/{base,deploymentKeys.private,oldRespect,token}.json -d",
-
     "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
     "local-unpublish-all": "lerna exec -- npm unpublish -f --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}\""

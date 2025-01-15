@@ -1,0 +1,1 @@
+../../packages/respect1155/contracts/IRespect1155.sol

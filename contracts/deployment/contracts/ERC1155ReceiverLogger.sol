@@ -1,0 +1,1 @@
+../../packages/respect1155/contracts/ERC1155ReceiverLogger.sol

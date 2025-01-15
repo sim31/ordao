@@ -1,0 +1,1 @@
+../../packages/respect1155/contracts/IERC7572.sol
