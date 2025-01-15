@@ -2,12 +2,12 @@
   "private": true,
   "version": "1.0.0",
   "workspaces": [
-    "contracts/*",
+    "contracts/packages/*",
+    "contracts/deployment",
     "libs/*",
     "services/*",
     "apps/*",
-    "tools/*",
-    "seeds/*"
+    "tests"
   ],
   "scripts": {
     "gen-ornode-client": "npm run gen-client -w ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",

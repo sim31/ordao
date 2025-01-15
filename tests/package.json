@@ -1,0 +1,46 @@
+{
+  "name": "@ordao/tests",
+  "type": "module",
+  "private": true,
+  "version": "1.1.4",
+  "description": "Integration tests for ordao",
+  "main": "index.js",
+  "config": {
+    "ornode": "../services/ornode/"
+  },
+  "scripts": {
+    "hh-test-ordao": "NODE_OPTIONS='--enable-source-maps --experimental-loader ts-node/esm/transpile-only --no-warnings=ExperimentalWarning' hardhat --show-stack-traces --network localhost test",
+    "hh-dev-script": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only --no-warnings=ExperimentalWarning' hardhat --config ./hardhat-dev.config.cts --show-stack-traces --network localhost run",
+    "hh-test-script": "NODE_OPTIONS='--experimental-loader ts-node/esm/transpile-only --no-warnings=ExperimentalWarning' hardhat --show-stack-traces --network localhost run",
+    "hh-dev-chain": "npx hardhat --config ./hardhat-dev.config.cts node",
+    "hh-test-chain": "npx hardhat --config ./hardhat.config.cts node",
+    "test-deployment": "VOTE_PERIOD=86400 VETO_PERIOD=518400 npm run hh-test-script ./src/devDeployment.ts",
+    "dev-deployment": "npm run hh-dev-script ./src/devDeployment.ts",
+    "dev-ornode": "node src/devOrnode.js",
+    "dev-ornode-sync": "node src/devOrnode.js --sync",
+    "dev-ornode-no-listen": "node src/devOrnode.js --no-event-listen",
+    "dev-ornode-swagger-ui": "cd $npm_package_config_ornode && sleep 30 && ORNODE_CFG_PATH=$npm_package_config_ornode_to_cfg_path npm run swagger-ui",
+    "test": "node ./src/testOrdao.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git"
+  },
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme",
+  "dependencies": {
+    "@ordao/ethers-decode-error": "^1.1.3",
+    "@ordao/orclient": "^1.1.4",
+    "@ordao/ortypes": "^1.1.3",
+    "@ordao/ts-utils": "^1.1.3",
+    "op-fractal-sc": "github:Optimystics/op-fractal-sc#main"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "shelljs": "^0.8.5"
+  }
+}

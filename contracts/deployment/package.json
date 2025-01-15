@@ -1,0 +1,26 @@
+{
+  "name": "@ordao/c-deployment",
+  "version": "1.0.0",
+  "description": "Environment for managing ordao contract deployments",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git"
+  },
+  "keywords": [
+    "ordao",
+    "solidity",
+    "hardhat"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "hardhat": "^2.22.18"
+  }
+}
