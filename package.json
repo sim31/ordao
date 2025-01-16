@@ -19,19 +19,17 @@
     "build-clean": "npm run clean && lerna run build --skip-nx-cache",
     "clean": "lerna run clean",
     "watch": "lerna watch -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
-
     "scripts": "npm -w @ordao/scripts run",
     "hh": "npx -w @ordao/c-deployment hardhat",
     "ignition": "npx -w @ordao/c-deployment hardhat ignition",
-
-    "hh-devnet": "npm run hh -- node",
+    "dev:chain": "npm run hh -- node",
     "dev:mkIgnitionParams": "npm run scripts -- mkIgnitionParams ../dev.ParentFrOrecR1155.json ParentFrOrecR1155 ../contracts/deployment/ignition/dev-ParentFrOrecR1155.json",
     "dev:cdeploy": "npm run ignition -- deploy --deployment-id dev-ParentFrOrecR1155 --parameters ./ignition/dev-ParentFrOrecR1155.json ignition/modules/ParentFrOrecR1155.ts --network localhost",
     "dev:ornode": "npm run -w @ordao/ornode dev",
-    "dev:watch":  "lerna watch --ignore=@ordao/gui -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
-    "dev:gui": "npm run -w @ordao/gui dev",
+    "dev:gui": "npx nodemon -w apps/gui/dist --delay 1 -x 'npm run -w @ordao/gui dev'",
     "dev:orclient-docs": "npx -w @ordao/orclient-docs http-server ./dist/ -p 5174",
-
+    "dev:watch": "lerna watch --ignore=@ordao/gui -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
+    "dev:run": "",
     "publish": "lerna publish --no-private",
     "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
@@ -43,7 +41,9 @@
   "devDependencies": {
     "@ordao/builder": "^1.0.0",
     "@types/lodash": "^4.17.13",
+    "concurrently": "^9.1.2",
     "lerna": "^8.1.9",
+    "nodemon": "^3.1.9",
     "rimraf": "^6.0.1"
   }
 }
