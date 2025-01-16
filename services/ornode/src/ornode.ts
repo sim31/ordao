@@ -93,7 +93,8 @@ export interface ConstructorConfig {
 export interface Config extends ConstructorConfig {
   newRespect: EthAddress | Respect1155.Contract,
   orec: EthAddress | OrecContract,
-  contractRunner: Url | ContractRunner
+  contractRunner: Url | ContractRunner,
+  listenToEvents: boolean
 }
 
 type ORNodeContextConfig = Omit<ORContext.Config, "ornode">;
@@ -144,8 +145,26 @@ export class ORNode implements IORNode {
 
     const ornode = new ORNode(ctx, db, cfg);
 
+    if (config.listenToEvents) {
+      console.log("Registering event handlers");
+      ornode._registerEventHandlers();
+    }
+
     return ornode
   }
+
+
+  private _registerEventHandlers() {
+    const orec = this._ctx.orec;
+
+    orec.on(orec.getEvent("ProposalCreated"), this._propCreatedHandler);
+    orec.on(orec.getEvent("Executed"), this._propExecHandler);
+    orec.on(orec.getEvent("ExecutionFailed"), this._propExecFailedHandler);
+    orec.on(orec.getEvent("Signal"), this._signalEventHandler);
+    orec.on(orec.getEvent("WeightedVoteIn"), this._weightedVoteHandler);
+    orec.on(orec.getEvent("EmptyVoteIn"), this._emptyVoteHandler);
+  }
+
 
   public async sync(config: SyncConfig) {
     console.log("starting sync");
@@ -403,17 +422,6 @@ export class ORNode implements IORNode {
     return awards;
   }
 
-  public registerEventHandlers() {
-    const orec = this._ctx.orec;
-
-    orec.on(orec.getEvent("ProposalCreated"), this._propCreatedHandler);
-    orec.on(orec.getEvent("Executed"), this._propExecHandler);
-    orec.on(orec.getEvent("ExecutionFailed"), this._propExecFailedHandler);
-    orec.on(orec.getEvent("Signal"), this._signalEventHandler);
-    orec.on(orec.getEvent("WeightedVoteIn"), this._weightedVoteHandler);
-    orec.on(orec.getEvent("EmptyVoteIn"), this._emptyVoteHandler);
-  }
-
   private _weightedVoteHandlerImpl = 
     async (
       propId: PropId,
@@ -437,7 +445,7 @@ export class ORNode implements IORNode {
       vtype: bigint,
       event: TypedEventLog<EmptyVoteInEvent.Event>
     ) => {
-      console.debug("WeightedVoteIn event. PropId: ", propId, "event: ", stringify(event));
+      console.debug("EmptyVoteIn event. PropId: ", propId, "event: ", stringify(event));
 
       await this._handleVoteEvent(
         propId, voter, zVoteTypeToStr.parse(vtype), 0, event
