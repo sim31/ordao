@@ -1,0 +1,32 @@
+{
+  "name": "@ordao/orclient-docs",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Documentation site for orclient",
+  "main": "index.js",
+  "config": {
+    "orclient": "../../libs/orclient",
+    "build_from_orclient": "../../apps/orclient-docs/dist"
+  },
+  "scripts": {
+    "build": "cd $npm_package_config_orclient && npx typedoc ./src/orclient.ts --out $npm_package_config_build_from_orclient",
+    "start": "npx http-server -p 5174 -o ./dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git"
+  },
+  "keywords": [
+    "ordao"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme",
+  "devDependencies": {
+    "@ordao/orclient": "^1.1.4",
+    "http-server": "^14.1.1"
+  }
+}
