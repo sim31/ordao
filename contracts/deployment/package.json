@@ -22,5 +22,8 @@
   "devDependencies": {
     "@nomicfoundation/hardhat-toolbox": "^5.0.0",
     "hardhat": "^2.22.18"
+  },
+  "dependencies": {
+    "op-fractal-sc": "github:Optimystics/op-fractal-sc#main"
   }
 }

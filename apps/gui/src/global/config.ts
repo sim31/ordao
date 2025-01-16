@@ -25,7 +25,7 @@ const ornodeUrl = import.meta.env.VITE_ORNODE_URL;
 const appTitle = import.meta.env.VITE_APP_TITLE;
 
 const chainId = import.meta.env.VITE_CHAIN_ID;
-const rpcUrls = JSON.parse(import.meta.env.VITE_RPC_URLS);
+const rpcUrls = import.meta.env.VITE_RPC_URLS.split(',');
 const chainName = import.meta.env.VITE_CHAIN_NAME;
 const blockExplorerUrl = import.meta.env.VITE_BLOCKEXP_URL;
 

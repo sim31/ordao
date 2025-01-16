@@ -1,0 +1,37 @@
+{
+  "providerUrl": "http://localhost:8545",
+  "contracts": {
+    "newRespect": "0x0165878A594ca255338adfa4d48449f69242Eb8F",
+    "orec": "0x5FC8d32690cc91D4c39d9d3abcBD16989F875707"
+  },
+  "tokenMetadataCfg": {
+    "award": {
+      "name": "Local Dev Fractal Respect Award",
+      "description": "Award for a contribution to Local Dev Fractal",
+      "image": "http://localhost:8090/public/of.png"
+    },
+    "fungible": {
+      "name": "Local Dev Fractal Respect",
+      "description": "Awards for a contributions to Local Dev Fractal",
+      "image": "http://localhost:8090/public/of.png",
+      "decimals": 0
+    },
+    "contract": {
+      "name": "Local Dev Fractal",
+      "symbol": "LDF",
+      "description": "Awards for a contributions to Local Dev Fractal",
+      "image": "http://localhost:8090/public/of.png",
+      "banner_image": "http://localhost:8090/public/of.png",
+      "featured_image": "http://localhost:8090/public/of.png",
+      "external_link": "https://of.frapps.xyz"
+    }
+  },
+  "mongoCfg": {
+    "url": "mongodb://localhost:27017",
+    "dbName": "ornode-dev"
+  },
+  "ornode": {
+    "startPeriodNum": 0,
+    "listenForEvents": true
+  }
+}

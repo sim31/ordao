@@ -100,7 +100,7 @@ export class ORContext<CT extends Config> {
     const balance = await this._st.oldRespect.balanceOf("0x5fc8a2626F6Caf00c4Af06436c12C831a2f61c66");
     z.coerce.number().parse(balance);
 
-    console.log("orContext validation successful");
+    console.log("orContext validation successful!");
   }
 
   private static _determineRunner(config: Config): ContractRunner {

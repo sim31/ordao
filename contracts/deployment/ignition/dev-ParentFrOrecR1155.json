@@ -1,0 +1,12 @@
+{
+  "ParentOrec": {
+    "votePeriod": 240,
+    "vetoPeriod": 240,
+    "voteThreshold": 8,
+    "maxLiveYesVotes": 6
+  },
+  "ParentOrecRespect1155": {
+    "uri": "http://localhost:8090/v1/token/%7Bid%7D",
+    "contractURI": "http://localhost:8090/v1/respectContractMetadata"
+  }
+}
