@@ -20,9 +20,13 @@
     "clean": "lerna run clean",
     "watch": "lerna watch -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
 
-    "hh-devnet": "npx -w @ordao/c-deployment hardhat node",
-    "dev:mkIgnitionParams": "npm run -w @ordao/scripts mkIgnitionParams ../dev-contracts-cfg.json ParentOrecRespect1155 ../contracts/deployment/ignition/dev-ParentOrecRespect1155.json",
-    "dev:cdeploy": "npx -w @ordao/c-deployment hardhat ignition deploy --deployment-id dev-ParentOrecRespect1155 --parameters ./ignition/dev-ParentOrecRespect1155.json ignition/modules/ParentOrecRespect1155.ts --network localhost",
+    "scripts": "npm -w @ordao/scripts run",
+    "hh": "npx -w @ordao/c-deployment hardhat",
+    "ignition": "npx -w @ordao/c-deployment hardhat ignition",
+
+    "hh-devnet": "npm run hh -- node",
+    "dev:mkIgnitionParams": "scripts -- mkIgnitionParams ../dev-contracts-cfg.json ParentOrecRespect1155 ../contracts/deployment/ignition/dev-ParentOrecRespect1155.json",
+    "dev:cdeploy": "npm run ignition -- deploy --deployment-id dev-ParentOrecRespect1155 --parameters ./ignition/dev-ParentOrecRespect1155.json ignition/modules/ParentOrecRespect1155.ts --network localhost",
     "ignition-visualize": "npx -w @ordao/c-deployment hardhat ignition visualize", 
 
     "publish": "lerna publish --no-private",
