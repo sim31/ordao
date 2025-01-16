@@ -34,8 +34,8 @@ export interface Config {
 }
 
 export const defaultConfig: Config = {
-  propConfirms: 3,
-  otherConfirms: 3,
+  propConfirms: 1,
+  otherConfirms: 1,
   propSubmitRetries: 4,
   propResubmitInterval: 3000
 }
