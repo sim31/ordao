@@ -77,6 +77,7 @@ export class ORContext<CT extends Config> {
       // There's a problem with ethers / typechain commonjs vs ESM versions.
       // Maybe I have a commonjs version of interface created by hardhat
       // and ErrorDecoder is expecting esm?
+      // Or maybe it's more generally an issue that one package creates an object and another applies instanceof?
       new Array(...state.orec.interface.fragments),
       new Array(...state.newRespect.interface.fragments),
     ]);

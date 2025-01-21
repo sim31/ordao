@@ -115,8 +115,6 @@ export class ORNode implements IORNode {
   private _ctx: ORContext;
   private _cfg: ConstructorConfig
   
-  private _tokUpdPool: Record<TokenId, Partial<RespectAwardMt['properties']>> = {};
-
   private constructor(
     orcontext: ORContext,
     db: IOrdb,
