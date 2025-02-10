@@ -38,8 +38,8 @@
     "typescript": "^5.4.5"
   },
   "peerDependencies": {
-    "@privy-io/react-auth": "^1.93.0",
-    "react": "^18.3.1"
+    "@privy-io/react-auth": "^2.4.2",
+    "react": "^18 || ^19"
   },
   "dependencies": {
     "@ordao/orclient": "^1.1.4"
