@@ -62,3 +62,5 @@ Thumbs.db
 
 # Private parts of json configs
 *.private.json
+
+builds
