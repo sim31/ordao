@@ -39,7 +39,6 @@
     "@openzeppelin/contracts": "^5.1.0"
   },
   "devDependencies": {
-    "@ordao/builder": "^1.0.0",
     "@types/lodash": "^4.17.13",
     "concurrently": "^9.1.2",
     "lerna": "^8.1.9",
