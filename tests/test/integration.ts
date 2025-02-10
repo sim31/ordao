@@ -83,7 +83,7 @@ describe("orclient", function() {
   before("create ORClient", async function() {
     expect(orec.runner).to.not.be.null;
     const ctx = new ORContext<ConfigWithOrnode>(
-      { orec, newRespect, oldRespect, ornode },
+      { orec, newRespect, ornode },
       orec.runner!
     );
     cl = new ORClient(ctx, { ...defaultConfig, propResubmitInterval: 1000, propConfirms: 4, otherConfirms: 4 });

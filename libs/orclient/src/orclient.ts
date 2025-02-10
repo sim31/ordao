@@ -413,7 +413,7 @@ export class ORClient {
    * Get amount of old (parent) Respect an account has.
    */
   async getOldRespectOf(account: EthAddress): Promise<bigint> {
-    return await this._ctx.oldRespect.balanceOf(account);
+    return await this._ctx.orec.respectOf(account);
   }
 
   /**

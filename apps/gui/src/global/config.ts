@@ -5,7 +5,6 @@ import { CreateOrclientConfig, DeploymentInfo } from "@ordao/orclient/createOrcl
 import { defaultConfig } from "@ordao/orclient";
 
 export const zContractsAddrs = z.object({
-  oldRespect: zEthAddress.optional(),
   newRespect: zEthAddress,
   orec: zEthAddress
 });
@@ -21,7 +20,6 @@ export const zConfig = z.object({
 });
 export type Config = z.infer<typeof zConfig>;
 
-const oldRespect = import.meta.env.VITE_OLD_RESPECT_ADDR;
 const newRespect = import.meta.env.VITE_NEW_RESPECT_ADDR;
 const orec = import.meta.env.VITE_OREC_ADDR;
 const ornodeUrl = import.meta.env.VITE_ORNODE_URL;
@@ -34,11 +32,9 @@ const rpcUrls = import.meta.env.VITE_RPC_URLS.split(",");
 const chainName = import.meta.env.VITE_CHAIN_NAME;
 const blockExplorerUrl = import.meta.env.VITE_BLOCKEXP_URL;
 
-// console.log(oldRespect, newRespect, orec, ornodeUrl, appTitle);
-
 export const config = zConfig.parse({
   contracts: {
-    oldRespect, newRespect, orec
+    newRespect, orec
   },
   ornodeUrl,
   appTitle,
