@@ -42,7 +42,8 @@
     "react": "^18 || ^19"
   },
   "dependencies": {
-    "@ordao/orclient": "^1.1.4"
+    "@ordao/orclient": "^1.1.4",
+    "use-sync-external-store": "^1.4.0"
   },
   "keywords": [
     "ordao",
