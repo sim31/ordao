@@ -86,7 +86,7 @@ describe("orclient", function() {
       { orec, newRespect, oldRespect, ornode },
       orec.runner!
     );
-    cl = new ORClient(ctx, { ...defaultConfig, propResubmitInterval: 1000 });
+    cl = new ORClient(ctx, { ...defaultConfig, propResubmitInterval: 1000, propConfirms: 4, otherConfirms: 4 });
   })
 
   function expectDecoded<T extends PropType>(
