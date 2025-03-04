@@ -6,5 +6,6 @@
       "changeProcessCwd": true
     }
   ],
-  "solidity.packageDefaultDependenciesDirectory": "../../node_modules"
+  "solidity.packageDefaultDependenciesDirectory": "",
+  "solidity.packageDefaultDependenciesContractsDirectory": "./"
 }
