@@ -27,27 +27,33 @@ export async function createHttpOrnode(
   config: Config,
   mordb: MongoOrdb,
   providerUrl: Url
-) {
-  console.log("Creating http ornode");
-  ornode = createORNode(config, mordb, providerUrl);
+): Promise<IORNode> {
+  return new Promise<IORNode>((resolve, reject) => {
+    console.log("Creating http ornode");
+    createORNode(config, mordb, providerUrl).then(resolve).catch(reject);
+  })
 }
 
 // Has to set ornode
 export async function createWebsocketOrnode(config: Config, mordb: MongoOrdb) {
-  let terminate: () => void;
+  return new Promise<IORNode>((resolve, reject) => {
+    let terminate: () => void;
 
-  const onConnect = async (wsp: WebSocketProvider) => {
-    // On reconnection - same mordb, new orcontext and corresponding ornode object
-    // But ornode variable is private here so it is not a problem.
-    ornode = createORNode(config, mordb, wsp);
-  };
-  terminate = ResettingResilientWs(
-    config.providerUrl,
-    config.ornode.wsResetInterval,
-    onConnect
-  );
+    console.log("Creating websocket ornode");
 
-  return terminate;
+    const onConnect = async (wsp: WebSocketProvider) => {
+      // On reconnection - same mordb, new orcontext and corresponding ornode object
+      // But ornode variable is private here so it is not a problem.
+      createORNode(config, mordb, wsp).then(resolve).catch(reject);
+    };
+    terminate = ResettingResilientWs(
+      config.providerUrl,
+      config.ornode.wsResetInterval,
+      onConnect
+    );
+
+    return terminate;
+  })
 }
 
 export async function init() {
@@ -61,9 +67,9 @@ export async function init() {
 
   const url = new URL(config.providerUrl);
   if (url.protocol === "wss:") {
-    createWebsocketOrnode(config, mordb);
+    ornode = createWebsocketOrnode(config, mordb);
   } else {
-    createHttpOrnode(config, mordb, config.providerUrl);
+    ornode = createHttpOrnode(config, mordb, config.providerUrl);
   }
   await ornode;
 }
