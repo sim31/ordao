@@ -1,6 +1,6 @@
 {
   "name": "@ordao/ortypes",
-  "version": "1.1.5",
+  "version": "1.2.0",
   "description": "Types for Optimistic Respect Based DAO and its components",
   "type": "commonjs",
   "module": "dist/esm/index.js",

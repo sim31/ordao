@@ -63,3 +63,5 @@ Thumbs.db
 *.private.json
 
 builds
+
+tests/tmp

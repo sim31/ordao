@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { DeploymentSpec, createOrclient, CreateOrclientConfig } from "@ordao/orclient/createOrclient.js";
 import { ORClient } from "@ordao/orclient";
 import { ConnectedWallet } from "@privy-io/react-auth";
-import { ordaoLibVersions } from "./libVersions";
+import { ordaoLibVersions } from "./libVersions.js";
 
 async function create(
   deployment: DeploymentSpec,

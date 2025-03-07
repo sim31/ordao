@@ -1,4 +1,4 @@
-import { PACKAGE_VERSION as ORCLIENT_VERSION } from "./version";
+import { PACKAGE_VERSION as ORCLIENT_VERSION } from "./version.js";
 import { PACKAGE_VERSION as ORTYPES_VERSION } from "@ordao/ortypes/version.js";
 import { PACKAGE_VERSION as TS_UTILS_VERSION } from "@ordao/ts-utils";
 import { PACKAGE_VERSION as ETHERS_DECODE_ERROR_VERSION } from "@ordao/ethers-decode-error";
