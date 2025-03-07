@@ -1,6 +1,6 @@
 {
   "name": "@ordao/ortypes",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Types for Optimistic Respect Based DAO and its components",
   "type": "commonjs",
   "module": "dist/esm/index.js",
@@ -75,10 +75,10 @@
     "typescript": "^5.4.5"
   },
   "dependencies": {
-    "@ordao/ethers-decode-error": "^1.2.0",
+    "@ordao/ethers-decode-error": "^1.2.1",
     "@ordao/orec": "^1.2.0",
     "@ordao/respect1155": "^1.2.0",
-    "@ordao/ts-utils": "^1.2.0",
+    "@ordao/ts-utils": "^1.2.1",
     "chai": "^4.3.0",
     "ethers": "^6.13.0",
     "op-fractal-sc": "github:Optimystics/op-fractal-sc#main",
