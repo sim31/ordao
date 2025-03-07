@@ -21,7 +21,7 @@ export const zDeploymentInfo = z.object({
 export type DeploymentInfo = z.infer<typeof zDeploymentInfo>;
 
 export type DeploymentKey = 
-  "op-sepolia" | "oh" | "of2-candidate-1" | "of";
+  "op-sepolia" | "oh" | "of" | "buildium";
 
 export const deployments: Record<DeploymentKey, DeploymentInfo> = {
   "op-sepolia": {
@@ -58,11 +58,11 @@ export const deployments: Record<DeploymentKey, DeploymentInfo> = {
       nativeCurrency: ethCurrency
     }
   },
-  "of2-candidate-1": {
-    title: "Optimism Fractal candidate 1",
+  "of": {
+    title: "Optimism Fractal",
     contracts: {
-      newRespect: "0xAA76B4397b0F79D5a16093c3040d8cf95951b9Ee",
-      orec: "0x7Abe89De9172b3F8F122AA8756b0F9Ee989686b7"
+      newRespect: "0x07418B51196045EB360F31d8881326858Ed25121",
+      orec: "0x73eb8B61E6Eb65aFAAE972874bB4EB5689d1cCE3"
     },
     ornodeUrl: "https://of2-ornode.frapps.xyz",
     chainInfo: {
@@ -75,13 +75,13 @@ export const deployments: Record<DeploymentKey, DeploymentInfo> = {
       nativeCurrency: ethCurrency
     }
   },
-  "of": {
-    title: "Optimism Fractal",
+  "buildium": {
+    title: "Buildium Fractal",
     contracts: {
-      newRespect: "0x07418B51196045EB360F31d8881326858Ed25121",
-      orec: "0x73eb8B61E6Eb65aFAAE972874bB4EB5689d1cCE3"
+      newRespect: "0xFEFB35CAB68FAEa586658Ec7Ceb71CBcCA7E6228",
+      orec: "0xd50931d0c930fbE99164723e38D458A4e58616E5"
     },
-    ornodeUrl: "https://of2-ornode.frapps.xyz",
+    ornodeUrl: "https://buildium-ornode.frapps.xyz",
     chainInfo: {
       chainId: "0xA",
       rpcUrls: [
