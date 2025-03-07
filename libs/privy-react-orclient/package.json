@@ -1,6 +1,6 @@
 {
   "name": "@ordao/privy-react-orclient",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "\"Helpers for using orclient with privy and react\"",
   "scripts": {
     "build:cjs": "tsc -p tsconfig.cjs.json",
@@ -42,7 +42,7 @@
     "react": "^18 || ^19"
   },
   "dependencies": {
-    "@ordao/orclient": "^1.2.1",
+    "@ordao/orclient": "^1.2.2",
     "use-sync-external-store": "^1.4.0"
   },
   "keywords": [
