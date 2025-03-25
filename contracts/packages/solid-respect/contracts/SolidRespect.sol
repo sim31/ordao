@@ -2,8 +2,10 @@
 pragma solidity ^0.8.24;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/utils/introspection/ERC165.sol";
+import "@ordao/orec/contracts/IRespect.sol";
 
-contract SolidRespect is IERC20, IERC20Metadata, IERC20Errors {
+contract SolidRespect is IRespect, IERC20, IERC20Metadata, IERC20Errors, ERC165 {
     mapping(address account => uint256) private _balances;
 
     uint256 private _totalSupply;
@@ -50,6 +52,10 @@ contract SolidRespect is IERC20, IERC20Metadata, IERC20Errors {
         return _balances[account];
     }
 
+    function respectOf(address account) public view virtual returns (uint256) {
+        return balanceOf(account);
+    }
+
     function transfer(address, uint256) public virtual returns (bool) {
         revert OpNotSupported();
     }
@@ -67,5 +73,17 @@ contract SolidRespect is IERC20, IERC20Metadata, IERC20Errors {
 
     function transferFrom(address, address, uint256) public virtual returns (bool) {
         revert OpNotSupported();
+    }
+
+    function supportsInterface(bytes4 interfaceId)
+        public
+        view
+        virtual
+        override(ERC165, IERC165)
+        returns (bool)
+    {
+        return interfaceId == type(IERC20).interfaceId
+        || interfaceId == type(IRespect).interfaceId
+        || super.supportsInterface(interfaceId);
     }
 }
