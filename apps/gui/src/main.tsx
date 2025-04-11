@@ -2,7 +2,7 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { ChakraProvider, Container } from '@chakra-ui/react'
 import './index.css'
-import BreakoutSubmitApp from './BreakoutSubmitApp'
+// import BreakoutSubmitApp from './BreakoutSubmitApp'
 import {
   Route,
   createBrowserRouter,
@@ -12,6 +12,7 @@ import {
 import Fallback from './components/Fallback'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { config } from './global/config'
+import App from './App'
 
 console.debug = console.log;
 console.debug("debug test")
@@ -29,7 +30,7 @@ console.log("log test")
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<BreakoutSubmitApp />} errorElement={<Fallback />}/>
+    <Route path="/" element={<App />} errorElement={<Fallback />}/>
   )
 );
 
