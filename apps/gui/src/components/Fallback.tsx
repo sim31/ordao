@@ -1,10 +1,10 @@
 import {
   Alert,
-  AlertIcon,
   AlertTitle,
   Text,
   VStack
 } from "@chakra-ui/react";
+import { CircleAlert } from "lucide-react";
 import { useMemo } from "react";
 import { useRouteError } from "react-router-dom";
 import { stringify } from "@ordao/ts-utils";
@@ -24,10 +24,10 @@ export default function Fallback() {
 
   return (
     <VStack>
-      <Alert status='error' minWidth="100vw">
-        <AlertIcon />
+      <Alert.Root status='error' minWidth="100vw">
+        <CircleAlert />
         <AlertTitle>{`Unhandled Error ${name ?? ""}`}</AlertTitle>
-      </Alert>
+      </Alert.Root>
       <Text whiteSpace="pre-wrap" backgroundColor="#eeeee4" maxWidth="80vw" margin="2em">
         {`Message: ${message}
 

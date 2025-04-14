@@ -1,6 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import { ChakraProvider, Container } from '@chakra-ui/react'
+import { Provider } from './components/ui/provider'
+import { Container } from '@chakra-ui/react'
 import './index.css'
 // import BreakoutSubmitApp from './BreakoutSubmitApp'
 import {
@@ -46,11 +47,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         },
       }}
     >
-      <ChakraProvider>
+      <Provider>
         <Container minHeight="100vh" minWidth="100vw" padding="0px">
           <RouterProvider router={router} />
         </Container>
-      </ChakraProvider>
+      </Provider>
     </PrivyProvider>
   </React.StrictMode>,
 )

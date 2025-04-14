@@ -64,6 +64,8 @@ export class ORClient {
   private _nodeToClient: NodeToClientTransformer;
   private _clientToNode: ClientToNodeTransformer;
   private _cfg: Config;
+  private _voteLength: number | undefined;
+  private _vetoLength: number | undefined;
 
   constructor(context: ORContext, cfg: Config = defaultConfig) {
     this._ctx = context;
@@ -524,11 +526,38 @@ export class ORClient {
     return awards;
   }
 
+  /**
+   * Get vote time remaining for a proposal (in milliseconds)
+   */
+  async getVoteTimeRemaining(prop: Proposal): Promise<number> {
+    const age = Date.now() - prop.createTime.getTime();
+    const voteLen = await this.getVoteLength();
+    const voteRem = (voteLen * 1000) - age;
+    if (voteRem < 0) {
+      throw new Error("Vote has expired");
+    }
+    return voteRem;
+  }
+
   async getVoteLength(): Promise<number> {
-    return Number(await this._ctx.orec.voteLen());
+    if (this._voteLength === undefined) {
+      this._voteLength = await this._getVoteLength();
+    }
+    return this._voteLength;
   }
 
   async getVetoLength(): Promise<number> {
+    if (this._vetoLength === undefined) {
+      this._vetoLength = await this._getVetoLength();
+    }
+    return this._vetoLength;
+  }
+
+  private async _getVoteLength(): Promise<number> {
+    return Number(await this._ctx.orec.voteLen());
+  }
+
+  private async _getVetoLength(): Promise<number> {
     return Number(await this._ctx.orec.vetoLen());
   }
   

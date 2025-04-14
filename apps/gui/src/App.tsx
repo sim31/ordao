@@ -1,8 +1,6 @@
 // import { useState } from 'react'
 // import './App.css'
 import { Badge, Card, Flex, Text } from "@chakra-ui/react"
-
-
 import { Proposal } from "@ordao/ortypes/orclient.js"
 // import { Box, Center, Flex } from "@chakra-ui/react"
 
@@ -79,11 +77,31 @@ const proposals: Proposal[] = [
   }
 ]
 
+const stageColorScheme = {
+  Voting: "orange",
+  Veto: "yellow",
+  Execution: "green",
+  Expired: "black"
+};
+
+const voteStatusColorScheme = {
+  Passing: "yellow",
+  Failing: "orange",
+  Failed: "red",
+  Passed: "green"
+};
+
+const statusColorScheme = {
+  NotExecuted: "gray",
+  Executed: "black",
+  ExecutionFailed: "red",
+};
+
 function ProposalCard({ proposal }: { proposal: Proposal }) {
   const shortenedId = proposal.id.slice(0, 6) + '...';
 
   return (
-    <Card
+    <Card.Root
       variant="outline"
       padding={4}
       gap={2}
@@ -91,26 +109,39 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
     >
 
       <Flex gap={2} alignItems="center" mb={0.5}>
-        <Badge variant="outline" colorScheme="green" fontSize="lg">
+        <Badge 
+          variant="solid" 
+          colorPalette={stageColorScheme[proposal.stage]} 
+          size="lg"
+        >
           {proposal.stage}
         </Badge>
-        <Badge variant="outline" colorScheme="blue" fontSize="lg">
+        <Badge 
+          variant="solid" 
+          colorPalette={voteStatusColorScheme[proposal.voteStatus]} 
+          size="lg"
+        >
           {proposal.voteStatus}
         </Badge>
-        <Badge variant="outline" colorScheme="green" fontSize="lg">
+        <Badge 
+          variant={proposal.status === "NotExecuted" ? "outline" : "solid"} 
+          colorPalette={statusColorScheme[proposal.status]} 
+          size="lg"
+        >
           {proposal.status}
         </Badge>
+
+        <Text fontSize="lg" color="gray.500">
+          Created: {proposal.createTime.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+        </Text>
+        <Text fontSize="lg" color="gray.500">
+          ID: {shortenedId}
+        </Text>
       </Flex>
 
       <Flex gap={2} alignItems="center" mb={2}>
         <Text fontWeight="bold" fontSize="2xl">
           {proposal.decoded?.propType || "Unknown"}
-        </Text>
-        <Text fontSize="lg" color="gray.500">
-          Created: {proposal.createTime.toLocaleString()}
-        </Text>
-        <Text fontSize="lg" color="gray.500">
-          ID: {shortenedId}
         </Text>
       </Flex>
 
@@ -262,7 +293,7 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
           No: {proposal.noWeight}
         </Text>
       </Flex>
-    </Card>
+    </Card.Root>
   );
 }
 
