@@ -80,6 +80,8 @@ const proposals: Proposal[] = [
 ]
 
 function ProposalCard({ proposal }: { proposal: Proposal }) {
+  const shortenedId = proposal.id.slice(0, 6) + '...';
+
   return (
     <Card
       variant="outline"
@@ -87,30 +89,181 @@ function ProposalCard({ proposal }: { proposal: Proposal }) {
       gap={2}
       flexDirection="column"
     >
-      <Flex gap={2} alignItems="center">
-        <Badge variant="outline" colorScheme="green">
+
+      <Flex gap={2} alignItems="center" mb={0.5}>
+        <Badge variant="outline" colorScheme="green" fontSize="lg">
           {proposal.stage}
         </Badge>
-        <Badge variant="outline" colorScheme="blue">
+        <Badge variant="outline" colorScheme="blue" fontSize="lg">
           {proposal.voteStatus}
         </Badge>
+        <Badge variant="outline" colorScheme="green" fontSize="lg">
+          {proposal.status}
+        </Badge>
       </Flex>
-      <Text fontWeight="bold" fontSize="xl">
-        {proposal.decoded?.propType || "Unknown" }
-      </Text>
-      <Text fontSize="md">
-        {proposal.id}
-      </Text>
-      <Flex gap={2} alignItems="center">
+
+      <Flex gap={2} alignItems="center" mb={2}>
+        <Text fontWeight="bold" fontSize="2xl">
+          {proposal.decoded?.propType || "Unknown"}
+        </Text>
+        <Text fontSize="lg" color="gray.500">
+          Created: {proposal.createTime.toLocaleString()}
+        </Text>
+        <Text fontSize="lg" color="gray.500">
+          ID: {shortenedId}
+        </Text>
+      </Flex>
+
+      <Flex flexDirection="column" gap={2}>
+        {proposal.decoded?.metadata && (
+          <Text fontSize="md">
+            Metadata: {JSON.stringify(proposal.decoded.metadata)}
+          </Text>
+        )}
+
+        {proposal.decoded?.propType === 'respectBreakout' && (
+          <>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Meeting Num:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.meetingNum}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Group Num:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.groupNum}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Rankings:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.rankings.join(', ')}
+              </Text>
+            </Flex>
+          </>
+        )}
+
+        {proposal.decoded?.propType === 'respectAccount' && (
+          <>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Meeting Num:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.meetingNum}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Group Num:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.groupNum}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Value:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.value}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Title:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.title}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Reason:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.reason}
+              </Text>
+            </Flex>
+          </>
+        )}
+
+        {proposal.decoded?.propType === 'burnRespect' && (
+          <>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Token ID:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.tokenId}
+              </Text>
+            </Flex>
+            <Flex justifyContent="space-between">
+              <Text fontSize="md" fontWeight="bold">
+                Reason:
+              </Text>
+              <Text fontSize="md" textAlign="right">
+                {proposal.decoded.reason}
+              </Text>
+            </Flex>
+          </>
+        )}
+
+        {proposal.decoded?.propType === 'tick' && (
+          <>
+            <Text fontSize="md">
+              Data: {proposal.decoded.data}
+            </Text>
+            {proposal.decoded.link && (
+              <Text fontSize="md">
+                Link: {proposal.decoded.link}
+              </Text>
+            )}
+          </>
+        )}
+
+        {proposal.decoded?.propType === 'customCall' && (
+          <>
+            <Text fontSize="md">
+              Address: {proposal.addr}
+            </Text>
+            <Text fontSize="md">
+              Cdata: {proposal.cdata}
+            </Text>
+          </>
+        )}
+
+        {proposal.decoded?.propType === 'customSignal' && (
+          <>
+            <Text fontSize="md">
+              Data: {proposal.decoded.data}
+            </Text>
+            {proposal.decoded.link && (
+              <Text fontSize="md">
+                Link: {proposal.decoded.link}
+              </Text>
+            )}
+          </>
+        )}
+      </Flex>
+
+      <Flex gap={2} alignItems="center" mt={2}>
         <Text fontSize="md">
-          {`Yes: ${proposal.yesWeight}`}
+          Yes: {proposal.yesWeight}
         </Text>
         <Text fontSize="md">
-          {`No: ${proposal.noWeight}`}
+          No: {proposal.noWeight}
         </Text>
       </Flex>
     </Card>
-  )
+  );
 }
 
 function App() {
