@@ -1,47 +1,17 @@
 import {
   Box,
   Flex,
-  // Avatar,
   Button,
   Menu,
-  MenuButton,
-  MenuList,
-  MenuItem,
-  // MenuDivider,
-  // useDisclosure,
-  useColorModeValue,
+  Portal,
   Stack,
-  useToast,
-  // useColorMode,
-  // Center,
 } from '@chakra-ui/react'
 import copy from 'copy-to-clipboard'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import { formatEthAddress } from 'eth-address'
 
-// interface Props {
-//   children: React.ReactNode
-// }
-
-// const NavLink = (props: Props) => {
-//   const { children } = props
-
-//   return (
-//     <Box
-//       as="a"
-//       px={2}
-//       py={1}
-//       rounded={'md'}
-//       _hover={{
-//         textDecoration: 'none',
-//         bg: useColorModeValue('gray.200', 'gray.700'),
-//       }}
-//       href={'#'}>
-//       {children}
-//     </Box>
-//   )
-// }
-
+// TODO: How to use toaster in V3
+// TODO: How to use tooltip in V3
 export type AppBarProps = {
   // onNewPropClick: () => void;
   title: string,
@@ -50,71 +20,64 @@ export type AppBarProps = {
   onLogin: () => void
 }
 
-export default function AppBar(props: AppBarProps) {
-  // const { colorMode, toggleColorMode } = useColorMode()
-  // const { isOpen, onOpen, onClose } = useDisclosure()
+export const AppBar = (props: AppBarProps) => {
+  const { title, loggedInUser, onLogout, onLogin } = props
 
-  const toast = useToast();
-
-  const copyUsername = useCallback(() => {
-    if (props.loggedInUser) {
-      copy(props.loggedInUser)
-      toast({
-        title: 'Address copied to clipboard!',
-        status: 'success',
-        duration: 9000,
-        isClosable: true,
-      })
+  const [showMenu, setShowMenu] = useState(false)
+  const onCopy = useCallback(() => {
+    if (loggedInUser) {
+      copy(loggedInUser)
     }
-  }, [props, toast])
+  }, [loggedInUser])
 
   return (
-    <Box w="100%" bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
-      <Flex h={16} w="100%" alignItems={'center'} justifyContent={'space-between'}>
-        <Box paddingLeft="0.5em" as="b" fontSize="larger">{props.title}</Box>
+    // TODO: Work with themes properly instead of setting colors here
+    <Box
+      position="fixed"
+      top="0"
+      left="0"
+      right="0"
+      zIndex="1"
+      w="full"
+      h="55px"
+      bg="black"
+      color="white"
+      display="flex"
+      justifyContent="center"
+      alignItems="center"
+    >
+      <Flex alignItems="center" justifyContent="space-between" w="full" ml="1em" mr="1em">
+        <Box fontSize="lg" fontWeight="bold">
+          {title}
+        </Box>
+        <Stack direction="row" gap={4}>
+          {loggedInUser ? (
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <Button variant="outline" size="sm" onClick={() => setShowMenu(!showMenu)}>
+                  {formatEthAddress(loggedInUser, 4)}
+                </Button>
+              </Menu.Trigger>
+              <Portal>
+                <Menu.Positioner>
+                  <Menu.Content>
+                    <Menu.Item value="logout" onClick={onLogout}>Logout</Menu.Item>
+                    <Menu.Item value="copy" onClick={onCopy}>Copy</Menu.Item>
+                  </Menu.Content>
+                </Menu.Positioner>
+              </Portal>
 
-        <Flex alignItems={'center'}>
-          <Stack direction={'row'} spacing={7}>
-            {/* <Button onClick={toggleColorMode}>
-              {colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-            </Button> */}
-
-            {/* <Button onClick={props.onNewPropClick}>Create Proposal</Button> */}
-            <Menu>
-              { props.loggedInUser ? (
-                <>
-                  <MenuButton
-                    as={Button}
-                    rounded={'full'}
-                    variant={'link'}
-                    cursor={'pointer'}
-                    minW={0}
-                  >
-                    {formatEthAddress(props.loggedInUser, 4)}
-                  </MenuButton>
-                  <MenuList alignItems={'center'}>
-                    {/* <MenuItem>Your Servers</MenuItem> */}
-                    {/* <MenuItem>Account Settings</MenuItem> */}
-                    <MenuItem onClick={copyUsername}>Copy</MenuItem>
-                    <MenuItem onClick={props.onLogout}>Logout</MenuItem>
-                  </MenuList>
-                </>
-              ) : (
-                <MenuButton
-                  as={Button}
-                  rounded={'full'}
-                  variant={'link'}
-                  cursor={'pointer'}
-                  minW={0}
-                  onClick={props.onLogin}
-                >
-                  Login
-                </MenuButton>
-              )}
-            </Menu>
-          </Stack>
-        </Flex>
+            </Menu.Root>
+            
+          ) : (
+            <Button onClick={onLogin} backgroundColor="black" color="white">
+              Login
+            </Button>
+          )}
+        </Stack>
       </Flex>
     </Box>
   )
 }
+
+

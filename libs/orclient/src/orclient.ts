@@ -539,6 +539,21 @@ export class ORClient {
     return voteRem;
   }
 
+  async getVetoTimeRemaining(prop: Proposal): Promise<number> {
+    const age = Date.now() - prop.createTime.getTime();
+    const voteLen = await this.getVoteLength();
+    const vetoLen = await this.getVetoLength();
+    const voteRem = (voteLen * 1000) - age;
+    if (voteRem > 0) {
+      throw new Error("Not veto period");
+    }
+    const vetoRem = ((voteLen + vetoLen) * 1000) - age;
+    if (vetoRem < 0) {
+      throw new Error("Veto period has expired");
+    }
+    return vetoRem;
+  }
+
   async getVoteLength(): Promise<number> {
     if (this._voteLength === undefined) {
       this._voteLength = await this._getVoteLength();

@@ -53,5 +53,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         </Container>
       </Provider>
     </PrivyProvider>
-  </React.StrictMode>,
+  </React.StrictMode>
 )
