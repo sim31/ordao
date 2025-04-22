@@ -4,6 +4,8 @@ import { execStatusColors, stageColors, voteStatusColors } from "../global/statu
 import { ORClient } from "@ordao/orclient";
 import { timeStr } from "../utils/time";
 import { propTitles } from "../global/propTitles";
+import { DecodedPropTable } from "./DecodedPropTable";
+import { PropTable } from "./PropTable";
 
 export interface ProposalCardProps {
   proposal: Proposal,
@@ -13,7 +15,26 @@ export interface ProposalCardProps {
 export function ProposalCard({ proposal }: ProposalCardProps) {
   const shortenedId = proposal.id.slice(0, 6) + '...';
 
-  const propTitle = proposal.decoded?.propType ? propTitles[proposal.decoded.propType] : 'Unknown';
+  const propKnown = proposal.cdata && proposal.addr && proposal.memo;
+  const propTitle = propKnown 
+    ? (proposal.decoded?.propType ? propTitles[proposal.decoded.propType] : 'Unknown proposal type')
+    : 'Unknown proposal';
+  const createTime = proposal.createTime.toLocaleString('en-US', {
+    month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
+  })
+
+  const renderProposalContent = () => {
+    if (propKnown) {
+      // TODO: do you need to check that this is a custom call?
+      if (proposal.decoded) {
+        return <DecodedPropTable dprop={proposal.decoded} />;
+      } else {
+        return <PropTable prop={proposal} /> 
+      }
+    } else {
+      return <Text>Missing proposal data</Text>
+    }
+  }
 
   return (
     <Card.Root
@@ -48,7 +69,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         </Badge>
 
         <Text fontSize="lg" color="gray.500">
-          Created: {proposal.createTime.toLocaleString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true })}
+          Created: {createTime}
         </Text>
         <Text fontSize="lg" color="gray.500">
           ID: {shortenedId}
@@ -61,7 +82,10 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         </Text>
       </Flex>
 
-      <Flex flexDirection="column" gap={2}>
+
+      {renderProposalContent()}
+
+      {/* <Flex flexDirection="column" gap={2}>
         {proposal.decoded?.metadata && (
           <Text fontSize="md">
             Metadata: {JSON.stringify(proposal.decoded.metadata)}
@@ -208,7 +232,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         <Text fontSize="md">
           No: {proposal.noWeight}
         </Text>
-      </Flex>
+      </Flex> */}
     </Card.Root>
   );
 }

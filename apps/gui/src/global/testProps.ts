@@ -72,7 +72,7 @@ export const proposals: Proposal[] = [
     }
   },
   {
-    "id": "0x0661f86552cb5f50ec104ce117ef455979903e9cfd68c5f472a68f135a83470f",
+    "id": "0x1661f86552cb5f50ec104ce117ef455979903e9cfd68c5f472a68f135a83470f",
     "status": "Executed",
     "voteStatus": "Passed",
     "stage": "Expired",
