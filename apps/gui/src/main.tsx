@@ -13,7 +13,8 @@ import {
 import Fallback from './components/Fallback'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { config } from './global/config'
-import App from './App'
+// import App from './App'
+import SidebarWithHeader from './SidebarWithHeader'
 
 console.debug = console.log;
 console.debug("debug test")
@@ -31,7 +32,7 @@ console.log("log test")
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path="/" element={<App />} errorElement={<Fallback />}/>
+    <Route path="/" element={<SidebarWithHeader />} errorElement={<Fallback />}/>
   )
 );
 
