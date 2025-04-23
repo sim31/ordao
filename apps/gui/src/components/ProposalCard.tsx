@@ -1,4 +1,4 @@
-import { Badge, Card, Flex, Text } from "@chakra-ui/react";
+import { Badge, Button, Card, Flex, Text } from "@chakra-ui/react";
 import { Proposal } from "@ordao/ortypes/orclient.js";
 import { execStatusColors, stageColors, voteStatusColors } from "../global/statusColors";
 import { ORClient } from "@ordao/orclient";
@@ -34,6 +34,22 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
       }
     } else {
       return <Text>Missing proposal data</Text>
+    }
+  }
+
+  const renderVoteButton = () => {
+    if (proposal.stage === 'Voting') {
+      return (
+        <Button variant="outline" onClick={() => console.log("Vote clicked")}>
+          Vote
+        </Button>
+      );
+    } else if (proposal.stage === 'Veto') {
+      return (
+        <Button variant="outline" onClick={() => console.log("Veto clicked")}>
+          Veto
+        </Button>
+      );
     }
   }
 
@@ -88,6 +104,17 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
       {proposal.yesWeight !== undefined && proposal.noWeight !== undefined && (
         <VoteCountChart yesWeight={Number(proposal.yesWeight)} noWeight={Number(proposal.noWeight)} />
       )}
+
+      <Flex gap={2} justifyContent="flex-start" mt="1em" mb="0.5em">
+        {renderVoteButton()}
+        <Button variant="outline" onClick={() => console.log("More info clicked")}>
+          More Info
+        </Button>
+        <Button variant="outline" onClick={() => console.log("Copy Link clicked")}>
+          Copy Link
+        </Button>
+      </Flex>
+      
 
     </Card.Root>
   );
