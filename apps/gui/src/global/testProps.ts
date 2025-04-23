@@ -30,7 +30,7 @@ export const proposals: Proposal[] = [
   {
     "id": "0x3436ed11c5301f63dcb885d7691d8fe7e8479223b647bf867543d84c66508eae",
     "createTime": new Date(),
-    "yesWeight": 882n,
+    "yesWeight": 500n,
     "noWeight": 0n,
     "stage": "Voting",
     "voteStatus": "Passing",
@@ -56,7 +56,7 @@ export const proposals: Proposal[] = [
     "id": "0x351f538816dd407a5cf1aed7c6af41684945a5b802d57ed07fa80d8f6c24a49c",
     "createTime": new Date(),
     "yesWeight": 882n,
-    "noWeight": 0n,
+    "noWeight": 420n,
     "stage": "Veto",
     "voteStatus": "Passing",
     "status": "NotExecuted",

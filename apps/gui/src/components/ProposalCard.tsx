@@ -6,6 +6,7 @@ import { timeStr } from "../utils/time";
 import { propTitles } from "../global/propTitles";
 import { DecodedPropTable } from "./DecodedPropTable";
 import { PropTable } from "./PropTable";
+import { VoteCountChart } from "./VotesCountChart";
 
 export interface ProposalCardProps {
   proposal: Proposal,
@@ -84,154 +85,10 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
 
       {renderProposalContent()}
 
-      {/* <Flex flexDirection="column" gap={2}>
-        {proposal.decoded?.metadata && (
-          <Text fontSize="md">
-            Metadata: {JSON.stringify(proposal.decoded.metadata)}
-          </Text>
-        )}
+      {proposal.yesWeight !== undefined && proposal.noWeight !== undefined && (
+        <VoteCountChart yesWeight={Number(proposal.yesWeight)} noWeight={Number(proposal.noWeight)} />
+      )}
 
-        {proposal.decoded?.propType === 'respectBreakout' && (
-          <>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Meeting Num:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.meetingNum}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Group Num:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.groupNum}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Rankings:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.rankings.join(', ')}
-              </Text>
-            </Flex>
-          </>
-        )}
-
-        {proposal.decoded?.propType === 'respectAccount' && (
-          <>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Meeting Num:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.meetingNum}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Group Num:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.groupNum}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Value:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.value}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Title:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.title}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Reason:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.reason}
-              </Text>
-            </Flex>
-          </>
-        )}
-
-        {proposal.decoded?.propType === 'burnRespect' && (
-          <>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Token ID:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.tokenId}
-              </Text>
-            </Flex>
-            <Flex justifyContent="space-between">
-              <Text fontSize="md" fontWeight="bold">
-                Reason:
-              </Text>
-              <Text fontSize="md" textAlign="right">
-                {proposal.decoded.reason}
-              </Text>
-            </Flex>
-          </>
-        )}
-
-        {proposal.decoded?.propType === 'tick' && (
-          <>
-            <Text fontSize="md">
-              Data: {proposal.decoded.data}
-            </Text>
-            {proposal.decoded.link && (
-              <Text fontSize="md">
-                Link: {proposal.decoded.link}
-              </Text>
-            )}
-          </>
-        )}
-
-        {proposal.decoded?.propType === 'customCall' && (
-          <>
-            <Text fontSize="md">
-              Address: {proposal.addr}
-            </Text>
-            <Text fontSize="md">
-              Cdata: {proposal.cdata}
-            </Text>
-          </>
-        )}
-
-        {proposal.decoded?.propType === 'customSignal' && (
-          <>
-            <Text fontSize="md">
-              Data: {proposal.decoded.data}
-            </Text>
-            {proposal.decoded.link && (
-              <Text fontSize="md">
-                Link: {proposal.decoded.link}
-              </Text>
-            )}
-          </>
-        )}
-      </Flex>
-
-      <Flex gap={2} alignItems="center" mt={2}>
-        <Text fontSize="md">
-          Yes: {proposal.yesWeight}
-        </Text>
-        <Text fontSize="md">
-          No: {proposal.noWeight}
-        </Text>
-      </Flex> */}
     </Card.Root>
   );
 }
