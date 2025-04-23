@@ -8,7 +8,7 @@ import { proposals } from "../global/testProps";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export function ProposalList({ orclient }: { orclient: ORClient }) {
   return (
-    <Flex direction="column" gap={4} marginLeft="4em" marginRight="8em">
+    <Flex direction="column" gap={4}>
       {proposals.map((prop) => (
         <ProposalCard key={prop.id} proposal={prop} orclient={orclient} />
       ))}

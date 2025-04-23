@@ -19,13 +19,13 @@ export function PropValueCell({ value }: { value: unknown }) {
       <PropValue key={i} value={item} />
     ))
     return (
-      <Table.Cell>
+      <Table.Cell wordBreak="break-word">
         {items}
       </Table.Cell>
     )
   } else {
     return (
-      <Table.Cell>
+      <Table.Cell wordBreak="break-word">
         <PropValue value={value} />
       </Table.Cell>
     );

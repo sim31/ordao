@@ -72,7 +72,7 @@ function App() {
         onLogout={privyLogout}
         onLogin={privyLogin}
       />
-      <Center minHeight="100vh" margin="4em" marginTop="6em">
+      <Center minHeight="100vh" marginTop="6em" width="100%">
         { !privyReady
           ? <Spinner size="xl"/>
           : (orclient && authenticated && userWallet

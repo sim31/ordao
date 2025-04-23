@@ -8,7 +8,7 @@ export interface ProposalContentTableProps {
 
 export function PropTable({ prop }: ProposalContentTableProps) {
   return (
-    <Table.Root>
+    <Table.Root size="lg">
       <Table.Body>
         {prop.decoded?.metadata.propTitle && (
           <PropTableRow fieldName="Proposal Title" value={prop.decoded.metadata.propTitle} />

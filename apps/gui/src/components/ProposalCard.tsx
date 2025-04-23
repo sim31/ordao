@@ -42,7 +42,6 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
       padding={4}
       gap={2}
       flexDirection="column"
-      size="md"
     >
 
       <Flex gap={2} alignItems="center" mb={0.5}>

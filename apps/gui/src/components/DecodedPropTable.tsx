@@ -1,14 +1,27 @@
 import { Table } from "@chakra-ui/react";
 import { DecodedProposal } from "@ordao/ortypes/orclient.js";
 import { PropTableRow } from "./PropTableRow";
+// import { formatEthAddress } from "eth-address";
+import { zRankNumToValue } from "@ordao/ortypes";
 
 export interface ProposalContentTableProps {
   dprop: DecodedProposal
 }
 
 export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
+  const rows = Object.entries(dprop).filter(([key]) => key !== 'propType' && key !== 'metadata').map(([key, value]) => {
+    let val = value;
+    if (dprop.propType === 'respectBreakout' && key === 'rankings') {
+      val = dprop.rankings.map((addr, i) => {
+        return `${addr}    (+${zRankNumToValue.parse(i + 1)} Respect)`;
+      })      
+    }
+    return (
+      <PropTableRow key={key} fieldName={key} value={val} />
+    )
+  });
   return (
-    <Table.Root>
+    <Table.Root size="lg">
       <Table.Body>
         {dprop.metadata.propTitle && (
           <PropTableRow fieldName="Proposal Title" value={dprop.metadata.propTitle} />
@@ -16,9 +29,7 @@ export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
         {dprop.metadata.propDescription && (
           <PropTableRow fieldName="Proposal Description" value={dprop.metadata.propDescription} />
         )}
-        {Object.entries(dprop).filter(([key]) => key !== 'propType' && key !== 'metadata').map(([key, value]) => (
-          <PropTableRow fieldName={key} value={value} />
-        ))}
+        {rows}
       </Table.Body>
     </Table.Root>
   );

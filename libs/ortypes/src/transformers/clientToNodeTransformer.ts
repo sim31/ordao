@@ -28,7 +28,7 @@ import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, st
 import { BurnRespectArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
 import { propId } from "@ordao/orec/utils";
 import { addCustomIssue } from "../zErrorHandling.js";
-import { zBreakoutMintRequest, zGroupNum, zPropType, zRankNum } from "../fractal.js";
+import { zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue } from "../fractal.js";
 import { zBigNumberish, zBigNumberishToBigint } from "../eth.js";
 import { packTokenId } from "@ordao/respect1155/utils/tokenId.js";
 
@@ -36,19 +36,6 @@ type ORContext = OrigORContext<ConfigWithOrnode>;
 
 const respectInterface = Respect1155Factory.createInterface();
 const orecInterface = OrecFactory.createInterface();
-
-const _rewards = [
-  55n, 34n, 21n, 13n, 8n, 5n
-];
-
-export const zRankNumToValue = zRankNum.transform((rankNum, ctx) => {
-  try {
-    const rankIndex = rankNum - 1;
-    return _rewards[rankIndex];
-  } catch (err) {
-    addCustomIssue(rankNum, ctx, err, "exception in zRankNumToValue");
-  }
-}).pipe(zBigNumberish.gt(0n));
 
 export const clientToOrecVoteMap = strToVtMap;
 
