@@ -10,11 +10,11 @@ import {
   createRoutesFromElements,
   RouterProvider,
 } from "react-router-dom";
-import Fallback from './components/Fallback'
+import Fallback from './components/app/Fallback'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { config } from './global/config'
 // import App from './App'
-import SidebarWithHeader from './SidebarWithHeader'
+import SidebarWithHeader from './components/app/SidebarWithHeader'
 
 console.debug = console.log;
 console.debug("debug test")

@@ -1,7 +1,7 @@
 import { Flex } from "@chakra-ui/react";
 import { ORClient } from "@ordao/orclient";
 import { ProposalCard } from "./ProposalCard";
-import { proposals } from "../global/testProps";
+import { proposals } from "../../global/testProps";
 
 
 // FIXME:

@@ -1,12 +1,12 @@
 import { Badge, Button, Card, Flex, Text } from "@chakra-ui/react";
 import { Proposal } from "@ordao/ortypes/orclient.js";
-import { execStatusColors, stageColors, voteStatusColors } from "../global/statusColors";
+import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors";
 import { ORClient } from "@ordao/orclient";
-import { timeStr } from "../utils/time";
-import { propTitles } from "../global/propTitles";
-import { DecodedPropTable } from "./DecodedPropTable";
-import { PropTable } from "./PropTable";
-import { VoteCountChart } from "./VotesCountChart";
+import { timeStr } from "../../utils/time.js";
+import { propTitles } from "../../global/propTitles.js";
+import { DecodedPropTable } from "./DecodedPropTable.js";
+import { PropTable } from "./PropTable.js";
+import { VoteCountChart } from "./VotesCountChart.js";
 
 export interface ProposalCardProps {
   proposal: Proposal,
