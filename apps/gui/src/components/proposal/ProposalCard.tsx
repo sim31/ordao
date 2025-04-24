@@ -1,7 +1,6 @@
 import { Badge, Button, Card, Flex, Text } from "@chakra-ui/react";
 import { Proposal } from "@ordao/ortypes/orclient.js";
 import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors";
-import { ORClient } from "@ordao/orclient";
 import { timeStr } from "../../utils/time.js";
 import { propTitles } from "../../global/propTitles.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";
@@ -10,7 +9,6 @@ import { VoteCountChart } from "./VotesCountChart.js";
 
 export interface ProposalCardProps {
   proposal: Proposal,
-  orclient: ORClient
 }
 
 export function ProposalCard({ proposal }: ProposalCardProps) {
@@ -57,6 +55,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
     <Card.Root
       variant="outline"
       padding={4}
+      margin="1em"
       gap={2}
       flexDirection="column"
     >

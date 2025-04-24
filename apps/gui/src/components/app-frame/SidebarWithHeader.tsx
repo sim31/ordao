@@ -17,18 +17,14 @@ import {
   Portal,
 } from '@chakra-ui/react'
 import {
-  FiHome,
   FiMenu,
 } from 'react-icons/fi'
-import { FaRegHandRock } from "react-icons/fa";
-import { TbContract } from 'react-icons/tb';
-import { PiMedalFill, PiMedalThin } from "react-icons/pi";
-import { GiConfirmed } from "react-icons/gi";
 import { IconType } from 'react-icons'
 import { ReactNode } from 'react'
 import { config } from '../../global/config';
 
-interface LinkItemProps {
+export interface MenuItem {
+  id: string
   name: string
   icon: IconType
 }
@@ -36,26 +32,29 @@ interface LinkItemProps {
 interface NavItemProps extends FlexProps {
   icon: IconType
   children: ReactNode
+  selected?: boolean
 }
 
-interface MobileProps extends FlexProps {
-  onOpen: () => void
+interface HeaderProps extends FlexProps {
+  onMenuOpen: () => void
 }
+
+export type MenuSelectHandler = (id: string) => void;
 
 interface SidebarProps extends BoxProps {
   onClose: () => void
+  menuItems: MenuItem[]
+  selectedMenuItem: string
+  onMenuSelect: MenuSelectHandler
 }
 
-const LinkItems: Array<LinkItemProps> = [
-  { name: 'Proposals', icon: FiHome },
-  { name: 'New Proposal', icon: TbContract },
-  { name: 'Parent Respect', icon: PiMedalFill },
-  { name: 'Child Respect', icon: PiMedalThin },
-  { name: 'Claim parent Respect', icon: FaRegHandRock },
-  { name: 'Confirm parent Respect', icon: GiConfirmed },
-]
-
-const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
+const SidebarContent = ({
+  onClose,
+  menuItems,
+  selectedMenuItem,
+  onMenuSelect,
+  ...rest
+}: SidebarProps) => {
   return (
     <Box
       transition="0.2s ease"
@@ -72,16 +71,21 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         </Text>
         <CloseButton display={{ base: 'flex', lg: 'none' }} onClick={onClose} />
       </Flex>
-      {LinkItems.map((link) => (
-        <NavItem key={link.name} icon={link.icon}>
-          {link.name}
+      {menuItems.map((item) => (
+        <NavItem
+          key={item.id}
+          icon={item.icon}
+          selected={item.id === selectedMenuItem}
+          onClick={() => onMenuSelect(item.id)}
+        >
+          {item.name}
         </NavItem>
       ))}
     </Box>
   )
 }
 
-const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, children, selected, ...rest }: NavItemProps) => {
   return (
     <Box
       as="a"
@@ -101,6 +105,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
         }}
         color="black"
         fontSize="lg"
+        fontWeight={selected ? 'extrabold' : 'normal'}
         {...rest}>
         {icon && (
           <Icon
@@ -118,7 +123,7 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
   )
 }
 
-const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+const Header = ({ onMenuOpen, ...rest }: HeaderProps) => {
   return (
     <Flex
       ml={{ base: 0, lg: 60 }}
@@ -131,8 +136,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       justifyContent={{ base: 'space-between', lg: 'flex-end' }}
       {...rest}>
       <IconButton
-        display={{ base: 'flex', lg: 'none' }}
-        onClick={onOpen}
+        display={{ base: 'flex', lg: 'none' }} // displayed only on small screens
+        onClick={onMenuOpen}
         variant="outline"
         aria-label="open menu"
       >
@@ -140,7 +145,7 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </IconButton>
 
       <Text
-        display={{ base: 'flex', lg: 'none' }}
+        display={{ base: 'flex', lg: 'none' }} // displayed only on small screens
         fontSize="2xl"
         fontFamily="monospace"
         fontWeight="bold">
@@ -167,23 +172,50 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   )
 }
 
-const SidebarWithHeader = () => {
-  const { open, onOpen, onClose } = useDisclosure()
+export interface SidebarWithHeaderProps {
+  children: ReactNode,
+  menuItems: MenuItem[]
+  selectedMenuItemId: string 
+  onMenuSelect: MenuSelectHandler
+}
+
+const SidebarWithHeader = ({
+  children,
+  menuItems,
+  selectedMenuItemId,
+  onMenuSelect
+}: SidebarWithHeaderProps) => {
+  const { open: drawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure()
 
   return (
     <Box minH="100vh" bg={{ base: 'gray.100', _dark: 'gray.900' }}>
-      <SidebarContent onClose={onClose} display={{ base: 'none', lg: 'block' }} />
+      {/* Sidebar displayed on larger screens. Contains title displayed on larger screens */}
+      <SidebarContent
+        onClose={onDrawerClose}
+        display={{ base: 'none', lg: 'block' }}
+        menuItems={menuItems}
+        selectedMenuItem={selectedMenuItemId}
+        onMenuSelect={onMenuSelect}
+      />
+      {/* Sidebar menu displayed as a drawer on smaller screens */}
       <Drawer.Root
-        open={open}
+        open={drawerOpen}
         placement="start"
         size="full">
         <DrawerContent>
-          <SidebarContent onClose={onClose} />
+          <SidebarContent 
+            onClose={onDrawerClose} 
+            menuItems={menuItems} 
+            selectedMenuItem={selectedMenuItemId} 
+            onMenuSelect={onMenuSelect}
+          />
         </DrawerContent>
       </Drawer.Root>
-      <MobileNav onOpen={onOpen} />
+      {/* Header which adjusts to screen size and manages a drawer */}
+      <Header onMenuOpen={onDrawerOpen} />
+
       <Box ml={{ base: 0, lg: 60 }} p="4">
-        {/* Content here */}
+        {children}
       </Box>
     </Box>
   )

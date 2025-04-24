@@ -1,13 +1,11 @@
 // import { useState } from 'react'
 // import './App.css'
-import { deploymentInfo, orclientConfig } from "../../global/config.js";
+import { deploymentInfo, orclientConfig, config } from "../global/config.js";
 import { usePrivy, useWallets } from "@privy-io/react-auth";
-import { config } from "../../global/config.js";
 import { useOrclient } from "@ordao/privy-react-orclient";
 import { Box, Button, Center, Drawer, IconButton, Spinner,  useDisclosure } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { AppBar } from "./AppBar.js";
-import { ProposalList } from "../proposal/ProposalList.js";
+import { ProposalList } from "./proposal/ProposalList.js";
 import { Menu as HamburgerIcon } from "lucide-react";
 // import { Box, Center, Flex } from "@chakra-ui/react"
 
@@ -110,7 +108,7 @@ function App() {
         {!privyReady ? (
           <Spinner size="xl" />
         ) : orclient && authenticated && userWallet ? (
-          <ProposalList orclient={orclient} />
+          <ProposalList/>
         ) : (
           <Button onClick={login} bg="black" color="white">
             Login
