@@ -61,7 +61,7 @@ const SidebarContent = ({
       bg={{ base: 'white', _dark: 'gray.900' }}
       borderRight="1px"
       borderRightColor={{ base: 'gray.200', _dark: 'gray.700' }}
-      w={{ base: 'full', lg: 60 }}
+      w={{ base: 'full', lg: 80 }}
       pos="fixed"
       h="full"
       {...rest}>
@@ -126,7 +126,7 @@ const NavItem = ({ icon, children, selected, ...rest }: NavItemProps) => {
 const Header = ({ onMenuOpen, ...rest }: HeaderProps) => {
   return (
     <Flex
-      ml={{ base: 0, lg: 60 }}
+      ml={{ base: 0, lg: 80 }}
       px={{ base: 4, lg: 4 }}
       height="20"
       alignItems="center"
@@ -214,7 +214,7 @@ const SidebarWithHeader = ({
       {/* Header which adjusts to screen size and manages a drawer */}
       <Header onMenuOpen={onDrawerOpen} />
 
-      <Box ml={{ base: 0, lg: 60 }} p="4">
+      <Box ml={{ base: 0, lg: 80 }} p="4">
         {children}
       </Box>
     </Box>

@@ -8,6 +8,7 @@ import { ProposalList } from "./proposal/ProposalList";
 import Fallback from "./Fallback";
 import { FiHome } from "react-icons/fi";
 import { useState } from "react";
+import { ArrowDownWideNarrow } from "lucide-react"
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -17,6 +18,7 @@ const router = createBrowserRouter(
 
 const menuItems: Array<MenuItem> = [
   { id: "proposals", name: 'Proposals', icon: FiHome },
+  { id: "submitBreakout", name: 'Submit Breakout Results', icon: ArrowDownWideNarrow },
   { id: "new", name: 'New Proposal', icon: TbContract },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill },
   { id: "childRespect", name: 'Child Respect', icon: PiMedalThin },
