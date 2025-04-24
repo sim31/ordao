@@ -18,14 +18,15 @@ import {
 } from '@chakra-ui/react'
 import {
   FiHome,
-  FiTrendingUp,
-  FiCompass,
-  FiStar,
-  FiSettings,
   FiMenu,
 } from 'react-icons/fi'
+import { FaRegHandRock } from "react-icons/fa";
+import { TbContract } from 'react-icons/tb';
+import { PiMedalFill, PiMedalThin } from "react-icons/pi";
+import { GiConfirmed } from "react-icons/gi";
 import { IconType } from 'react-icons'
 import { ReactNode } from 'react'
+import { config } from '../../global/config';
 
 interface LinkItemProps {
   name: string
@@ -46,11 +47,12 @@ interface SidebarProps extends BoxProps {
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: 'Home', icon: FiHome },
-  { name: 'Trending', icon: FiTrendingUp },
-  { name: 'Explore', icon: FiCompass },
-  { name: 'Favourites', icon: FiStar },
-  { name: 'Settings', icon: FiSettings },
+  { name: 'Proposals', icon: FiHome },
+  { name: 'New Proposal', icon: TbContract },
+  { name: 'Parent Respect', icon: PiMedalFill },
+  { name: 'Child Respect', icon: PiMedalThin },
+  { name: 'Claim parent Respect', icon: FaRegHandRock },
+  { name: 'Confirm parent Respect', icon: GiConfirmed },
 ]
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
@@ -60,15 +62,15 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
       bg={{ base: 'white', _dark: 'gray.900' }}
       borderRight="1px"
       borderRightColor={{ base: 'gray.200', _dark: 'gray.700' }}
-      w={{ base: 'full', md: 60 }}
+      w={{ base: 'full', lg: 60 }}
       pos="fixed"
       h="full"
       {...rest}>
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
-          Logo
+        <Text fontSize="2xl" fontWeight="bold">
+          {config.appTitle}
         </Text>
-        <CloseButton display={{ base: 'flex', md: 'none' }} onClick={onClose} />
+        <CloseButton display={{ base: 'flex', lg: 'none' }} onClick={onClose} />
       </Flex>
       {LinkItems.map((link) => (
         <NavItem key={link.name} icon={link.icon}>
@@ -97,6 +99,8 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
           bg: 'cyan.400',
           color: 'white',
         }}
+        color="black"
+        fontSize="lg"
         {...rest}>
         {icon && (
           <Icon
@@ -117,17 +121,17 @@ const NavItem = ({ icon, children, ...rest }: NavItemProps) => {
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
   return (
     <Flex
-      ml={{ base: 0, md: 60 }}
-      px={{ base: 4, md: 4 }}
+      ml={{ base: 0, lg: 60 }}
+      px={{ base: 4, lg: 4 }}
       height="20"
       alignItems="center"
       bg={{ base: 'white', _dark: 'gray.900' }}
       borderBottomWidth="1px"
       borderBottomColor={{ base: 'gray.200', _dark: 'gray.700' }}
-      justifyContent={{ base: 'space-between', md: 'flex-end' }}
+      justifyContent={{ base: 'space-between', lg: 'flex-end' }}
       {...rest}>
       <IconButton
-        display={{ base: 'flex', md: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
         onClick={onOpen}
         variant="outline"
         aria-label="open menu"
@@ -136,11 +140,11 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
       </IconButton>
 
       <Text
-        display={{ base: 'flex', md: 'none' }}
+        display={{ base: 'flex', lg: 'none' }}
         fontSize="2xl"
         fontFamily="monospace"
         fontWeight="bold">
-        Logo
+        {config.appTitle}
       </Text>
 
       <Menu.Root>
@@ -168,7 +172,7 @@ const SidebarWithHeader = () => {
 
   return (
     <Box minH="100vh" bg={{ base: 'gray.100', _dark: 'gray.900' }}>
-      <SidebarContent onClose={onClose} display={{ base: 'none', md: 'block' }} />
+      <SidebarContent onClose={onClose} display={{ base: 'none', lg: 'block' }} />
       <Drawer.Root
         open={open}
         placement="start"
@@ -178,7 +182,7 @@ const SidebarWithHeader = () => {
         </DrawerContent>
       </Drawer.Root>
       <MobileNav onOpen={onOpen} />
-      <Box ml={{ base: 0, md: 60 }} p="4">
+      <Box ml={{ base: 0, lg: 60 }} p="4">
         {/* Content here */}
       </Box>
     </Box>
