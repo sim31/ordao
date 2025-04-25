@@ -4,16 +4,27 @@ import { PiMedalFill, PiMedalThin } from "react-icons/pi";
 import { GiConfirmed } from "react-icons/gi";
 import SidebarWithHeader, { MenuItem } from "./app-frame/SidebarWithHeader";
 import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } from "react-router-dom";
-import { ProposalList } from "./proposal/ProposalList";
 import Fallback from "./Fallback";
 import { FiHome } from "react-icons/fi";
 import { useState } from "react";
 import { ArrowDownWideNarrow } from "lucide-react"
+// import Form from "./proposal/create/Form";
+// import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
+import { ProposalList } from "./proposal/ProposalList";
+import Form from "./proposal/create/Form";
+import { zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 
 const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<ProposalList />} errorElement={<Fallback />}/>
-  )
+  createRoutesFromElements([
+    <Route path="/" element={<ProposalList />} errorElement={<Fallback />}/>,
+    <Route
+      path="/customCall"
+      element={<Form
+        schema={zCustomCallRequest}
+        onSubmit={() => {console.log("submitted")}}
+      />}
+    errorElement={<Fallback />}/>
+  ])
 );
 
 const menuItems: Array<MenuItem> = [

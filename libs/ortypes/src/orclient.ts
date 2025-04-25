@@ -148,7 +148,7 @@ export const zCustomCall = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.customCall),
   cdata: zBytes,
   address: zEthAddress
-});
+})
 export type CustomCall = z.infer<typeof zCustomCall>;
 
 export const zCustomCallRequest = zCustomCall.omit({ propType: true });

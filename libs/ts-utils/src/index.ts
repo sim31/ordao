@@ -44,6 +44,9 @@ export function withoutProperty<T extends object, K extends keyof T>(
   return ret;
 }
 
+export function assertUnreachable(x: never): never {
+    throw new Error("Didn't expect to get here");
+}
 
 export { ErrorWithCause } from "./ErrorWithCause.js";
 
