@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Flex, Text } from "@chakra-ui/react";
+import { Badge, Button, Card, Flex, Text, Clipboard, IconButton } from "@chakra-ui/react";
 import { Proposal } from "@ordao/ortypes/orclient.js";
 import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors.js";
 import { timeStr } from "../../utils/time.js";
@@ -55,7 +55,6 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
     <Card.Root
       variant="outline"
       padding={4}
-      margin="1em"
       gap={2}
       flexDirection="column"
     >
@@ -89,6 +88,13 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         <Text fontSize="lg" color="gray.500">
           ID: {shortenedId}
         </Text>
+        <Clipboard.Root value={proposal.id} onStatusChange={() => console.log("copied")}>
+          <Clipboard.Trigger asChild>
+            <IconButton variant="surface" size="xs">
+              <Clipboard.Indicator />
+            </IconButton>
+          </Clipboard.Trigger>
+        </Clipboard.Root>
       </Flex>
 
       <Flex gap={2} alignItems="center" mb={2}>
@@ -109,9 +115,15 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         <Button variant="outline" onClick={() => console.log("More info clicked")}>
           More Info
         </Button>
-        <Button variant="outline" onClick={() => console.log("Copy Link clicked")}>
-          Copy Link
-        </Button>
+
+        <Clipboard.Root value="https://chakra-ui.com">
+          <Clipboard.Trigger asChild>
+            <Button variant="surface" size="sm">
+              <Clipboard.Indicator />
+              <Text>Copy Link</Text>
+            </Button>
+          </Clipboard.Trigger>
+        </Clipboard.Root>
       </Flex>
       
 

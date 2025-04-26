@@ -10,20 +10,27 @@ import { useState } from "react";
 import { ArrowDownWideNarrow } from "lucide-react"
 // import Form from "./proposal/create/Form";
 // import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
-import { ProposalList } from "./proposal-view/ProposalList";
-import Form from "./proposal-view/create/Form";
+import { ProposalList } from "./pages/ProposalList";
+import Form from "./form/ZodForm"
 import { zCustomCallRequest } from "@ordao/ortypes/orclient.js";
+import { ProposalForm } from "./pages/ProposalForm";
+import { stringify } from "@ordao/ts-utils";
 
 const router = createBrowserRouter(
   createRoutesFromElements([
     <Route path="/" element={<ProposalList />} errorElement={<Fallback />}/>,
     <Route
       path="/customCall"
-      element={<Form
-        schema={zCustomCallRequest}
-        onSubmit={() => {console.log("submitted")}}
-      />}
-    errorElement={<Fallback />}/>
+      element={
+        <ProposalForm>
+          <Form
+            schema={zCustomCallRequest}
+            onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+          />
+        </ProposalForm>
+      }
+      errorElement={<Fallback />}
+    />
   ])
 );
 

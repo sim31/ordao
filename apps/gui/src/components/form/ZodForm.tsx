@@ -1,8 +1,9 @@
-import { z } from 'zod';
+import { z, ZodStringCheck } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable } from '@ordao/ts-utils';
 
+// TODO: extract zod reflection stuff to separate library
 const primitiveTypeNames = ['number', 'bigint', 'string', 'boolean'] as const;
 type PrimitiveTypeName = typeof primitiveTypeNames[number];
 type ObjectTypeName = 'object';
@@ -25,11 +26,39 @@ interface ArrayTypeInfo extends TypeInfo {
   min?: number,
   max?: number
 }
+interface StringTypeInfo extends PrimitiveTypeInfo {
+  typeName: 'string',
+  checks: ZodStringCheck[]
+}
+
+function strTypeLength(strt: StringTypeInfo): number | undefined {
+  const length = strt.checks.find(c => c.kind === 'length');
+  return length?.value;
+}
+
+function strTypeMinLength(strt: StringTypeInfo): number | undefined {
+  const length = strTypeLength(strt);
+  if (length) {
+    return length;
+  } else {
+    const min = strt.checks.find(c => c.kind === 'min');
+    return min?.value;
+  }
+}
+
+function strTypeMaxLength(strt: StringTypeInfo): number | undefined {
+  const length = strTypeLength(strt);
+  if (length) {
+    return length;
+  } else {
+    const max = strt.checks.find(c => c.kind === 'max');
+    return max?.value;
+  } 
+}
 
 function isPrimitive(typeInfo: TypeInfo): typeInfo is PrimitiveTypeInfo {
   return primitiveTypeNames.find(tn => tn === typeInfo.typeName) !== undefined;
 }
-
 
 function zodEffectInnerType<T extends z.ZodTypeAny>(effect: z.ZodEffects<T>) {
   return effect.innerType();
@@ -68,6 +97,10 @@ function zodArrayMaxLength<T extends z.ZodTypeAny>(array: z.ZodArray<T>): number
   return array._def.maxLength === null ? undefined : array._def.maxLength.value;
 }
 
+function zodStringChecks(zstr: z.ZodString): z.ZodStringCheck[] {
+  return zstr._def.checks;
+}
+
 function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
   const typeStr = zodTypeStr(schema);
   switch (typeStr) {
@@ -99,8 +132,14 @@ function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
       return { typeName: 'number', schema }
     case 'ZodBigInt':
       return { typeName: 'bigint', schema };
-    case 'ZodString':
-      return { typeName: 'string', schema }
+    case 'ZodString': {
+      const r: StringTypeInfo = {
+        typeName: 'string',
+        schema,
+        checks: zodStringChecks(schema as z.infer<T>)
+      };
+      return r;
+    }
     case 'ZodBoolean':
       return { typeName: 'boolean', schema }
     default:
@@ -108,12 +147,12 @@ function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
   }
 }
 
-interface FormProps<T extends z.AnyZodObject> {
+interface ZodFormProps<T extends z.AnyZodObject> {
   schema: T
   onSubmit: (data: z.infer<T>) => void;
 }
 
-function Form<T extends z.AnyZodObject>({ schema, onSubmit }: FormProps<T>) {
+function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     mode: "onSubmit"
@@ -150,7 +189,7 @@ function Form<T extends z.AnyZodObject>({ schema, onSubmit }: FormProps<T>) {
   };
 
   return (
-    <form onSubmit={handleSubmit(d => console.log(d))}>
+    <form onSubmit={handleSubmit(onSubmit)}>
       {Object.entries(fields).map(([fieldName, typeInfo]) => (
         <div key={fieldName}>
           <label>{fieldName}</label>
@@ -163,4 +202,4 @@ function Form<T extends z.AnyZodObject>({ schema, onSubmit }: FormProps<T>) {
   );
 }
 
-export default Form;
+export default ZodForm;

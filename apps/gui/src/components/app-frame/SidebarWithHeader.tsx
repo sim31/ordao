@@ -214,7 +214,7 @@ const SidebarWithHeader = ({
       {/* Header which adjusts to screen size and manages a drawer */}
       <Header onMenuOpen={onDrawerOpen} />
 
-      <Box ml={{ base: 0, lg: 80 }} p="4">
+      <Box ml={{ base: 0, lg: 80 }} p="2em">
         {children}
       </Box>
     </Box>
