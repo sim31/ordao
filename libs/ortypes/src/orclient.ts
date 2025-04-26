@@ -144,14 +144,30 @@ export const zTickRequest = zTick
   .partial({ metadata: true, data: true });
 export type TickRequest = z.infer<typeof zTickRequest>;
 
+const cdataDescription = `
+Calldata
+
+Data that will be sent to the contract
+`
+const addressDescription = `
+Address
+
+Address of the contract
+`
+const customCallDescription = `
+Custom Call
+
+Send any message to any smart contract
+`
+
 export const zCustomCall = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.customCall),
-  cdata: zBytes,
-  address: zEthAddress
-})
+  address: zEthAddress.describe(addressDescription),
+  cdata: zBytes.describe(cdataDescription),
+}).describe(customCallDescription);
 export type CustomCall = z.infer<typeof zCustomCall>;
 
-export const zCustomCallRequest = zCustomCall.omit({ propType: true });
+export const zCustomCallRequest = zCustomCall.omit({ propType: true }).describe(customCallDescription);
 export type CustomCallRequest = z.infer<typeof zCustomCallRequest>;
 
 export const zDecodedProposal = z.union([

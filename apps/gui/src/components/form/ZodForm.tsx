@@ -1,41 +1,47 @@
 import { z, ZodStringCheck } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { assertUnreachable } from '@ordao/ts-utils';
+import { assertUnreachable, stringify } from '@ordao/ts-utils';
+import { Field, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
 
 // TODO: extract zod reflection stuff to separate library
-const primitiveTypeNames = ['number', 'bigint', 'string', 'boolean'] as const;
+const primitiveTypeNames = ['number', 'bigint', 'boolean'] as const;
 type PrimitiveTypeName = typeof primitiveTypeNames[number];
 type ObjectTypeName = 'object';
 type ArrayTypeName = 'array';
-type TypeName = PrimitiveTypeName | ObjectTypeName | ArrayTypeName;
-interface TypeInfo {
+type StringTypeName = 'string'
+type TypeName = PrimitiveTypeName | StringTypeName | ObjectTypeName | ArrayTypeName;
+interface TypeInfoBase {
   typeName: TypeName,
-  schema: z.ZodSchema
+  schema: z.ZodSchema,
+  title?: string,
+  description?: string
 }
-interface PrimitiveTypeInfo extends TypeInfo {
+interface PrimitiveTypeInfo extends TypeInfoBase {
   typeName: PrimitiveTypeName
 }
-interface ObjectTypeInfo extends TypeInfo {
+interface ObjectTypeInfo extends TypeInfoBase {
   typeName: ObjectTypeName
-  fields: Record<string, TypeInfo>
+  fields: Record<string, TypeInfoBase>
 }
-interface ArrayTypeInfo extends TypeInfo {
+interface ArrayTypeInfo extends TypeInfoBase {
   typeName: ArrayTypeName
-  elementType: TypeInfo
+  elementType: TypeInfoBase
   min?: number,
   max?: number
 }
-interface StringTypeInfo extends PrimitiveTypeInfo {
+interface StringTypeInfo extends TypeInfoBase {
   typeName: 'string',
   checks: ZodStringCheck[]
 }
+type TypeInfo = PrimitiveTypeInfo | StringTypeInfo | ObjectTypeInfo | ArrayTypeInfo;
 
 function strTypeLength(strt: StringTypeInfo): number | undefined {
   const length = strt.checks.find(c => c.kind === 'length');
   return length?.value;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function strTypeMinLength(strt: StringTypeInfo): number | undefined {
   const length = strTypeLength(strt);
   if (length) {
@@ -58,6 +64,30 @@ function strTypeMaxLength(strt: StringTypeInfo): number | undefined {
 
 function isPrimitive(typeInfo: TypeInfo): typeInfo is PrimitiveTypeInfo {
   return primitiveTypeNames.find(tn => tn === typeInfo.typeName) !== undefined;
+}
+
+interface TypeTitleDesc {
+  title?: string,
+  description?: string
+}
+
+const descriptionRe = /^(?:\s)?([^\n]+)\n{2}((?:\s|\S)*)$/g;
+
+function extractDescription(schema: z.ZodTypeAny): TypeTitleDesc {
+  const description = schema.description;
+  const r: TypeTitleDesc = {};
+  if (description !== undefined) {
+    console.log("description: ", description);
+    const titleDescMatch = new RegExp(descriptionRe).exec(description);
+    if (titleDescMatch) {
+      r.title = titleDescMatch[1];
+      r.description = titleDescMatch[2];
+      console.log("Found title and desc: ", stringify(r))
+    } else {
+      r.description = description;
+    }
+  }
+  return r;
 }
 
 function zodEffectInnerType<T extends z.ZodTypeAny>(effect: z.ZodEffects<T>) {
@@ -101,20 +131,40 @@ function zodStringChecks(zstr: z.ZodString): z.ZodStringCheck[] {
   return zstr._def.checks;
 }
 
+function overwriteDescription<T extends z.ZodTypeAny>(typeInfo: TypeInfo, schema: T): TypeInfo {
+  const { title, description } = extractDescription(schema);
+  if (title !== undefined || description !== undefined) {
+    return {
+      ...typeInfo,
+      title,
+      description
+    }
+  } else {
+    return typeInfo;
+  }
+}
+
 function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
   const typeStr = zodTypeStr(schema);
   switch (typeStr) {
-    case 'ZodEffects':
-      return getTypeInfo(zodEffectInnerType(schema as z.infer<T>));
-    case 'ZodOptional':
-      return getTypeInfo(zodOptionalInnerType(schema as z.infer<T>));
-    case 'ZodPipeline':
-      return getTypeInfo(zodPipelineInnerType(schema as z.infer<T>));
+    case 'ZodEffects': {
+      const ti = getTypeInfo(zodEffectInnerType(schema as z.infer<T>));
+      return overwriteDescription(ti, schema);
+    }
+    case 'ZodOptional': {
+      const ti = getTypeInfo(zodOptionalInnerType(schema as z.infer<T>));
+      return overwriteDescription(ti, schema);
+    }
+    case 'ZodPipeline': {
+      const ti = getTypeInfo(zodPipelineInnerType(schema as z.infer<T>));
+      return overwriteDescription(ti, schema);
+    }
     case 'ZodObject': {
       const r: ObjectTypeInfo = {
         typeName: 'object',
         schema,
-        fields: objectFields(schema as z.infer<T>)
+        fields: objectFields(schema as z.infer<T>),
+        ...extractDescription(schema)
       };
       return r;
     }
@@ -124,24 +174,26 @@ function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
         schema,
         elementType: arrayElementType(schema as z.infer<T>),
         min: zodArrayMinLength(schema as z.infer<T>),
-        max: zodArrayMaxLength(schema as z.infer<T>)
+        max: zodArrayMaxLength(schema as z.infer<T>),
+        ...extractDescription(schema)
       };
       return r;
     }
     case 'ZodNumber':
-      return { typeName: 'number', schema }
+      return { typeName: 'number', schema, ...extractDescription(schema) }
     case 'ZodBigInt':
-      return { typeName: 'bigint', schema };
+      return { typeName: 'bigint', schema, ...extractDescription(schema) };
     case 'ZodString': {
       const r: StringTypeInfo = {
         typeName: 'string',
         schema,
-        checks: zodStringChecks(schema as z.infer<T>)
+        checks: zodStringChecks(schema as z.infer<T>),
+        ...extractDescription(schema)
       };
       return r;
     }
     case 'ZodBoolean':
-      return { typeName: 'boolean', schema }
+      return { typeName: 'boolean', schema, ...extractDescription(schema) };
     default:
       throw new Error(`Unknown type: ${typeStr}`);
   }
@@ -160,25 +212,51 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
 
   const fields = objectFields(schema);
 
+  // TODO: create component for each type of input.
+  // Currently not doing that because not sure how to pass values returned from useForm
+  const renderStringInput = (fieldName: string) => {
+    return (
+      <Input width="100%" {...register(fieldName)}/>
+    )
+  }
 
-  const renderPrimitiveField = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
+  const renderTextArea = (fieldName: string) => {
+    return (
+      <Textarea width="100%"{...register(fieldName)}/>
+    )
+  }
+
+
+  const renderPrimitiveInput = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
     console.log("Rendering primitive field", fieldName, typeInfo);
     switch (typeInfo.typeName) {
-      case 'string':
-        return <input type="text" {...register(fieldName)} />;
       case 'number':
-      case 'bigint':
-        return <input type="number" {...register(fieldName)} />;
-      case 'boolean':
-        return <input type="checkbox" {...register(fieldName)} />;
+      case 'bigint': {
+        return (
+          <NumberInput.Root>
+            <NumberInput.Control />
+            <NumberInput.Input {...register(fieldName)} />
+          </NumberInput.Root>
+        )
+      }
+      case 'boolean': {
+        return <div>TODO: https://chakra-ui.com/docs/components/checkbox#hook-form</div>
+      }
       default:
         assertUnreachable(typeInfo.typeName);
     }
   }
 
-  const renderField = (fieldName: string, typeInfo: TypeInfo) => {
+  const renderInput = (fieldName: string, typeInfo: TypeInfo) => {
     if (isPrimitive(typeInfo)) {
-      return renderPrimitiveField(fieldName, typeInfo);
+      return renderPrimitiveInput(fieldName, typeInfo);
+    } else if (typeInfo.typeName === 'string') {
+      const maxLength = strTypeMaxLength(typeInfo);
+      if (maxLength === undefined || maxLength > 64) {
+        return renderTextArea(fieldName);
+      } else {
+        return renderStringInput(fieldName);
+      }
     } else if (typeInfo.typeName === 'object') {
       return <div>TODO: 'object'</div>
     } else if (typeInfo.typeName === 'array') {
@@ -190,13 +268,16 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
-      {Object.entries(fields).map(([fieldName, typeInfo]) => (
-        <div key={fieldName}>
-          <label>{fieldName}</label>
-          {renderField(fieldName, typeInfo)}
-          {errors[fieldName]?.message && <div>{errors[fieldName].message.toString()}</div>}
-        </div>
-      ))}
+      <Stack gap="4" align="flex-start">
+        {Object.entries(fields).map(([fieldName, typeInfo]) => (
+          <Field.Root invalid={!!errors[fieldName]}>
+            <Field.Label>{typeInfo.title || fieldName}</Field.Label>
+            {renderInput(fieldName, typeInfo)}
+            <Field.ErrorText>{errors[fieldName]?.message?.toString()}</Field.ErrorText>
+            <Field.HelperText>{typeInfo.description}</Field.HelperText>
+          </Field.Root>
+        ))}
+      </Stack>
       <button type="submit">Submit</button>
     </form>
   );

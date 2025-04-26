@@ -34,6 +34,7 @@ export const zBytesLikeToBytes = zBytesLike.transform((val, ctx) => {
 }).pipe(zBytes);
 
 export const zEthAddress = z.string()
+  .length(42)
   .refine((val) => {
     return isAddress(val);
   })

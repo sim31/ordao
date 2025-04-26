@@ -11,7 +11,6 @@ import { ArrowDownWideNarrow } from "lucide-react"
 // import Form from "./proposal/create/Form";
 // import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalList } from "./pages/ProposalList";
-import Form from "./form/ZodForm"
 import { zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalForm } from "./pages/ProposalForm";
 import { stringify } from "@ordao/ts-utils";
@@ -22,12 +21,10 @@ const router = createBrowserRouter(
     <Route
       path="/customCall"
       element={
-        <ProposalForm>
-          <Form
-            schema={zCustomCallRequest}
-            onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
-          />
-        </ProposalForm>
+        <ProposalForm
+          schema={zCustomCallRequest}
+          onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+        />
       }
       errorElement={<Fallback />}
     />
