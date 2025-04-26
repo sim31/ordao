@@ -10,8 +10,8 @@ import { useState } from "react";
 import { ArrowDownWideNarrow } from "lucide-react"
 // import Form from "./proposal/create/Form";
 // import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
-import { ProposalList } from "./proposal/ProposalList";
-import Form from "./proposal/create/Form";
+import { ProposalList } from "./proposal-view/ProposalList";
+import Form from "./proposal-view/create/Form";
 import { zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 
 const router = createBrowserRouter(

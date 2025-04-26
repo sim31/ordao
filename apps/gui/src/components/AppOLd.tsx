@@ -5,7 +5,7 @@ import { usePrivy, useWallets } from "@privy-io/react-auth";
 import { useOrclient } from "@ordao/privy-react-orclient";
 import { Box, Button, Center, Drawer, IconButton, Spinner,  useDisclosure } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { ProposalList } from "./proposal/ProposalList.js";
+import { ProposalList } from "./proposal-view/ProposalList.js";
 import { Menu as HamburgerIcon } from "lucide-react";
 // import { Box, Center, Flex } from "@chakra-ui/react"
 

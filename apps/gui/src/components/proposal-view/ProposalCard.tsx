@@ -1,6 +1,6 @@
 import { Badge, Button, Card, Flex, Text } from "@chakra-ui/react";
 import { Proposal } from "@ordao/ortypes/orclient.js";
-import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors";
+import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors.js";
 import { timeStr } from "../../utils/time.js";
 import { propTitles } from "../../global/propTitles.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";
