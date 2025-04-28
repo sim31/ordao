@@ -18,10 +18,11 @@ export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: Pro
         gap={2}
         flexDirection="column"
         minWidth="40em"
+        boxShadow="sm"
       >
         <Flex gap={2} alignItems="center" mb={2}>
           <Text fontWeight="bold" fontSize="2xl">
-            Custom Call
+            Burn Respect
           </Text>
         </Flex>
         <ZodForm schema={schema} onSubmit={onSubmit} />

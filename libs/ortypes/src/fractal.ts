@@ -12,7 +12,12 @@ export const PropTypeValues = [
 export const zPropType = z.enum(PropTypeValues);
 export type PropType = z.infer<typeof zPropType>;
 
-export const zRankings = z.array(zEthAddress).min(3).max(6);
+const rankingsDesc = `
+Rankings
+
+Top contributors.
+`
+export const zRankings = z.array(zEthAddress).min(3).max(6).describe(rankingsDesc)
 export type Rankings = z.infer<typeof zRankings>;
 
 export const zValueToRanking = z.bigint().transform((val, ctx) => {

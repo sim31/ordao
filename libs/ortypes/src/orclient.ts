@@ -22,7 +22,6 @@ const mtDescription = `
 Description
 
 `
-
 export const zProposalMetadata = z.object({
   propTitle: z.string().max(64).optional().describe(mtTitle),
   propDescription: z.string().optional().describe(mtDescription)
@@ -98,15 +97,36 @@ export const zRespectBreakout = zDecodedPropBase.merge(zBreakoutResult).extend({
 });
 export type RespectBreakout = z.infer<typeof zRespectBreakout>;
 
+const accountDesc = `
+Account (recipient)
+
+Address of an account that will receive Respect.
+`
+const valueDesc = `
+Value
+
+Value (also known as denomincation) of the Respect award to be minted. This determines the amount by which total Respect score will be increased.
+`
+const titleDesc = `
+Title
+
+Title of the Respect Award
+`
+const reasonDesc = `
+Reason
+
+More descriptive reason for the Respect Award
+`
+
 export const zRespectAccount = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.respectAccount),
   meetingNum: zMeetingNum,
   mintType: zMintType,
   groupNum: zGroupNum.optional(),
-  account: zEthAddress,
-  value: zUint,
-  title: z.string(),
-  reason: z.string(),
+  account: zEthAddress.describe(accountDesc),
+  value: zUint.describe(valueDesc),
+  title: z.string().max(64).describe(titleDesc),
+  reason: z.string().describe(reasonDesc),
   tokenId: zTokenId
 });
 export type RespectAccount = z.infer<typeof zRespectAccount>;
@@ -119,44 +139,93 @@ export type RespectAccount = z.infer<typeof zRespectAccount>;
 //   title
 
 // }
+
+const respectAccountDescription = `
+Respect Account
+
+Mint Respect to an account.
+`
 export const zRespectAccountRequest = zRespectAccount
+  .describe(respectAccountDescription)
   .omit({ propType: true, tokenId: true })
   .partial({ mintType: true, meetingNum: true, metadata: true })
 export type RespectAccountRequest = z.infer<typeof zRespectAccountRequest>;
 
+const tokenIdDescription = `
+Token ID
+
+ID of Respect Award (soulbound token).
+`
+const reason = `
+Reason for burning
+
+Information for historical record.
+`
+const burnRespectDescription = `
+Burn Respect
+
+Burn 1 Respect award. This will also subract value of the awardfrom the total Respect score.
+`
 export const zBurnRespect = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.burnRespect),
-  tokenId: zTokenId,
-  reason: z.string()
+  tokenId: zTokenId.describe(tokenIdDescription),
+  reason: z.string().describe(reason)
 })
 export type BurnRespect = z.infer<typeof zBurnRespect>;
 
 export const zBurnRespectRequest = zBurnRespect
   .omit({ propType: true })
   .partial({ metadata: true })
+  .describe(burnRespectDescription);
 export type BurnRespectRequest = z.infer<typeof zBurnRespectRequest>;
+
+const signalBytesDesc = `
+Data
+
+Data to send with the signal. Use '0x' for empty data.
+`
+const linkDesc = `
+Link
+
+Optional link to signal with the signal.
+`
+
+const customSignalDescription = `
+Custom Signal
+
+Emit a signal event from OREC contract
+`
 
 export const zCustomSignal = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.customSignal),
   signalType: zCustomSignalType,
-  data: zBytes,
-  link: z.string().optional()
+  data: zBytes.describe(signalBytesDesc),
+  link: z.string().optional().describe(linkDesc)
 });
 export type CustomSignal = z.infer<typeof zCustomSignal>;
 
 export const zCustomSignalRequest = zCustomSignal
+  .describe(customSignalDescription)
   .omit({ propType: true })
   .partial({ metadata: true });
 export type CustomSignalRequest = z.infer<typeof zCustomSignalRequest>;
 
+
 export const zTick = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.tick),
-  link: z.string().optional(),
-  data: zBytes
+  link: z.string().optional().describe(linkDesc),
+  data: zBytes.describe(signalBytesDesc)
 })
 export type Tick = z.infer<typeof zTick>;
 
+const tickReqDescription = `
+Tick
+
+Increment period number (and meeting number) by 1.
+`
+
 export const zTickRequest = zTick
+  .describe(tickReqDescription)
   .omit({ propType: true })
   .partial({ metadata: true, data: true });
 export type TickRequest = z.infer<typeof zTickRequest>;

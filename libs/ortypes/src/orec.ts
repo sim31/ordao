@@ -112,8 +112,15 @@ export const zKnownSignalTypes = z.preprocess(
   z.nativeEnum(KnownSignalTypes)
 );
 
+const signalTypeDesc = `
+Signal Type
+
+Number 0-255 identifying signal type.
+
+0 - Tick
+`
 export const zSignalType = zUint8;
-export const zCustomSignalType = zSignalType.gt(0);
+export const zCustomSignalType = zSignalType.gt(0).describe(signalTypeDesc);
 export const zTickSignalType = z.literal(Number(zKnownSignalTypes.innerType().enum.Tick));
 
 export const zBytesToVoteMemo = zBytes.transform(val => {

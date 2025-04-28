@@ -1,7 +1,7 @@
 import { z, ZodStringCheck } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { assertUnreachable, stringify } from '@ordao/ts-utils';
+import { assertUnreachable } from '@ordao/ts-utils';
 import { Button, Field, Fieldset, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
 
 // TODO: extract zod reflection stuff to separate library
@@ -14,6 +14,7 @@ type TypeName = PrimitiveTypeName | StringTypeName | ObjectTypeName | ArrayTypeN
 interface TypeInfoBase {
   typeName: TypeName,
   schema: z.ZodSchema,
+  defaultValue?: unknown,
   title?: string,
   description?: string
 }
@@ -77,12 +78,10 @@ function extractDescription(schema: z.ZodTypeAny): TypeTitleDesc {
   const description = schema.description;
   const r: TypeTitleDesc = {};
   if (description !== undefined) {
-    console.log("description: ", description);
     const titleDescMatch = new RegExp(descriptionRe).exec(description);
     if (titleDescMatch) {
       r.title = titleDescMatch[1];
       r.description = titleDescMatch[2];
-      console.log("Found title and desc: ", stringify(r))
     } else {
       r.description = description;
     }
@@ -100,6 +99,14 @@ function zodOptionalInnerType<T extends z.ZodTypeAny>(optional: z.ZodOptional<T>
 
 function zodPipelineInnerType<A extends z.ZodTypeAny, B extends z.ZodTypeAny>(pipeline: z.ZodPipeline<A, B>) {
   return pipeline._def.out;
+}
+
+function zodDefaultValue<T extends z.ZodTypeAny>(schema: z.ZodDefault<T>): z.infer<T> {
+  return schema._def.defaultValue;
+}
+
+function zodDefaultInnerType<T extends z.ZodTypeAny>(schema: z.ZodDefault<T>): T {
+  return schema._def.innerType;
 }
 
 function objectFields<T extends z.AnyZodObject>(schema: T): Record<string, TypeInfo> {
@@ -144,9 +151,15 @@ function overwriteDescription<T extends z.ZodTypeAny>(typeInfo: TypeInfo, schema
   }
 }
 
+
 function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
   const typeStr = zodTypeStr(schema);
   switch (typeStr) {
+    case 'ZodDefault': {
+      const ti = getTypeInfo(zodDefaultInnerType(schema as z.infer<T>));
+      ti.defaultValue = zodDefaultValue(schema as z.infer<T>);
+      return overwriteDescription(ti, schema);            
+    }
     case 'ZodEffects': {
       const ti = getTypeInfo(zodEffectInnerType(schema as z.infer<T>));
       return overwriteDescription(ti, schema);
@@ -211,7 +224,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
   });
 
   const fields = objectFields(schema);
-
+  const { description } = extractDescription(schema);
 
   const prefixStr = (str: string, prefix?: string) => {
     return prefix !== undefined ? `${prefix}.${str}` : str;
@@ -234,14 +247,12 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
   }
 
   const renderPrimitiveInput = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
-    console.log("Rendering primitive field", fieldName, typeInfo);
     switch (typeInfo.typeName) {
       case 'number':
       case 'bigint': {
         return (
           <NumberInput.Root>
-            <NumberInput.Control />
-            <NumberInput.Input {...register(fieldName)} />
+            <NumberInput.Input {...register(fieldName, { setValueAs: v => typeInfo.typeName === 'number' ? Number(v) : BigInt(v) })} />
           </NumberInput.Root>
         )
       }
@@ -270,7 +281,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
       return renderPrimitiveInput(fieldName, typeInfo);
     } else if (typeInfo.typeName === 'string') {
       const maxLength = strTypeMaxLength(typeInfo);
-      if (maxLength === undefined || maxLength > 66) {
+      if (maxLength === undefined || maxLength > 80) {
         return renderTextArea(fieldName, maxLength);
       } else {
         return renderStringInput(fieldName);
@@ -286,7 +297,6 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
 
   const renderField = (fieldName: string, typeInfo: TypeInfo, prefix?: string) => {
     const f = prefixStr(fieldName, prefix);
-    console.log("errors: ", errors);
     return (
       <Field.Root invalid={!!errors[f]}>
         <Field.Label>{typeInfo.title || fieldName}</Field.Label>
@@ -303,9 +313,14 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
 
   return (
     <form onSubmit={handleSubmit((onSubmit))}>
-      <Stack gap="4" align="flex-start">
-        {renderFields(fields)}
-      </Stack>
+      <Fieldset.Root>
+        <Stack gap="4" align="flex-start">
+          <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
+          <Fieldset.Content borderTop="solid" borderColor="gray.200" pt="1em">
+            {renderFields(fields)}
+          </Fieldset.Content>
+        </Stack>
+      </Fieldset.Root>
       {/* <button type="submit">Submit</button> */}
       <Button color="black" mt="2em" as="button" type="submit">Submit</Button>
     </form>

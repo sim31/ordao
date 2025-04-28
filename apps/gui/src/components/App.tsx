@@ -11,7 +11,7 @@ import { FaRankingStar } from "react-icons/fa6";
 // import Form from "./proposal/create/Form";
 // import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalList } from "./pages/ProposalList";
-import { zCustomCallRequest } from "@ordao/ortypes/orclient.js";
+import { zBurnRespectRequest, zCustomCallRequest, zCustomSignalRequest, zRespectAccountRequest, zTickRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalForm } from "./pages/ProposalForm";
 import { stringify } from "@ordao/ts-utils";
 
@@ -23,6 +23,46 @@ const router = createBrowserRouter(
       element={
         <ProposalForm
           schema={zCustomCallRequest}
+          onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+        />
+      }
+      errorElement={<Fallback />}
+    />,
+    <Route
+      path="/burnRespect"
+      element={
+        <ProposalForm
+          schema={zBurnRespectRequest}
+          onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+        />
+      }
+      errorElement={<Fallback />}
+    />,
+    <Route
+      path="/tick"
+      element={
+        <ProposalForm
+          schema={zTickRequest}
+          onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+        />
+      }
+      errorElement={<Fallback />}
+    />,
+    <Route
+      path="/respectAccount"
+      element={
+        <ProposalForm
+          schema={zRespectAccountRequest}
+          onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+        />
+      }
+      errorElement={<Fallback />}
+    />,
+    <Route
+      path="/signal"
+      element={
+        <ProposalForm
+          schema={zCustomSignalRequest}
           onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
         />
       }
