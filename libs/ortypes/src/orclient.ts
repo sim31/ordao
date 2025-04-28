@@ -6,10 +6,27 @@ import { zBytes, zEthAddress, zTxHash, zUint } from "./eth.js";
 import { zTimestamp } from "./common.js";
 import { ErrorType } from "@ordao/ethers-decode-error";
 
+const mtDesc = `
+Proposal Description
+
+Information for voters
+` 
+
+const mtTitle = `
+Title
+
+
+`
+
+const mtDescription = `
+Description
+
+`
+
 export const zProposalMetadata = z.object({
-  propTitle: z.string().optional(),
-  propDescription: z.string().optional()
-})
+  propTitle: z.string().max(64).optional().describe(mtTitle),
+  propDescription: z.string().optional().describe(mtDescription)
+}).describe(mtDesc);
 export type ProposalMetadata = z.infer<typeof zProposalMetadata>;
 
 export const zDecodedPropBase = z.object({

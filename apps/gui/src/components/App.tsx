@@ -7,7 +7,7 @@ import { createBrowserRouter, createRoutesFromElements, Route, RouterProvider } 
 import Fallback from "./Fallback";
 import { FiHome } from "react-icons/fi";
 import { useState } from "react";
-import { ArrowDownWideNarrow } from "lucide-react"
+import { FaRankingStar } from "react-icons/fa6";
 // import Form from "./proposal/create/Form";
 // import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalList } from "./pages/ProposalList";
@@ -33,7 +33,7 @@ const router = createBrowserRouter(
 
 const menuItems: Array<MenuItem> = [
   { id: "proposals", name: 'Proposals', icon: FiHome },
-  { id: "submitBreakout", name: 'Submit Breakout Results', icon: ArrowDownWideNarrow },
+  { id: "submitBreakout", name: 'Submit Breakout Results', icon: FaRankingStar },
   { id: "new", name: 'New Proposal', icon: TbContract },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill },
   { id: "childRespect", name: 'Child Respect', icon: PiMedalThin },

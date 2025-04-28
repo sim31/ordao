@@ -2,7 +2,7 @@ import { z, ZodStringCheck } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable, stringify } from '@ordao/ts-utils';
-import { Field, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
+import { Button, Field, Fieldset, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
 
 // TODO: extract zod reflection stuff to separate library
 const primitiveTypeNames = ['number', 'bigint', 'boolean'] as const;
@@ -22,7 +22,7 @@ interface PrimitiveTypeInfo extends TypeInfoBase {
 }
 interface ObjectTypeInfo extends TypeInfoBase {
   typeName: ObjectTypeName
-  fields: Record<string, TypeInfoBase>
+  fields: Record<string, TypeInfo>
 }
 interface ArrayTypeInfo extends TypeInfoBase {
   typeName: ArrayTypeName
@@ -207,25 +207,31 @@ interface ZodFormProps<T extends z.AnyZodObject> {
 function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
-    mode: "onSubmit"
+    mode: "onSubmit",
   });
 
   const fields = objectFields(schema);
+
+
+  const prefixStr = (str: string, prefix?: string) => {
+    return prefix !== undefined ? `${prefix}.${str}` : str;
+  }
 
   // TODO: create component for each type of input.
   // Currently not doing that because not sure how to pass values returned from useForm
   const renderStringInput = (fieldName: string) => {
     return (
-      <Input width="100%" {...register(fieldName)}/>
+      <Input {...register(fieldName)}/>
     )
   }
 
-  const renderTextArea = (fieldName: string) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const renderTextArea = (fieldName: string, maxLength?: number) => {
+    // TODO: Adjust size based on maxLength
     return (
-      <Textarea width="100%"{...register(fieldName)}/>
+      <Textarea minHeight="8em" {...register(fieldName)}/>
     )
   }
-
 
   const renderPrimitiveInput = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
     console.log("Rendering primitive field", fieldName, typeInfo);
@@ -247,18 +253,30 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     }
   }
 
+
+  const renderObject = (fieldName: string, typeInfo: ObjectTypeInfo) => {
+    return (
+      <Fieldset.Root>
+        <Fieldset.Content pl="2em">
+          {renderFields(typeInfo.fields, `${fieldName}.`)}
+        </Fieldset.Content>
+      </Fieldset.Root>
+
+    )
+  }
+
   const renderInput = (fieldName: string, typeInfo: TypeInfo) => {
     if (isPrimitive(typeInfo)) {
       return renderPrimitiveInput(fieldName, typeInfo);
     } else if (typeInfo.typeName === 'string') {
       const maxLength = strTypeMaxLength(typeInfo);
-      if (maxLength === undefined || maxLength > 64) {
-        return renderTextArea(fieldName);
+      if (maxLength === undefined || maxLength > 66) {
+        return renderTextArea(fieldName, maxLength);
       } else {
         return renderStringInput(fieldName);
       }
     } else if (typeInfo.typeName === 'object') {
-      return <div>TODO: 'object'</div>
+      return renderObject(fieldName, typeInfo);
     } else if (typeInfo.typeName === 'array') {
       return <div>TODO: 'array'</div>
     } else {
@@ -266,19 +284,30 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     }
   };
 
+  const renderField = (fieldName: string, typeInfo: TypeInfo, prefix?: string) => {
+    const f = prefixStr(fieldName, prefix);
+    console.log("errors: ", errors);
+    return (
+      <Field.Root invalid={!!errors[f]}>
+        <Field.Label>{typeInfo.title || fieldName}</Field.Label>
+        {renderInput(f, typeInfo)}
+        <Field.ErrorText>{errors[f]?.message?.toString()}</Field.ErrorText>
+        <Field.HelperText>{typeInfo.description}</Field.HelperText>
+      </Field.Root>
+    )
+  }
+
+  const renderFields = (fields: Record<string, TypeInfo>, prefix?: string) => {
+    return Object.entries(fields).map(([fieldName, typeInfo]) => renderField(fieldName, typeInfo, prefix));
+  }
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <form onSubmit={handleSubmit((onSubmit))}>
       <Stack gap="4" align="flex-start">
-        {Object.entries(fields).map(([fieldName, typeInfo]) => (
-          <Field.Root invalid={!!errors[fieldName]}>
-            <Field.Label>{typeInfo.title || fieldName}</Field.Label>
-            {renderInput(fieldName, typeInfo)}
-            <Field.ErrorText>{errors[fieldName]?.message?.toString()}</Field.ErrorText>
-            <Field.HelperText>{typeInfo.description}</Field.HelperText>
-          </Field.Root>
-        ))}
+        {renderFields(fields)}
       </Stack>
-      <button type="submit">Submit</button>
+      {/* <button type="submit">Submit</button> */}
+      <Button color="black" mt="2em" as="button" type="submit">Submit</Button>
     </form>
   );
 }

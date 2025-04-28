@@ -17,6 +17,7 @@ export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: Pro
         padding={4}
         gap={2}
         flexDirection="column"
+        minWidth="40em"
       >
         <Flex gap={2} alignItems="center" mb={2}>
           <Text fontWeight="bold" fontSize="2xl">
