@@ -16,6 +16,7 @@ import { ProposalForm } from "./pages/ProposalForm";
 import { stringify } from "@ordao/ts-utils";
 import { ProposalView } from "./pages/ProposalView";
 import { proposals } from "../global/testProps";
+import ProposalFormMenu from "./pages/ProposalFormMenu";
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -84,6 +85,13 @@ const router = createBrowserRouter(
       path="/propView"
       element={
         <ProposalView proposal={proposals[1]} />
+      }
+      errorElement={<Fallback />}
+    />,
+    <Route
+      path="/newProposal"
+      element={
+        <ProposalFormMenu />
       }
       errorElement={<Fallback />}
     />,

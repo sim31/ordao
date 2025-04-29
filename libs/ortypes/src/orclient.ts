@@ -278,12 +278,12 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
 }
 
 export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
-  "customCall": zCustomCallRequest,
   "tick": zTickRequest,
-  "customSignal": zCustomSignalRequest,
-  "burnRespect": zBurnRespectRequest,
   "respectAccount": zRespectAccountRequest,
-  "respectBreakout": zRespectBreakoutRequest
+  "respectBreakout": zRespectBreakoutRequest,
+  "burnRespect": zBurnRespectRequest,
+  "customCall": zCustomCallRequest,
+  "customSignal": zCustomSignalRequest,
 }
 
 export const zExecErrorType = z.nativeEnum(ErrorType);
