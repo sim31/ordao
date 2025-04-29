@@ -79,15 +79,21 @@ export const zVoteWithPropRequest = zVoteWithProp.partial({ vote: true });
 export type VoteWithPropRequest = z.infer<typeof zVoteWithPropRequest>;
 
 export const zBreakoutResult = z.object({
-  groupNum: zGroupNum,
-  rankings: zRankings
+  rankings: zRankings,
+  groupNum: zGroupNum
 });
 export type BreakoutResult = z.infer<typeof zBreakoutResult>;
 
+const respectBreakoutDesc = `
+Respect Breakout
+
+Mint Respect to a breakout group from Respect game.
+`
+
 export const zRespectBreakoutRequest = zBreakoutResult.extend({
-  meetingNum: zMeetingNum.optional(),
+  meetingNum: zMeetingNum,
   metadata: zProposalMetadata.optional()
-});
+}).describe(respectBreakoutDesc);
 export type RespectBreakoutRequest = z.infer<typeof zRespectBreakoutRequest>;
 
 export const zRespectBreakout = zDecodedPropBase.merge(zBreakoutResult).extend({
@@ -105,7 +111,7 @@ Address of an account that will receive Respect.
 const valueDesc = `
 Value
 
-Value (also known as denomincation) of the Respect award to be minted. This determines the amount by which total Respect score will be increased.
+Value (also known as denomination) of the Respect award to be minted. This determines the amount by which total Respect score will be increased.
 `
 const titleDesc = `
 Title
@@ -148,7 +154,7 @@ Mint Respect to an account.
 export const zRespectAccountRequest = zRespectAccount
   .describe(respectAccountDescription)
   .omit({ propType: true, tokenId: true })
-  .partial({ mintType: true, meetingNum: true, metadata: true })
+  .partial({ meetingNum: true, metadata: true })
 export type RespectAccountRequest = z.infer<typeof zRespectAccountRequest>;
 
 const tokenIdDescription = `
@@ -164,7 +170,7 @@ Information for historical record.
 const burnRespectDescription = `
 Burn Respect
 
-Burn 1 Respect award. This will also subract value of the awardfrom the total Respect score.
+Burn 1 Respect award. This will also subract value of the award from the total Respect score.
 `
 export const zBurnRespect = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.burnRespect),
@@ -209,7 +215,6 @@ export const zCustomSignalRequest = zCustomSignal
   .omit({ propType: true })
   .partial({ metadata: true });
 export type CustomSignalRequest = z.infer<typeof zCustomSignalRequest>;
-
 
 export const zTick = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.tick),

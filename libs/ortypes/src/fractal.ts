@@ -15,7 +15,11 @@ export type PropType = z.infer<typeof zPropType>;
 const rankingsDesc = `
 Rankings
 
-Top contributors.
+Contributor rankings in Respect game.
+
+0 - top contributor
+1 - 2nd best contributor
+...
 `
 export const zRankings = z.array(zEthAddress).min(3).max(6).describe(rankingsDesc)
 export type Rankings = z.infer<typeof zRankings>;

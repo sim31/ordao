@@ -11,7 +11,7 @@ import { FaRankingStar } from "react-icons/fa6";
 // import Form from "./proposal/create/Form";
 // import { CustomCallRequest, zCustomCallRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalList } from "./pages/ProposalList";
-import { zBurnRespectRequest, zCustomCallRequest, zCustomSignalRequest, zRespectAccountRequest, zTickRequest } from "@ordao/ortypes/orclient.js";
+import { zBurnRespectRequest, zCustomCallRequest, zCustomSignalRequest, zRespectAccountRequest, zRespectBreakoutRequest, zTickRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalForm } from "./pages/ProposalForm";
 import { stringify } from "@ordao/ts-utils";
 
@@ -59,7 +59,7 @@ const router = createBrowserRouter(
       errorElement={<Fallback />}
     />,
     <Route
-      path="/signal"
+      path="/customSignal"
       element={
         <ProposalForm
           schema={zCustomSignalRequest}
@@ -67,7 +67,17 @@ const router = createBrowserRouter(
         />
       }
       errorElement={<Fallback />}
-    />
+    />,
+    <Route
+      path="/respectBreakout"
+      element={
+        <ProposalForm
+          schema={zRespectBreakoutRequest}
+          onSubmit={(data) => {console.log("Submitted: ",stringify(data))}}
+        />
+      }
+      errorElement={<Fallback />}
+    />,
   ])
 );
 

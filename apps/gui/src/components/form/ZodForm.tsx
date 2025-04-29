@@ -2,7 +2,7 @@ import { z, ZodStringCheck } from 'zod';
 import { FieldErrors, GlobalError, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable } from '@ordao/ts-utils';
-import { Button, Field, Fieldset, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
+import { Button, Field, Fieldset, HStack, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
 
 // TODO: extract zod reflection stuff to separate library
 const primitiveTypeNames = ['number', 'bigint', 'boolean'] as const;
@@ -14,6 +14,7 @@ type TypeName = PrimitiveTypeName | StringTypeName | ObjectTypeName | ArrayTypeN
 interface TypeInfoBase {
   typeName: TypeName,
   schema: z.ZodSchema,
+  optional?: boolean,
   defaultValue?: unknown,
   title?: string,
   description?: string
@@ -27,7 +28,7 @@ interface ObjectTypeInfo extends TypeInfoBase {
 }
 interface ArrayTypeInfo extends TypeInfoBase {
   typeName: ArrayTypeName
-  elementType: TypeInfoBase
+  elementType: TypeInfo
   min?: number,
   max?: number
 }
@@ -81,9 +82,11 @@ function extractDescription(schema: z.ZodTypeAny): TypeTitleDesc {
     const titleDescMatch = new RegExp(descriptionRe).exec(description);
     if (titleDescMatch) {
       r.title = titleDescMatch[1];
-      r.description = titleDescMatch[2];
+      const d = titleDescMatch[2].trimStart();
+      r.description = d.length === 0 ? undefined : d;
     } else {
-      r.description = description;
+      const d = description.trimStart();
+      r.description = d.length === 0 ? undefined : d;
     }
   }
   return r;
@@ -166,6 +169,7 @@ function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
     }
     case 'ZodOptional': {
       const ti = getTypeInfo(zodOptionalInnerType(schema as z.infer<T>));
+      ti.optional = true;
       return overwriteDescription(ti, schema);
     }
     case 'ZodPipeline': {
@@ -224,13 +228,14 @@ type Errors = FieldErrors<{
 type Error = GlobalError;
 
 function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm({
     resolver: zodResolver(schema),
     mode: "onSubmit",
   });
 
   const fields = objectFields(schema);
   const { description } = extractDescription(schema);
+  const formValues = watch();
 
   const prefixStr = (str: string, prefix?: string) => {
     return prefix !== undefined ? `${prefix}.${str}` : str;
@@ -252,15 +257,36 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     )
   }
 
+  const renderNumber = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
+    const setValueAs = typeInfo.typeName === 'number'
+      ? (v: string) => {
+        if (v.trim() === '') {
+          return undefined;
+        } else {
+          return Number(v);
+        }
+      }
+      : (v: string) => {
+        if (v.trim() === '') {
+          return undefined;
+        } else {
+          return BigInt(v);
+        }
+      }
+
+    return (
+      <NumberInput.Root>
+        <NumberInput.Input {...register(fieldName, { setValueAs })} />
+      </NumberInput.Root>
+    )
+  }
+
   const renderPrimitiveInput = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     switch (typeInfo.typeName) {
       case 'number':
       case 'bigint': {
-        return (
-          <NumberInput.Root>
-            <NumberInput.Input {...register(fieldName, { setValueAs: v => typeInfo.typeName === 'number' ? Number(v) : BigInt(v) })} />
-          </NumberInput.Root>
-        )
+        return renderNumber(fieldName, typeInfo);
       }
       case 'boolean': {
         return <div>TODO: https://chakra-ui.com/docs/components/checkbox#hook-form</div>
@@ -282,6 +308,36 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     )
   }
 
+  const renderArray = (fieldName: string, typeInfo: ArrayTypeInfo, error?: Error) => {
+    // This probably won't work for arrays nested more deeply;
+    let arrayValues = formValues[fieldName] as unknown[];
+    const minSize = typeInfo.min;
+    if (arrayValues === undefined) {
+      arrayValues = new Array(minSize !== undefined ? minSize : 1).fill("");
+    }
+    const errors = error !== undefined ? error as Errors : undefined;
+    console.log("array field name: ", fieldName, "array values: ", arrayValues);
+
+    return (
+      <Fieldset.Root>
+        <Fieldset.Content pl="2em">
+          {arrayValues.map((item, index) => {
+            return renderField(
+              `${index}`,
+              typeInfo.elementType,
+              `${fieldName}.`,
+              errors !== undefined ? errors[index] : undefined
+            );
+          })}
+        <HStack>
+          <Button width="50%" color="black" onClick={() => setValue(fieldName, [...arrayValues, ''])}>Add</Button>
+          <Button width="50%" color="black" onClick={() => setValue(fieldName, arrayValues.slice(0, -1))}>Remove</Button>
+        </HStack>
+        </Fieldset.Content>
+      </Fieldset.Root>
+    )
+  }
+
   const renderInput = (fieldName: string, typeInfo: TypeInfo, error?: Error) => {
     if (isPrimitive(typeInfo)) {
       return renderPrimitiveInput(fieldName, typeInfo);
@@ -295,7 +351,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     } else if (typeInfo.typeName === 'object') {
       return renderObject(fieldName, typeInfo, error);
     } else if (typeInfo.typeName === 'array') {
-      return <div>TODO: 'array'</div>
+      return renderArray(fieldName, typeInfo, error);
     } else {
       // assertUnreachable(typeInfo.typeName);
     }
@@ -304,11 +360,17 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
   const renderField = (fieldName: string, typeInfo: TypeInfo, prefix?: string, error?: Error) => {
     const f = prefixStr(fieldName, prefix);
     return (
-      <Field.Root invalid={!!error} key={f}>
-        <Field.Label>{typeInfo.title || fieldName}</Field.Label>
+      <Field.Root invalid={!!error} key={f} required={!typeInfo.optional}>
+        <Field.Label>{typeInfo.title || fieldName} <Field.RequiredIndicator /></Field.Label>
+        <Field.HelperText
+          wordBreak="break-word"
+          whiteSpace="pre-wrap"
+          style={{ whiteSpace: 'pre-wrap' }}
+        >
+          {typeInfo.description}
+        </Field.HelperText>
         {renderInput(f, typeInfo, error)}
-        <Field.ErrorText>{error?.message?.toString()}</Field.ErrorText>
-        <Field.HelperText>{typeInfo.description}</Field.HelperText>
+        <Field.ErrorText maxWidth="42em" wordBreak="break-word">{error?.message?.toString()}</Field.ErrorText>
       </Field.Root>
     )
   }

@@ -117,6 +117,7 @@ Signal Type
 
 Number 0-255 identifying signal type.
 
+Reserved:
 0 - Tick
 `
 export const zSignalType = zUint8;

@@ -11,7 +11,7 @@ interface ProposalFormProps<T extends z.AnyZodObject> {
 export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: ProposalFormProps<T>) {
 
   return (
-    <Center width="100%">
+    <Center>
       <Card.Root
         variant="outline"
         padding={4}
