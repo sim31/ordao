@@ -26,7 +26,7 @@ export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
     )
   });
   return (
-    <Table.Root size="lg">
+    <Table.Root size="lg" mb="0.5em">
       <Table.Body>
         {dprop.metadata.propTitle && (
           <PropTableRow fieldName="Proposal Title" value={dprop.metadata.propTitle} />

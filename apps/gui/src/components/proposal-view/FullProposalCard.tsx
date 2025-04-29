@@ -5,6 +5,9 @@ import { DecodedPropTable } from "./DecodedPropTable";
 import { PropTable } from "./PropTable";
 import { ShortPropId } from "./ShortPropId";
 import { ProposalStatusLine } from "./ProposalStatusLine";
+import { ProposalVoteStat } from "./ProposalVoteStat";
+import { VoteButtons } from "./VoteButtons";
+import { ObjectTable } from "./ObjectTable";
 
 export interface FullProposalCardProps {
   proposal: Proposal,
@@ -37,6 +40,14 @@ export function FullProposalCard({ proposal }: FullProposalCardProps) {
     }
   }
 
+  const renderProposalDetails = () => {
+    const obj = {
+      ...proposal,
+    }
+    delete obj["decoded"];
+    return <ObjectTable obj={obj} />
+  }
+
   return (
     <Card.Root
       variant="outline"
@@ -60,19 +71,22 @@ export function FullProposalCard({ proposal }: FullProposalCardProps) {
           {typeInfo?.description}
         </Card.Description>
 
-        <Box mb="1em">
+        <Box mb="2em">
           <Text fontWeight="bold" fontSize="xl" mb="0.5em">Status</Text>
           <ProposalStatusLine proposal={proposal} />
+          <ProposalVoteStat proposal={proposal} />
+          <VoteButtons proposal={proposal} />
         </Box>
 
 
-        <Box mb="1em">
+        <Box mb="2em">
           <Text fontWeight="bold" fontSize="xl" mb="0.5em">Content</Text>
           {renderProposalContent()}
         </Box>
 
-        <Box mb="1em">
+        <Box mb="2em">
           <Text fontWeight="bold" fontSize="xl" mb="0.5em">Details</Text>
+          {renderProposalDetails()}
         </Box>
 
 

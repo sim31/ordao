@@ -1,10 +1,11 @@
-import { Button, Card, Flex, Text, Clipboard } from "@chakra-ui/react";
+import { Button, Card, Text, Clipboard } from "@chakra-ui/react";
 import { Proposal, propSchemaMap } from "@ordao/ortypes/orclient.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";
 import { PropTable } from "./PropTable.js";
-import { VoteCountChart } from "./VotesCountChart.js";
 import { extractZodDescription } from "@ordao/zod-utils";
 import { ProposalStatusLine } from "./ProposalStatusLine.js";
+import { VoteButtons } from "./VoteButtons.js";
+import { ProposalVoteStat } from "./ProposalVoteStat.js";
 
 export interface ProposalCardProps {
   proposal: Proposal,
@@ -31,22 +32,6 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
     }
   }
 
-  const renderVoteButton = () => {
-    if (proposal.stage === 'Voting') {
-      return (
-        <Button variant="outline" onClick={() => console.log("Vote clicked")}>
-          Vote
-        </Button>
-      );
-    } else if (proposal.stage === 'Veto') {
-      return (
-        <Button variant="outline" onClick={() => console.log("Veto clicked")}>
-          Veto
-        </Button>
-      );
-    }
-  }
-
   return (
     <Card.Root
       variant="outline"
@@ -54,22 +39,20 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
       gap={2}
       flexDirection="column"
     >
-      <ProposalStatusLine proposal={proposal}/>
+      <Card.Header pt="0.5em" pl="1em">
+        <ProposalStatusLine proposal={proposal}/>
+      </Card.Header>
 
-      <Flex gap={2} alignItems="center" mb={2}>
-        <Text fontWeight="bold" fontSize="2xl">
-          {propTitle}
-        </Text>
-      </Flex>
+      <Card.Body pt="0" pl="1em" gap="1em">
+        <Card.Title fontSize="2xl">{propTitle}</Card.Title>
 
-      {renderProposalContent()}
+        {renderProposalContent()}
 
-      {proposal.yesWeight !== undefined && proposal.noWeight !== undefined && (
-        <VoteCountChart yesWeight={Number(proposal.yesWeight)} noWeight={Number(proposal.noWeight)} />
-      )}
+        <ProposalVoteStat proposal={proposal} />
+      </Card.Body>
 
-      <Flex gap={2} justifyContent="flex-start" mt="1em" mb="0.5em">
-        {renderVoteButton()}
+      <Card.Footer>
+        <VoteButtons proposal={proposal} />
         <Button variant="outline" onClick={() => console.log("More info clicked")}>
           Details
         </Button>
@@ -82,8 +65,8 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
             </Button>
           </Clipboard.Trigger>
         </Clipboard.Root>
-      </Flex>
-      
+
+      </Card.Footer>
 
     </Card.Root>
   );

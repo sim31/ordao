@@ -83,7 +83,7 @@ const router = createBrowserRouter(
     <Route
       path="/propView"
       element={
-        <ProposalView proposal={proposals[0]} />
+        <ProposalView proposal={proposals[1]} />
       }
       errorElement={<Fallback />}
     />,
