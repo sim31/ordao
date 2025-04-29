@@ -1,14 +1,18 @@
 import { Table } from "@chakra-ui/react";
-import { DecodedProposal } from "@ordao/ortypes/orclient.js";
+import { DecodedProposal, propSchemaMap } from "@ordao/ortypes/orclient.js";
 import { PropTableRow } from "./PropTableRow";
 // import { formatEthAddress } from "eth-address";
 import { zRankNumToValue } from "@ordao/ortypes";
+import { zodObjectFields } from "@ordao/zod-utils";
 
 export interface ProposalContentTableProps {
   dprop: DecodedProposal
 }
 
 export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
+  const zPropSchema = propSchemaMap[dprop.propType]; 
+  const fields = zodObjectFields(zPropSchema);
+
   const rows = Object.entries(dprop).filter(([key]) => key !== 'propType' && key !== 'metadata').map(([key, value]) => {
     let val = value;
     if (dprop.propType === 'respectBreakout' && key === 'rankings') {
@@ -16,8 +20,9 @@ export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
         return `${addr}    (+${zRankNumToValue.parse(i + 1)} Respect)`;
       })      
     }
+    const fieldName = fields[key].title || key;
     return (
-      <PropTableRow key={key} fieldName={key} value={val} />
+      <PropTableRow key={key} fieldName={fieldName} value={val} />
     )
   });
   return (

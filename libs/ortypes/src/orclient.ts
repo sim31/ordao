@@ -78,17 +78,18 @@ export type VoteWithProp = z.infer<typeof zVoteWithProp>;
 export const zVoteWithPropRequest = zVoteWithProp.partial({ vote: true });
 export type VoteWithPropRequest = z.infer<typeof zVoteWithPropRequest>;
 
+const respectBreakoutDesc = `
+Respect Breakout
+
+Mint Respect to a breakout group from Respect game.
+`
+
 export const zBreakoutResult = z.object({
   rankings: zRankings,
   groupNum: zGroupNum
 });
 export type BreakoutResult = z.infer<typeof zBreakoutResult>;
 
-const respectBreakoutDesc = `
-Respect Breakout
-
-Mint Respect to a breakout group from Respect game.
-`
 
 export const zRespectBreakoutRequest = zBreakoutResult.extend({
   meetingNum: zMeetingNum,
@@ -100,7 +101,7 @@ export const zRespectBreakout = zDecodedPropBase.merge(zBreakoutResult).extend({
   propType: z.literal(zPropType.Enum.respectBreakout),
   meetingNum: zMeetingNum,
   mintData: zBytes
-});
+}).describe(respectBreakoutDesc);
 export type RespectBreakout = z.infer<typeof zRespectBreakout>;
 
 const accountDesc = `
@@ -124,6 +125,11 @@ Reason
 More descriptive reason for the Respect Award
 `
 
+const respectAccountDescription = `
+Respect Account
+
+Mint Respect to an account.
+`
 export const zRespectAccount = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.respectAccount),
   meetingNum: zMeetingNum,
@@ -134,7 +140,7 @@ export const zRespectAccount = zDecodedPropBase.extend({
   title: z.string().max(64).describe(titleDesc),
   reason: z.string().describe(reasonDesc),
   tokenId: zTokenId
-});
+}).describe(respectAccountDescription);
 export type RespectAccount = z.infer<typeof zRespectAccount>;
 
 // const respectAccountRequestEx = {
@@ -146,22 +152,12 @@ export type RespectAccount = z.infer<typeof zRespectAccount>;
 
 // }
 
-const respectAccountDescription = `
-Respect Account
-
-Mint Respect to an account.
-`
 export const zRespectAccountRequest = zRespectAccount
   .describe(respectAccountDescription)
   .omit({ propType: true, tokenId: true })
   .partial({ meetingNum: true, metadata: true })
 export type RespectAccountRequest = z.infer<typeof zRespectAccountRequest>;
 
-const tokenIdDescription = `
-Token ID
-
-ID of Respect Award (soulbound token).
-`
 const reason = `
 Reason for burning
 
@@ -174,9 +170,9 @@ Burn 1 Respect award. This will also subract value of the award from the total R
 `
 export const zBurnRespect = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.burnRespect),
-  tokenId: zTokenId.describe(tokenIdDescription),
+  tokenId: zTokenId,
   reason: z.string().describe(reason)
-})
+}).describe(burnRespectDescription);
 export type BurnRespect = z.infer<typeof zBurnRespect>;
 
 export const zBurnRespectRequest = zBurnRespect
@@ -207,7 +203,7 @@ export const zCustomSignal = zDecodedPropBase.extend({
   signalType: zCustomSignalType,
   data: zBytes.describe(signalBytesDesc),
   link: z.string().optional().describe(linkDesc)
-});
+}).describe(customSignalDescription);
 export type CustomSignal = z.infer<typeof zCustomSignal>;
 
 export const zCustomSignalRequest = zCustomSignal
@@ -216,21 +212,22 @@ export const zCustomSignalRequest = zCustomSignal
   .partial({ metadata: true });
 export type CustomSignalRequest = z.infer<typeof zCustomSignalRequest>;
 
-export const zTick = zDecodedPropBase.extend({
-  propType: z.literal(zPropType.Enum.tick),
-  link: z.string().optional().describe(linkDesc),
-  data: zBytes.describe(signalBytesDesc)
-})
-export type Tick = z.infer<typeof zTick>;
-
-const tickReqDescription = `
+const tickDescription = `
 Tick
 
 Increment period number (and meeting number) by 1.
 `
 
+export const zTick = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.tick),
+  link: z.string().optional().describe(linkDesc),
+  data: zBytes.describe(signalBytesDesc)
+}).describe(tickDescription)
+export type Tick = z.infer<typeof zTick>;
+
+
 export const zTickRequest = zTick
-  .describe(tickReqDescription)
+  .describe(tickDescription)
   .omit({ propType: true })
   .partial({ metadata: true, data: true });
 export type TickRequest = z.infer<typeof zTickRequest>;
@@ -270,6 +267,24 @@ export const zDecodedProposal = z.union([
   zRespectBreakout
 ]);
 export type DecodedProposal = z.infer<typeof zDecodedProposal>;
+
+export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
+  "customCall": zCustomCall,
+  "tick": zTick,
+  "customSignal": zCustomSignal,
+  "burnRespect": zBurnRespect,
+  "respectAccount": zRespectAccount,
+  "respectBreakout": zRespectBreakout
+}
+
+export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
+  "customCall": zCustomCallRequest,
+  "tick": zTickRequest,
+  "customSignal": zCustomSignalRequest,
+  "burnRespect": zBurnRespectRequest,
+  "respectAccount": zRespectAccountRequest,
+  "respectBreakout": zRespectBreakoutRequest
+}
 
 export const zExecErrorType = z.nativeEnum(ErrorType);
 export type ExecErrorType = z.infer<typeof zExecErrorType>;

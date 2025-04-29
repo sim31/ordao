@@ -5,7 +5,8 @@ export type PrimitiveTypeName = typeof primitiveTypeNames[number];
 export type ObjectTypeName = 'object';
 export type ArrayTypeName = 'array';
 export type StringTypeName = 'string'
-export type TypeName = PrimitiveTypeName | StringTypeName | ObjectTypeName | ArrayTypeName;
+export type LiteralTypeName = 'literal'
+export type TypeName = PrimitiveTypeName | StringTypeName | LiteralTypeName | ObjectTypeName | ArrayTypeName;
 export interface TypeInfoBase {
   typeName: TypeName,
   schema: z.ZodSchema,
@@ -31,7 +32,11 @@ export interface StringTypeInfo extends TypeInfoBase {
   typeName: 'string',
   checks: ZodStringCheck[]
 }
-export type TypeInfo = PrimitiveTypeInfo | StringTypeInfo | ObjectTypeInfo | ArrayTypeInfo;
+export interface LiteralTypeInfo extends TypeInfoBase {
+  typeName: 'literal',
+  value: number | string | boolean | bigint | symbol
+}
+export type TypeInfo = PrimitiveTypeInfo | StringTypeInfo | LiteralTypeInfo | ObjectTypeInfo | ArrayTypeInfo;
 
 export function strTypeLength(strt: StringTypeInfo): number | undefined {
   const length = strt.checks.find(c => c.kind === 'length');
@@ -107,6 +112,11 @@ export function zodDefaultInnerType<T extends z.ZodTypeAny>(schema: z.ZodDefault
   return schema._def.innerType;
 }
 
+export function zodLiteralInnerType<T>(literal: z.ZodLiteral<T>): T {
+  console.log("zod literal: ", literal);
+  return literal._def.value;
+}
+
 export function zodObjectFields<T extends z.AnyZodObject>(schema: T): Record<string, TypeInfo> {
   const r: Record<string, TypeInfo> = {};
   for (const field in schema.shape) {
@@ -149,6 +159,7 @@ export function overwriteDescription<T extends z.ZodTypeAny>(typeInfo: TypeInfo,
   }
 }
 
+
 export function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
   const typeStr = zodTypeStr(schema);
   switch (typeStr) {
@@ -169,6 +180,14 @@ export function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
     case 'ZodPipeline': {
       const ti = getTypeInfo(zodPipelineInnerType(schema as z.infer<T>));
       return overwriteDescription(ti, schema);
+    }
+    case 'ZodLiteral': {
+      const r: LiteralTypeInfo = {
+        typeName: 'literal',
+        schema,
+        value: zodLiteralInnerType(schema as z.infer<T>),
+        ...extractZodDescription(schema)
+      }
     }
     case 'ZodObject': {
       const r: ObjectTypeInfo = {

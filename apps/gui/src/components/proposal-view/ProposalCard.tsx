@@ -1,11 +1,11 @@
 import { Badge, Button, Card, Flex, Text, Clipboard, IconButton } from "@chakra-ui/react";
-import { Proposal } from "@ordao/ortypes/orclient.js";
+import { Proposal, propSchemaMap } from "@ordao/ortypes/orclient.js";
 import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors.js";
 import { timeStr } from "../../utils/time.js";
-import { propTitles } from "../../global/propTitles.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";
 import { PropTable } from "./PropTable.js";
 import { VoteCountChart } from "./VotesCountChart.js";
+import { extractZodDescription } from "@ordao/zod-utils";
 
 export interface ProposalCardProps {
   proposal: Proposal,
@@ -14,10 +14,12 @@ export interface ProposalCardProps {
 export function ProposalCard({ proposal }: ProposalCardProps) {
   const shortenedId = proposal.id.slice(0, 6) + '...';
 
+  const propType = proposal.decoded?.propType;
+  const zPropType = propType && propSchemaMap[propType];
+  const desc = zPropType && extractZodDescription(zPropType);
+  const propTitle = desc?.title !== undefined ? desc.title : 'Unknown proposal type';
+
   const propKnown = proposal.cdata && proposal.addr && proposal.memo;
-  const propTitle = propKnown 
-    ? (proposal.decoded?.propType ? propTitles[proposal.decoded.propType] : 'Unknown proposal type')
-    : 'Unknown proposal';
   const createTime = proposal.createTime.toLocaleString('en-US', {
     month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
   })
