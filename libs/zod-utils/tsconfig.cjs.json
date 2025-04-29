@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "moduleResolution": "Node16",
+    "module": "Node16",
+    "outDir": "./dist/cjs",
+    "target": "ES2020"
+  }
+}
