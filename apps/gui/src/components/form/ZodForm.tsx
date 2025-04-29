@@ -1,8 +1,8 @@
 import { z, ZodStringCheck } from 'zod';
-import { useForm } from 'react-hook-form';
+import { FieldErrors, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable } from '@ordao/ts-utils';
-import { Button, Field, Fieldset, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
+import { Button, Field, Fieldset, HStack, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
 
 // TODO: extract zod reflection stuff to separate library
 const primitiveTypeNames = ['number', 'bigint', 'boolean'] as const;
@@ -27,7 +27,7 @@ interface ObjectTypeInfo extends TypeInfoBase {
 }
 interface ArrayTypeInfo extends TypeInfoBase {
   typeName: ArrayTypeName
-  elementType: TypeInfoBase
+  elementType: TypeInfo
   min?: number,
   max?: number
 }
@@ -218,13 +218,14 @@ interface ZodFormProps<T extends z.AnyZodObject> {
 }
 
 function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>) {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, watch, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
     mode: "onSubmit",
   });
 
   const fields = objectFields(schema);
   const { description } = extractDescription(schema);
+  const values = watch();
 
   const prefixStr = (str: string, prefix?: string) => {
     return prefix !== undefined ? `${prefix}.${str}` : str;
@@ -269,10 +270,38 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     return (
       <Fieldset.Root>
         <Fieldset.Content pl="2em">
-          {renderFields(typeInfo.fields, `${fieldName}.`)}
+          {renderFields(typeInfo.fields, errors[fieldName] as FieldErrors, `${fieldName}.`)}
         </Fieldset.Content>
       </Fieldset.Root>
 
+    )
+  }
+
+  const renderArray = (fieldName: string, typeInfo: ArrayTypeInfo, errors: FieldErrors) => {
+    // This probably won't work for arrays nested more deeply;
+    let arrayValues = values[fieldName] as unknown[];
+    if (arrayValues === undefined) {
+      arrayValues = [''];
+    }
+    console.log("array field name: ", fieldName, "array values: ", arrayValues);
+
+    return (
+      <Fieldset.Root>
+        <Fieldset.Content pl="2em">
+          {arrayValues.map((item, index) => {
+            return renderField(
+              `${index}`,
+              typeInfo.elementType,
+              errors[index] as FieldErrors,
+              `${fieldName}.`
+            );
+          })}
+        <HStack>
+          <Button width="50%" color="black" onClick={() => setValue(fieldName, [...arrayValues, ''])}>Add</Button>
+          <Button width="50%" color="black" onClick={() => setValue(fieldName, arrayValues.slice(0, -1))}>Remove</Button>
+        </HStack>
+        </Fieldset.Content>
+      </Fieldset.Root>
     )
   }
 
@@ -289,26 +318,27 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     } else if (typeInfo.typeName === 'object') {
       return renderObject(fieldName, typeInfo);
     } else if (typeInfo.typeName === 'array') {
-      return <div>TODO: 'array'</div>
+      return renderArray(fieldName, typeInfo, errors[fieldName] as FieldErrors);
     } else {
       // assertUnreachable(typeInfo.typeName);
     }
   };
 
-  const renderField = (fieldName: string, typeInfo: TypeInfo, prefix?: string) => {
-    const f = prefixStr(fieldName, prefix);
+  const renderField = (fieldName: string, typeInfo: TypeInfo, errs?: FieldErrors, prefix?: string) => {
+    console.log("errors: ",  errs, prefix);
+    const f = prefixStr(fieldName);
     return (
-      <Field.Root invalid={!!errors[f]}>
+      <Field.Root invalid={!!errs}>
         <Field.Label>{typeInfo.title || fieldName}</Field.Label>
-        {renderInput(f, typeInfo)}
-        <Field.ErrorText>{errors[f]?.message?.toString()}</Field.ErrorText>
         <Field.HelperText>{typeInfo.description}</Field.HelperText>
+        {renderInput(f, typeInfo)}
+        <Field.ErrorText>{errs?.message?.toString()}</Field.ErrorText>
       </Field.Root>
     )
   }
 
-  const renderFields = (fields: Record<string, TypeInfo>, prefix?: string) => {
-    return Object.entries(fields).map(([fieldName, typeInfo]) => renderField(fieldName, typeInfo, prefix));
+  const renderFields = (fields: Record<string, TypeInfo>, errs?: FieldErrors, prefix?: string) => {
+    return Object.entries(fields).map(([fieldName, typeInfo]) => renderField(fieldName, typeInfo, errs, prefix));
   }
 
   return (
@@ -317,7 +347,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
         <Stack gap="4" align="flex-start">
           <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
           <Fieldset.Content borderTop="solid" borderColor="gray.200" pt="1em">
-            {renderFields(fields)}
+            {renderFields(fields, errors)}
           </Fieldset.Content>
         </Stack>
       </Fieldset.Root>
