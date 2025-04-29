@@ -1,5 +1,5 @@
 import { z, ZodStringCheck } from 'zod';
-import { useForm } from 'react-hook-form';
+import { FieldErrors, GlobalError, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable } from '@ordao/ts-utils';
 import { Button, Field, Fieldset, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
@@ -217,6 +217,12 @@ interface ZodFormProps<T extends z.AnyZodObject> {
   onSubmit: (data: z.infer<T>) => void;
 }
 
+type Errors = FieldErrors<{
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [x: string]: any;
+}>;
+type Error = GlobalError;
+
 function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>) {
   const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -265,18 +271,18 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
   }
 
 
-  const renderObject = (fieldName: string, typeInfo: ObjectTypeInfo) => {
+  const renderObject = (fieldName: string, typeInfo: ObjectTypeInfo, error?: Error) => {
     return (
       <Fieldset.Root>
         <Fieldset.Content pl="2em">
-          {renderFields(typeInfo.fields, `${fieldName}.`)}
+          {renderFields(typeInfo.fields, `${fieldName}.`, error as Errors)}
         </Fieldset.Content>
       </Fieldset.Root>
 
     )
   }
 
-  const renderInput = (fieldName: string, typeInfo: TypeInfo) => {
+  const renderInput = (fieldName: string, typeInfo: TypeInfo, error?: Error) => {
     if (isPrimitive(typeInfo)) {
       return renderPrimitiveInput(fieldName, typeInfo);
     } else if (typeInfo.typeName === 'string') {
@@ -287,7 +293,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
         return renderStringInput(fieldName);
       }
     } else if (typeInfo.typeName === 'object') {
-      return renderObject(fieldName, typeInfo);
+      return renderObject(fieldName, typeInfo, error);
     } else if (typeInfo.typeName === 'array') {
       return <div>TODO: 'array'</div>
     } else {
@@ -295,20 +301,20 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     }
   };
 
-  const renderField = (fieldName: string, typeInfo: TypeInfo, prefix?: string) => {
+  const renderField = (fieldName: string, typeInfo: TypeInfo, prefix?: string, error?: Error) => {
     const f = prefixStr(fieldName, prefix);
     return (
-      <Field.Root invalid={!!errors[f]}>
+      <Field.Root invalid={!!error} key={f}>
         <Field.Label>{typeInfo.title || fieldName}</Field.Label>
-        {renderInput(f, typeInfo)}
-        <Field.ErrorText>{errors[f]?.message?.toString()}</Field.ErrorText>
+        {renderInput(f, typeInfo, error)}
+        <Field.ErrorText>{error?.message?.toString()}</Field.ErrorText>
         <Field.HelperText>{typeInfo.description}</Field.HelperText>
       </Field.Root>
     )
   }
 
-  const renderFields = (fields: Record<string, TypeInfo>, prefix?: string) => {
-    return Object.entries(fields).map(([fieldName, typeInfo]) => renderField(fieldName, typeInfo, prefix));
+  const renderFields = (fields: Record<string, TypeInfo>, prefix?: string, errors?: Errors) => {
+    return Object.entries(fields).map(([fieldName, typeInfo]) => renderField(fieldName, typeInfo, prefix, errors?.[fieldName]));
   }
 
   return (
@@ -317,7 +323,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
         <Stack gap="4" align="flex-start">
           <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
           <Fieldset.Content borderTop="solid" borderColor="gray.200" pt="1em">
-            {renderFields(fields)}
+            {renderFields(fields, undefined, errors)}
           </Fieldset.Content>
         </Stack>
       </Fieldset.Root>
