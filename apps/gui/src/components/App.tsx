@@ -14,6 +14,8 @@ import { ProposalList } from "./pages/ProposalList";
 import { zBurnRespectRequest, zCustomCallRequest, zCustomSignalRequest, zRespectAccountRequest, zRespectBreakoutRequest, zTickRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalForm } from "./pages/ProposalForm";
 import { stringify } from "@ordao/ts-utils";
+import { ProposalView } from "./pages/ProposalView";
+import { proposals } from "../global/testProps";
 
 const router = createBrowserRouter(
   createRoutesFromElements([
@@ -78,6 +80,14 @@ const router = createBrowserRouter(
       }
       errorElement={<Fallback />}
     />,
+    <Route
+      path="/propView"
+      element={
+        <ProposalView proposal={proposals[0]} />
+      }
+      errorElement={<Fallback />}
+    />,
+
   ])
 );
 

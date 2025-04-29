@@ -1,6 +1,7 @@
 import { Card, Center, Flex, Text } from "@chakra-ui/react";
 import { z } from "zod";
 import ZodForm from "../form/ZodForm";
+import { extractZodDescription } from "@ordao/zod-utils";
 
 
 interface ProposalFormProps<T extends z.AnyZodObject> {
@@ -9,6 +10,8 @@ interface ProposalFormProps<T extends z.AnyZodObject> {
 }
 
 export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: ProposalFormProps<T>) {
+  const desc = extractZodDescription(schema);
+  const propTitle = desc?.title;
 
   return (
     <Center>
@@ -22,7 +25,7 @@ export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: Pro
       >
         <Flex gap={2} alignItems="center" mb={2}>
           <Text fontWeight="bold" fontSize="2xl">
-            Burn Respect
+            {propTitle}
           </Text>
         </Flex>
         <ZodForm schema={schema} onSubmit={onSubmit} />
