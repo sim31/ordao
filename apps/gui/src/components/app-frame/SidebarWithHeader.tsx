@@ -169,8 +169,8 @@ const Header = ({ onMenuOpen, ...rest }: HeaderProps) => {
           <Portal>
             <Menu.Positioner>
               <Menu.Content>
-                <Menu.Item value="logout">Logout</Menu.Item>
-                <Menu.Item value="copy">Copy</Menu.Item>
+                <Menu.Item fontSize="lg"value="copy">Copy</Menu.Item>
+                <Menu.Item fontSize="lg" value="logout">Logout</Menu.Item>
               </Menu.Content>
             </Menu.Positioner>
           </Portal>

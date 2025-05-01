@@ -51,7 +51,7 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
         <ProposalVoteStat proposal={proposal} />
       </Card.Body>
 
-      <Card.Footer>
+      <Card.Footer mb="0" pb="0.5em">
         <VoteButtons proposal={proposal} />
         <Button variant="outline" onClick={() => console.log("More info clicked")}>
           Details

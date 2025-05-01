@@ -23,7 +23,7 @@ export function ProposalReqTypeCard({ schema, onClick }: ProposalReqTypeCardProp
     >
       <Card.Body>
         <Card.Title fontSize="xl" mb="1em">{title}</Card.Title>
-        <Card.Description fontSize="md" wordBreak={"break-word"}>{description}</Card.Description>
+        <Card.Description fontSize="md">{description}</Card.Description>
       </Card.Body>
     </Card.Root>
   )

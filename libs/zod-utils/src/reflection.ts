@@ -113,7 +113,6 @@ export function zodDefaultInnerType<T extends z.ZodTypeAny>(schema: z.ZodDefault
 }
 
 export function zodLiteralInnerType<T>(literal: z.ZodLiteral<T>): T {
-  console.log("zod literal: ", literal);
   return literal._def.value;
 }
 

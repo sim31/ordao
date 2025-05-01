@@ -41,7 +41,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const renderTextArea = (fieldName: string, maxLength?: number) => {
+  const renderTextArea = (fieldName: string, _maxLength?: number) => {
     // TODO: Adjust size based on maxLength
     return (
       <Textarea minHeight="8em" {...register(fieldName)}/>
@@ -112,7 +112,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
     return (
       <Fieldset.Root>
         <Fieldset.Content pl="2em">
-          {arrayValues.map((item, index) => {
+          {arrayValues.map((_, index) => {
             return renderField(
               `${index}`,
               typeInfo.elementType,
