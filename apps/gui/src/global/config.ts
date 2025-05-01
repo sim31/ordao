@@ -16,7 +16,9 @@ export const zConfig = z.object({
   appTitle: z.string(),
   chainInfo: zChainInfo,
   privyAppId: z.string(),
-  docsOrigin: z.string().url()
+  docsOrigin: z.string().url(),
+  parentRespectLink: z.string().url(),
+  childRespectLink: z.string().url()
 });
 export type Config = z.infer<typeof zConfig>;
 
@@ -26,6 +28,8 @@ const ornodeUrl = import.meta.env.VITE_ORNODE_URL;
 const appTitle = import.meta.env.VITE_APP_TITLE;
 const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;
 const docsOrigin = import.meta.env.VITE_DOCS_ORIGIN;
+const parentRespectLink = import.meta.env.VITE_PARENT_RESPECT_LINK;
+const childRespectLink = import.meta.env.VITE_CHILD_RESPECT_LINK;
 
 const chainId = import.meta.env.VITE_CHAIN_ID;
 const rpcUrls = import.meta.env.VITE_RPC_URLS.split(",");
@@ -45,7 +49,9 @@ export const config = zConfig.parse({
     blockExplorerUrl
   },
   privyAppId,
-  docsOrigin
+  docsOrigin,
+  parentRespectLink,
+  childRespectLink
 });
 
 export const orclientConfig: CreateOrclientConfig = {

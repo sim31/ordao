@@ -1,6 +1,6 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import { propRequestSchemaMap } from "@ordao/ortypes/orclient.js";
-import { ProposalReqTypeCard } from "../proposal-type-view/ProposalReqTypeCard";
+import { ProposalReqTypeCard } from "./ProposalReqTypeCard";
 // import { zCustomCall } from "@ordao/ortypes/orclient.js";
 
 export default function ProposalFormMenu() {

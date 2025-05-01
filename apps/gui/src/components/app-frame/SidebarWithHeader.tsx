@@ -24,16 +24,34 @@ import {
 import { IconType } from 'react-icons'
 import { ReactNode } from 'react'
 import { config } from '../../global/config';
+import { RouteIds, Link as RouterLink, useMatches, useRouter } from '@tanstack/react-router';
+import { routeTree } from '../../routeTree.gen'
 
-export interface MenuItem {
+export interface MenuItemBase {
   id: string
   name: string
   icon: IconType
 }
 
+export interface MenuItemExternalLink extends MenuItemBase {
+  externalLink: string
+}
+
+export interface MenuItemInternalLink extends MenuItemBase {
+  id: RouteIds<typeof routeTree>
+}
+
+export type MenuItem = MenuItemExternalLink | MenuItemInternalLink;
+
+function isExternalLink(item: MenuItem): item is MenuItemExternalLink {
+  return 'externalLink' in item;
+}
+
 interface NavItemProps extends FlexProps {
   icon: IconType
   children: ReactNode
+  to: string
+  newTab?: boolean
   selected?: boolean
 }
 
@@ -46,17 +64,23 @@ export type MenuSelectHandler = (id: string) => void;
 interface SidebarProps extends BoxProps {
   onClose: () => void
   menuItems: MenuItem[]
-  selectedMenuItem: string
   onMenuSelect: MenuSelectHandler
 }
 
 const SidebarContent = ({
   onClose,
   menuItems,
-  selectedMenuItem,
   onMenuSelect,
   ...rest
 }: SidebarProps) => {
+  const matches = useMatches()
+  const activeMenuItem = menuItems.find((item) => {
+    const m = matches.find(match => match.id === item.id);
+    return m !== undefined;
+  })
+  const activeMenuItemId = activeMenuItem?.id;
+  const { routesById } = useRouter();
+
   return (
     <Box
       transition="0.2s ease"
@@ -80,8 +104,10 @@ const SidebarContent = ({
         <NavItem
           key={item.id}
           icon={item.icon}
-          selected={item.id === selectedMenuItem}
+          selected={item.id === activeMenuItemId}
           onClick={() => onMenuSelect(item.id)}
+          to={isExternalLink(item) ? item.externalLink : routesById[item.id].path}
+          newTab={isExternalLink(item)}
         >
           {item.name}
         </NavItem>
@@ -90,40 +116,40 @@ const SidebarContent = ({
   )
 }
 
-const NavItem = ({ icon, children, selected, ...rest }: NavItemProps) => {
+const NavItem = ({ icon, children, selected, to, newTab, ...rest }: NavItemProps) => {
   return (
     <Box
-      as="a"
+      asChild
       // href="#"
       style={{ textDecoration: 'none' }}
-      _focus={{ boxShadow: 'none' }}>
-      <Flex
-        align="center"
-        p="4"
-        mx="4"
-        borderRadius="lg"
-        role="group"
-        cursor="pointer"
-        _hover={{
-          bg: 'cyan.400',
-          color: 'white',
-        }}
-        color="black"
-        fontSize="lg"
-        fontWeight={selected ? 'extrabold' : 'normal'}
-        {...rest}>
-        {icon && (
-          <Icon
-            mr="4"
-            fontSize="16"
-            _groupHover={{
-              color: 'white',
-            }}
-            as={icon}
-          />
-        )}
-        {children}
-      </Flex>
+      _focus={{ boxShadow: 'none' }}
+    >
+      <RouterLink disabled={selected} to={to} target={newTab ? '_blank' : undefined}>
+        <Flex
+          align="center"
+          p="4"
+          mx="4"
+          borderRadius="lg"
+          role="group"
+          cursor={selected ? 'default' : 'pointer'}
+          _hover={selected ? {} : { bg: 'cyan.400', color: 'white' }}
+          color="black"
+          fontSize="lg"
+          fontWeight={selected ? 'extrabold' : 'normal'}
+          {...rest}>
+          {icon && (
+            <Icon
+              mr="4"
+              fontSize="16"
+              _groupHover={{
+                color: 'white',
+              }}
+              as={icon}
+            />
+          )}
+          {children}
+        </Flex>
+      </RouterLink>
     </Box>
   )
 }
@@ -185,16 +211,19 @@ export interface SidebarWithHeaderProps {
   children: ReactNode,
   menuItems: MenuItem[]
   selectedMenuItemId: string 
-  onMenuSelect: MenuSelectHandler
 }
 
 const SidebarWithHeader = ({
   children,
   menuItems,
-  selectedMenuItemId,
-  onMenuSelect
 }: SidebarWithHeaderProps) => {
   const { open: drawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure()
+  
+  const onMenuSelect = () => {
+    if (drawerOpen) {
+      onDrawerClose()
+    }
+  }
 
   return (
     <Box minH="100vh" bg={{ base: 'gray.100', _dark: 'gray.900' }}>
@@ -203,7 +232,6 @@ const SidebarWithHeader = ({
         onClose={onDrawerClose}
         display={{ base: 'none', lg: 'block' }}
         menuItems={menuItems}
-        selectedMenuItem={selectedMenuItemId}
         onMenuSelect={onMenuSelect}
       />
       {/* Sidebar menu displayed as a drawer on smaller screens */}
@@ -215,7 +243,6 @@ const SidebarWithHeader = ({
           <SidebarContent 
             onClose={onDrawerClose} 
             menuItems={menuItems} 
-            selectedMenuItem={selectedMenuItemId} 
             onMenuSelect={onMenuSelect}
           />
         </DrawerContent>

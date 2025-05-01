@@ -1,18 +1,27 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from './components/ui/provider'
-import { Container } from '@chakra-ui/react'
 import './index.css'
 // import BreakoutSubmitApp from './BreakoutSubmitApp'
 import { PrivyProvider } from '@privy-io/react-auth'
 import { config } from './global/config'
-// import App from './App'
-import App from './components/App'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+// Import the generated route tree
+import { routeTree } from './routeTree.gen'
 
 console.debug = console.log;
 console.debug("debug test")
 console.log("log test")
 
+// Create a new router instance
+const router = createRouter({ routeTree })
+
+// Register the router instance for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -27,9 +36,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       }}
     >
       <Provider>
-        <Container minHeight="100vh" minWidth="100vw" padding="0px">
-          <App />
-        </Container>
+        <RouterProvider router={router} />
       </Provider>
     </PrivyProvider>
   </React.StrictMode>

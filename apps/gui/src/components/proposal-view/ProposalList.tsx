@@ -1,5 +1,5 @@
 import { Flex } from "@chakra-ui/react";
-import { ProposalCard } from "../proposal-view/ProposalCard";
+import { ProposalCard } from "./ProposalCard";
 import { proposals } from "../../global/testProps";
 
 export function ProposalList() {
