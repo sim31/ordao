@@ -92,7 +92,7 @@ export type BreakoutResult = z.infer<typeof zBreakoutResult>;
 
 
 export const zRespectBreakoutRequest = zBreakoutResult.extend({
-  meetingNum: zMeetingNum,
+  meetingNum: zMeetingNum.optional(),
   metadata: zProposalMetadata.optional()
 }).describe(respectBreakoutDesc);
 export type RespectBreakoutRequest = z.infer<typeof zRespectBreakoutRequest>;
@@ -155,7 +155,7 @@ export type RespectAccount = z.infer<typeof zRespectAccount>;
 export const zRespectAccountRequest = zRespectAccount
   .describe(respectAccountDescription)
   .omit({ propType: true, tokenId: true })
-  .partial({ meetingNum: true, metadata: true })
+  .partial({ mintType: true, meetingNum: true, metadata: true })
 export type RespectAccountRequest = z.infer<typeof zRespectAccountRequest>;
 
 const reason = `
@@ -221,7 +221,7 @@ Increment period number (and meeting number) by 1.
 export const zTick = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.tick),
   link: z.string().optional().describe(linkDesc),
-  data: zBytes.describe(signalBytesDesc)
+  data: zBytes.optional().describe(signalBytesDesc)
 }).describe(tickDescription)
 export type Tick = z.infer<typeof zTick>;
 
