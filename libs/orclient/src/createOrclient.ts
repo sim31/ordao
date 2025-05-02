@@ -5,6 +5,8 @@ import { BrowserProvider, Eip1193Provider } from "ethers";
 import { Config, ORClient } from "./orclient.js";
 import { RemoteOrnode } from "./remoteOrnode.js";
 import { consoleInitialized, initConsole, ORConsole } from "./orconsole.js";
+import { ORClientReader } from "./orclientReader.js";
+import { ORConsoleReader } from "./orconsoleReader.js";
 
 export const zContractsAddrs = z.object({
   newRespect: zEthAddress,
@@ -167,6 +169,38 @@ export async function createOrclient(
     (window as any).c = orclient;
   } else {
     orclient = new ORClient(ctx, config);
+  }
+
+  return orclient;
+}
+
+export async function createOrclientReader(
+  deployment: DeploymentSpec,
+  providerURL: string,
+  config?: CreateOrclientConfig
+): Promise<ORClientReader> {
+  const depl = typeof deployment === 'string'
+    ? deployments[deployment] : deployment;
+  
+  const ornode: RemoteOrnode = new RemoteOrnode(depl.ornodeUrl);
+
+  const ctxCfg: ORContext.ConfigWithOrnode = {
+    orec: depl.contracts.orec,
+    newRespect: depl.contracts.newRespect,
+    ornode,
+    contractRunner: providerURL
+  }
+  const ctx = await ORContext.ORContext.create<ORContext.ConfigWithOrnode>(ctxCfg);
+
+  let orclient: ORClientReader;
+  if (config?.consoleConfig?.enabled) {
+    if (!consoleInitialized) {
+      initConsole(config.consoleConfig.docsOrigin);
+    }
+    orclient = new ORConsoleReader(ctx);
+    (window as any).c = orclient;
+  } else {
+    orclient = new ORClientReader(ctx);
   }
 
   return orclient;

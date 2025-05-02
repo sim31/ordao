@@ -1,12 +1,12 @@
 import { stringify } from "@ordao/ts-utils";
 import { ordaoLibVersions } from "./libVersions.js";
-import { ORClient, ORContext, Config, defaultConfig } from "./orclient.js";
+import { ORClient as ORClientReader, ORContext, Config, defaultConfig } from "./orclient.js";
 import { PACKAGE_VERSION } from "./version.js";
 
-// TODO: A lot of duplicate code between this file and orconsoleReader.ts
+// TODO: A lot of duplicate code between this file and orconsole.ts
 
 function _getPublicFunctions(): string[] {
-  return Object.getOwnPropertyNames(ORClient.prototype)
+  return Object.getOwnPropertyNames(ORClientReader.prototype)
     .filter(m => m[0] != '_');
 }
 
@@ -24,7 +24,7 @@ function _printHelp() {
 }
 
 // TODO: add intro to documentation and about how to use the console.
-export class ORConsole extends ORClient {
+export class ORConsoleReader extends ORClientReader {
 
   constructor(context: ORContext, cfg: Config = defaultConfig) {
     super(context, cfg);
@@ -38,7 +38,7 @@ export let consoleInitialized = false;
 
 export function initConsole(docOrigin: string) {
   for (const fname of _methods) {
-    const prop = (ORClient.prototype as any)[fname];
+    const prop = (ORClientReader.prototype as any)[fname];
     const url = new URL(docOrigin);
     url.hash = fname;
     url.pathname = _docPath;
@@ -49,13 +49,13 @@ export function initConsole(docOrigin: string) {
     }
   }
 
-  (ORClient.prototype as any)['help'] = () => {
+  (ORClientReader.prototype as any)['help'] = () => {
     const url = new URL(docOrigin);
     url.pathname = _indexPath;
     window.open(url, "_blank")?.focus();
   }
 
-  (ORClient.prototype as any)['version'] = () => {
+  (ORClientReader.prototype as any)['version'] = () => {
     console.log("versions: ", stringify(ordaoLibVersions));
   }
 
