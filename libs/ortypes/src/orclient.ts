@@ -268,6 +268,16 @@ export const zDecodedProposal = z.union([
 ]);
 export type DecodedProposal = z.infer<typeof zDecodedProposal>;
 
+export const zProposalRequest = z.union([
+  zCustomCallRequest,
+  zTickRequest,
+  zCustomSignalRequest,
+  zBurnRespectRequest,
+  zRespectAccountRequest,
+  zRespectBreakoutRequest
+]);
+export type ProposalRequest = z.infer<typeof zProposalRequest>;
+
 export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "customCall": zCustomCall,
   "tick": zTick,

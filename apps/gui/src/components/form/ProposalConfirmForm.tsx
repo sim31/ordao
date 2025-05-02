@@ -1,15 +1,16 @@
 import { Card, Center, Flex, Text } from "@chakra-ui/react";
-import { z } from "zod";
-import ZodForm from "../form/ZodForm";
+import { ProposalRequest } from "@ordao/ortypes/orclient.js";
 import { extractZodDescription } from "@ordao/zod-utils";
+import { z } from "zod";
+import { ObjectTable } from "../proposal-view/ObjectTable";
 
 
 interface ProposalFormProps<T extends z.AnyZodObject> {
-  schema: T
-  onSubmit: (data: z.infer<T>) => void;
+  propRequest: ProposalRequest,
+  schema: T,
 }
 
-export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: ProposalFormProps<T>) {
+export function ProposalConfirmForm<T extends z.AnyZodObject>({ schema, propRequest }: ProposalFormProps<T>) {
   const desc = extractZodDescription(schema);
   const propTitle = desc?.title;
 
@@ -28,7 +29,7 @@ export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit }: Pro
             {propTitle}
           </Text>
         </Flex>
-        <ZodForm schema={schema} onSubmit={onSubmit} />
+        <ObjectTable obj={propRequest} />
       </Card.Root>
     </Center>
   )

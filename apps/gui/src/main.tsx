@@ -8,13 +8,19 @@ import { config } from './global/config'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
+import Fallback from './components/Fallback'
+import NotFoundError from './components/NotFound'
 
 console.debug = console.log;
 console.debug("debug test")
 console.log("log test")
 
 // Create a new router instance
-const router = createRouter({ routeTree })
+const router = createRouter({
+  routeTree,
+  defaultErrorComponent: Fallback,
+  defaultNotFoundComponent: NotFoundError
+})
 
 // Register the router instance for type safety
 declare module '@tanstack/react-router' {

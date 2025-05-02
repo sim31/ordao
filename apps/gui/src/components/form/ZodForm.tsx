@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { ArrayTypeInfo, extractZodDescription, isPrimitive, ObjectTypeInfo, PrimitiveTypeInfo, strTypeMaxLength, TypeInfo, zodObjectFields } from '@ordao/zod-utils';
-import { FieldErrors, GlobalError, useForm } from 'react-hook-form';
+import { DefaultValues, FieldErrors, GlobalError, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable } from '@ordao/ts-utils';
 import { Button, Field, Fieldset, HStack, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
@@ -10,6 +10,8 @@ import { Button, Field, Fieldset, HStack, Input, NumberInput, Stack, Textarea } 
 interface ZodFormProps<T extends z.AnyZodObject> {
   schema: T
   onSubmit: (data: z.infer<T>) => void;
+  defaultValues?: DefaultValues<z.infer<T>>
+  submitButtonText?: string
 }
 
 type Errors = FieldErrors<{
@@ -18,15 +20,22 @@ type Errors = FieldErrors<{
 }>;
 type Error = GlobalError;
 
-function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>) {
+function ZodForm<T extends z.AnyZodObject>({
+  schema,
+  onSubmit,
+  submitButtonText,
+  defaultValues
+}: ZodFormProps<T>) {
   const { register, handleSubmit, formState: { errors }, watch, setValue } = useForm({
     resolver: zodResolver(schema),
     mode: "onSubmit",
+    defaultValues: defaultValues
   });
 
   const fields = zodObjectFields(schema);
   const { description } = extractZodDescription(schema);
   const formValues = watch();
+  const submitText = submitButtonText ?? 'Submit';
 
   const prefixStr = (str: string, prefix?: string) => {
     return prefix !== undefined ? `${prefix}.${str}` : str;
@@ -50,18 +59,22 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
 
   const renderNumber = (fieldName: string, typeInfo: PrimitiveTypeInfo) => {
     const setValueAs = typeInfo.typeName === 'number'
-      ? (v: string) => {
-        if (v.trim() === '') {
+      ? (v: unknown) => {
+        if (typeof v === 'string' && v.trim() === '') {
           return undefined;
-        } else {
+        } else if (typeof v === 'string' || typeof v === 'number' || typeof v === 'bigint') {
           return Number(v);
+        } else {
+          return undefined
         }
       }
-      : (v: string) => {
-        if (v.trim() === '') {
+      : (v: unknown) => {
+        if (typeof v === 'string' && v.trim() === '') {
           return undefined;
-        } else {
+        } else if (typeof v === 'string' || typeof v === 'number' || typeof v === 'bigint') {
           return BigInt(v);
+        } else {
+          return undefined;
         }
       }
 
@@ -181,7 +194,7 @@ function ZodForm<T extends z.AnyZodObject>({ schema, onSubmit }: ZodFormProps<T>
         </Stack>
       </Fieldset.Root>
       {/* <button type="submit">Submit</button> */}
-      <Button color="black" mt="2em" as="button" type="submit">Submit</Button>
+      <Button color="black" mt="2em" as="button" type="submit">{submitText}</Button>
     </form>
   );
 }

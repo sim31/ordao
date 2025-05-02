@@ -1,15 +1,20 @@
 import { SimpleGrid } from "@chakra-ui/react";
 import { propRequestSchemaMap } from "@ordao/ortypes/orclient.js";
 import { ProposalReqTypeCard } from "./ProposalReqTypeCard";
+import { PropType, PropTypeValues } from "@ordao/ortypes";
 // import { zCustomCall } from "@ordao/ortypes/orclient.js";
 
-export default function ProposalFormMenu() {
-  const cards = Object.entries(propRequestSchemaMap).map(([key, schema]) => {
+interface ProposalFormMenuProps {
+  onSelect: (propType: (keyof typeof propRequestSchemaMap)) => void
+}
+
+export default function ProposalFormMenu({ onSelect }: ProposalFormMenuProps) {
+  const cards = PropTypeValues.map((propType: PropType) => {
     return (
       <ProposalReqTypeCard
-        key={key}
-        schema={schema}
-        onClick={() => console.log("Clicked: ", key)}
+        key={propType}
+        schema={propRequestSchemaMap[propType]}
+        onClick={() => onSelect(propType)}
       />
     )
   })

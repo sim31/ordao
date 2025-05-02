@@ -36,5 +36,5 @@ export const Route = createRootRoute({
         <TanStackRouterDevtools />
       </Container>
     )
-  }
+  },
 })

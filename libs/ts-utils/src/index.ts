@@ -48,6 +48,23 @@ export function assertUnreachable(x: never): never {
     throw new Error("Didn't expect to get here");
 }
 
+export const flattenObj = (obj: any) => {
+  let result: any = {};
+
+  for (const i in obj) {
+    if (typeof obj[i] === 'object' && !Array.isArray(obj[i])) {
+      const temp = flattenObj(obj[i]);
+      for (const j in temp) {
+        result[i + '.' + j] = temp[j];
+      }
+    } else {
+      result[i] = obj[i];
+    }
+  }
+
+  return result;
+};
+
 export { ErrorWithCause } from "./ErrorWithCause.js";
 
 export * from "./version.js";

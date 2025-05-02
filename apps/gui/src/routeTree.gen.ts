@@ -13,7 +13,8 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as NewProposalImport } from './routes/newProposal'
 import { Route as IndexImport } from './routes/index'
-import { Route as NewProposalIndexImport } from './routes/newProposal.index'
+import { Route as NewProposalIndexImport } from './routes/newProposal/index'
+import { Route as NewProposalPropTypeIndexImport } from './routes/newProposal/$propType.index'
 
 // Create/Update Routes
 
@@ -32,6 +33,12 @@ const IndexRoute = IndexImport.update({
 const NewProposalIndexRoute = NewProposalIndexImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => NewProposalRoute,
+} as any)
+
+const NewProposalPropTypeIndexRoute = NewProposalPropTypeIndexImport.update({
+  id: '/$propType/',
+  path: '/$propType/',
   getParentRoute: () => NewProposalRoute,
 } as any)
 
@@ -60,6 +67,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof NewProposalIndexImport
       parentRoute: typeof NewProposalImport
     }
+    '/newProposal/$propType/': {
+      id: '/newProposal/$propType/'
+      path: '/$propType'
+      fullPath: '/newProposal/$propType'
+      preLoaderRoute: typeof NewProposalPropTypeIndexImport
+      parentRoute: typeof NewProposalImport
+    }
   }
 }
 
@@ -67,10 +81,12 @@ declare module '@tanstack/react-router' {
 
 interface NewProposalRouteChildren {
   NewProposalIndexRoute: typeof NewProposalIndexRoute
+  NewProposalPropTypeIndexRoute: typeof NewProposalPropTypeIndexRoute
 }
 
 const NewProposalRouteChildren: NewProposalRouteChildren = {
   NewProposalIndexRoute: NewProposalIndexRoute,
+  NewProposalPropTypeIndexRoute: NewProposalPropTypeIndexRoute,
 }
 
 const NewProposalRouteWithChildren = NewProposalRoute._addFileChildren(
@@ -81,11 +97,13 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/newProposal': typeof NewProposalRouteWithChildren
   '/newProposal/': typeof NewProposalIndexRoute
+  '/newProposal/$propType': typeof NewProposalPropTypeIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/newProposal': typeof NewProposalIndexRoute
+  '/newProposal/$propType': typeof NewProposalPropTypeIndexRoute
 }
 
 export interface FileRoutesById {
@@ -93,14 +111,20 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/newProposal': typeof NewProposalRouteWithChildren
   '/newProposal/': typeof NewProposalIndexRoute
+  '/newProposal/$propType/': typeof NewProposalPropTypeIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/newProposal' | '/newProposal/'
+  fullPaths: '/' | '/newProposal' | '/newProposal/' | '/newProposal/$propType'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/newProposal'
-  id: '__root__' | '/' | '/newProposal' | '/newProposal/'
+  to: '/' | '/newProposal' | '/newProposal/$propType'
+  id:
+    | '__root__'
+    | '/'
+    | '/newProposal'
+    | '/newProposal/'
+    | '/newProposal/$propType/'
   fileRoutesById: FileRoutesById
 }
 
@@ -134,11 +158,16 @@ export const routeTree = rootRoute
     "/newProposal": {
       "filePath": "newProposal.tsx",
       "children": [
-        "/newProposal/"
+        "/newProposal/",
+        "/newProposal/$propType/"
       ]
     },
     "/newProposal/": {
-      "filePath": "newProposal.index.tsx",
+      "filePath": "newProposal/index.tsx",
+      "parent": "/newProposal"
+    },
+    "/newProposal/$propType/": {
+      "filePath": "newProposal/$propType.index.tsx",
       "parent": "/newProposal"
     }
   }
