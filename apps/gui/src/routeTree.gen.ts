@@ -11,10 +11,17 @@
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as NewProposalImport } from './routes/newProposal'
 import { Route as IndexImport } from './routes/index'
 import { Route as NewProposalIndexImport } from './routes/newProposal.index'
 
 // Create/Update Routes
+
+const NewProposalRoute = NewProposalImport.update({
+  id: '/newProposal',
+  path: '/newProposal',
+  getParentRoute: () => rootRoute,
+} as any)
 
 const IndexRoute = IndexImport.update({
   id: '/',
@@ -23,9 +30,9 @@ const IndexRoute = IndexImport.update({
 } as any)
 
 const NewProposalIndexRoute = NewProposalIndexImport.update({
-  id: '/newProposal/',
-  path: '/newProposal/',
-  getParentRoute: () => rootRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => NewProposalRoute,
 } as any)
 
 // Populate the FileRoutesByPath interface
@@ -39,21 +46,41 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexImport
       parentRoute: typeof rootRoute
     }
-    '/newProposal/': {
-      id: '/newProposal/'
+    '/newProposal': {
+      id: '/newProposal'
       path: '/newProposal'
       fullPath: '/newProposal'
-      preLoaderRoute: typeof NewProposalIndexImport
+      preLoaderRoute: typeof NewProposalImport
       parentRoute: typeof rootRoute
+    }
+    '/newProposal/': {
+      id: '/newProposal/'
+      path: '/'
+      fullPath: '/newProposal/'
+      preLoaderRoute: typeof NewProposalIndexImport
+      parentRoute: typeof NewProposalImport
     }
   }
 }
 
 // Create and export the route tree
 
+interface NewProposalRouteChildren {
+  NewProposalIndexRoute: typeof NewProposalIndexRoute
+}
+
+const NewProposalRouteChildren: NewProposalRouteChildren = {
+  NewProposalIndexRoute: NewProposalIndexRoute,
+}
+
+const NewProposalRouteWithChildren = NewProposalRoute._addFileChildren(
+  NewProposalRouteChildren,
+)
+
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/newProposal': typeof NewProposalIndexRoute
+  '/newProposal': typeof NewProposalRouteWithChildren
+  '/newProposal/': typeof NewProposalIndexRoute
 }
 
 export interface FileRoutesByTo {
@@ -64,26 +91,27 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/newProposal': typeof NewProposalRouteWithChildren
   '/newProposal/': typeof NewProposalIndexRoute
 }
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/newProposal'
+  fullPaths: '/' | '/newProposal' | '/newProposal/'
   fileRoutesByTo: FileRoutesByTo
   to: '/' | '/newProposal'
-  id: '__root__' | '/' | '/newProposal/'
+  id: '__root__' | '/' | '/newProposal' | '/newProposal/'
   fileRoutesById: FileRoutesById
 }
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  NewProposalIndexRoute: typeof NewProposalIndexRoute
+  NewProposalRoute: typeof NewProposalRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  NewProposalIndexRoute: NewProposalIndexRoute,
+  NewProposalRoute: NewProposalRouteWithChildren,
 }
 
 export const routeTree = rootRoute
@@ -97,14 +125,21 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
-        "/newProposal/"
+        "/newProposal"
       ]
     },
     "/": {
       "filePath": "index.tsx"
     },
+    "/newProposal": {
+      "filePath": "newProposal.tsx",
+      "children": [
+        "/newProposal/"
+      ]
+    },
     "/newProposal/": {
-      "filePath": "newProposal.index.tsx"
+      "filePath": "newProposal.index.tsx",
+      "parent": "/newProposal"
     }
   }
 }

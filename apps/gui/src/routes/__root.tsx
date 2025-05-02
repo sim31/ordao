@@ -12,7 +12,7 @@ import { config } from '../global/config'
 
 const menuItems: Array<MenuItem> = [
   { id: "/", name: 'Proposals', icon: FiHome },
-  { id: "/newProposal/", name: 'New Proposal', icon: TbContract },
+  { id: "/newProposal", name: 'New Proposal', icon: TbContract },
   // TODO:
   { id: "submitBreakout", name: 'Submit Breakout Results', icon: FaRankingStar, externalLink: window.location.origin },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill, externalLink: config.parentRespectLink },

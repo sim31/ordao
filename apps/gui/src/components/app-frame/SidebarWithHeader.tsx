@@ -85,7 +85,7 @@ const SidebarContent = ({
     <Box
       transition="0.2s ease"
       bg={{ base: 'white', _dark: 'gray.900' }}
-      borderRight="1px"
+      borderRight="1px/*  */"
       borderRightColor={{ base: 'gray.400', _dark: 'gray.700' }}
       boxShadow="md"
       w={{ base: 'full', lg: 80 }}
@@ -124,15 +124,15 @@ const NavItem = ({ icon, children, selected, to, newTab, ...rest }: NavItemProps
       style={{ textDecoration: 'none' }}
       _focus={{ boxShadow: 'none' }}
     >
-      <RouterLink disabled={selected} to={to} target={newTab ? '_blank' : undefined}>
+      <RouterLink from="/" to={to} target={newTab ? '_blank' : undefined}>
         <Flex
           align="center"
           p="4"
           mx="4"
           borderRadius="lg"
           role="group"
-          cursor={selected ? 'default' : 'pointer'}
-          _hover={selected ? {} : { bg: 'cyan.400', color: 'white' }}
+          cursor="pointer"
+          _hover={{bg: 'cyan.400', color: 'white' }}
           color="black"
           fontSize="lg"
           fontWeight={selected ? 'extrabold' : 'normal'}
