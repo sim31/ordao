@@ -221,53 +221,15 @@ export class ORClientReader {
   /**
    * Get vote time remaining for a proposal (in milliseconds)
    */
-  async getVoteTimeRemaining(prop: Proposal): Promise<number> {
-    const age = Date.now() - prop.createTime.getTime();
-    const voteLen = await this.getVoteLength();
-    const voteRem = (voteLen * 1000) - age;
-    if (voteRem < 0) {
-      throw new Error("Vote has expired");
-    }
-    return voteRem;
-  }
-
-  async getVetoTimeRemaining(prop: Proposal): Promise<number> {
-    const age = Date.now() - prop.createTime.getTime();
-    const voteLen = await this.getVoteLength();
-    const vetoLen = await this.getVetoLength();
-    const voteRem = (voteLen * 1000) - age;
-    if (voteRem > 0) {
-      throw new Error("Not veto period");
-    }
-    const vetoRem = ((voteLen + vetoLen) * 1000) - age;
-    if (vetoRem < 0) {
-      throw new Error("Veto period has expired");
-    }
-    return vetoRem;
-  }
-
   async getVoteLength(): Promise<number> {
-    if (this._voteLength === undefined) {
-      this._voteLength = await this._getVoteLength();
-    }
-    return this._voteLength;
+    return await this._ctx.getVoteLength();
   }
 
   async getVetoLength(): Promise<number> {
-    if (this._vetoLength === undefined) {
-      this._vetoLength = await this._getVetoLength();
-    }
-    return this._vetoLength;
+    return await this._ctx.getVetoLength();
   }
 
-  private async _getVoteLength(): Promise<number> {
-    return Number(await this._ctx.orec.voteLen());
-  }
-
-  private async _getVetoLength(): Promise<number> {
-    return Number(await this._ctx.orec.vetoLen());
-  }
-  
+  // TODO: implementations of these should probably go to orcontext like for vote/veto length
   async getMinWeight(): Promise<number> {
     return Number(await this._ctx.orec.minWeight());
   }

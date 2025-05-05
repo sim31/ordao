@@ -318,6 +318,8 @@ export const zOnchainProp = zNOnchainProp.extend({
   voteStatus: zVoteStatus,
   stage: zStage, 
   execError: zExecError.optional(),
+  voteTimeLeftMs: z.function().args().returns(z.number()),
+  vetoTimeLeftMs: z.function().args().returns(z.number())
 });
 
 export const zProposal = zOnchainProp.merge(zProposedMsgBase.partial()).extend({

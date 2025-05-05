@@ -10,6 +10,7 @@ import { Required } from "utility-types";
 import { expect } from "chai";
 import { testVersion } from "@ordao/orec/utils";
 import { ErrorDecoder, DecodedError } from "@ordao/ethers-decode-error"
+import { NotVetoTimeError, NotVoteTimeError } from "./errors.js";
 
 export class OnchainPropNotFound extends Error {
   name: string = "OnchainPropNotFound"
@@ -58,6 +59,8 @@ export class ORContext<CT extends Config> {
   private _orecAddr?: EthAddress;
   private _runner: ContractRunner;
   private _errDecoder: ErrorDecoder;
+  private _voteLength?: number;
+  private _vetoLength?: number;
 
   constructor(
     state: StateForConfig<CT>,
@@ -216,6 +219,63 @@ export class ORContext<CT extends Config> {
     return this._newRespectAddr;
   }
 
+  async getVoteLength(refresh: boolean = false): Promise<number> {
+    if (this._voteLength === undefined || refresh) {
+      this._voteLength = await this._getVoteLength();
+    }
+    return this._voteLength;
+  }
+
+  async getVetoLength(refresh: boolean = false): Promise<number> {
+    if (this._vetoLength === undefined || refresh) {
+      this._vetoLength = await this._getVetoLength();
+    }
+    return this._vetoLength;
+  }
+
+  private async _getVoteLength(): Promise<number> {
+    return Number(await this.orec.voteLen());
+  }
+
+  private async _getVetoLength(): Promise<number> {
+    return Number(await this.orec.vetoLen());
+  }
+
+
+  getVoteTimeLeftSync(prop: OnchainProp, voteLen: number): number {
+    const age = Date.now() - prop.createTime.getTime();
+    const voteRem = (voteLen * 1000) - age;
+    if (voteRem < 0) {
+      throw new NotVoteTimeError();
+    }
+    return voteRem;
+  }
+
+  getVetoTimeLeftSync(prop: OnchainProp, voteLen: number, vetoLen: number): number {
+    const age = Date.now() - prop.createTime.getTime();
+    const voteRem = (voteLen * 1000) - age;
+    if (voteRem > 0) {
+      throw new NotVetoTimeError();
+    }
+    const vetoRem = ((voteLen + vetoLen) * 1000) - age;
+    if (vetoRem < 0) {
+      throw new NotVetoTimeError()
+    }
+    return vetoRem;
+  }
+
+  async getVoteTimeLeft(prop: OnchainProp): Promise<number> {
+    const voteLen = await this.getVoteLength();
+    return this.getVoteTimeLeftSync(prop, voteLen);
+  }
+
+  async getVetoTimeLeft(prop: OnchainProp): Promise<number> {
+    const voteLen = await this.getVoteLength();
+    const vetoLen = await this.getVetoLength();
+    return this.getVetoTimeLeftSync(prop, voteLen, vetoLen);
+  }
+
+  // TODO: these two functions should probably be somewhere else
   async getProposalFromChain(id: PropId): Promise<OnchainProp> {
     const prop = await this.tryGetPropFromChain(id);
     if (prop === undefined) {
@@ -245,6 +305,6 @@ export class ORContext<CT extends Config> {
 
       return r;
 
-      }
+    }
   }
 }

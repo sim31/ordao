@@ -13,6 +13,20 @@ export function ProposalStatusLine({ proposal }: ProposalStatusLineProps) {
     month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit', hour12: true
   })
 
+  const renderTimeLeft = () => {
+    let tstr: string | undefined;
+    if (proposal.stage === 'Voting') {
+      tstr = timeStr(proposal.voteTimeLeftMs())
+    } else if (proposal.stage === 'Veto') {
+      tstr = timeStr(proposal.vetoTimeLeftMs())
+    }
+    if (tstr) {
+      return `| ${tstr} left`
+    } else {
+      return undefined;
+    }
+  }
+
   return (
     <Flex gap={2} alignItems="center" mb={0.5}>
       <Badge 
@@ -20,7 +34,7 @@ export function ProposalStatusLine({ proposal }: ProposalStatusLineProps) {
         colorPalette={stageColors[proposal.stage]} 
         size="lg"
       >
-        {proposal.stage} {proposal.stage === 'Voting' || proposal.stage === 'Veto' ? `| ${timeStr(86300000)} left` : '' }
+        {proposal.stage} {renderTimeLeft()}
       </Badge>
       <Badge 
         variant="solid" 

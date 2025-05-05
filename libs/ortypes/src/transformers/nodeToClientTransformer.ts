@@ -73,6 +73,7 @@ import {
   voteTypeMap,
   zVoteTypeToStr
 } from "../orec.js";
+import { NotVetoTimeError, NotVoteTimeError } from "../errors.js";
 
 type ORContext = OrigORContext<ConfigWithOrnode>;
 
@@ -434,6 +435,17 @@ export class NodeToClientTransformer {
     }
   }
 
+  async voteTimeLeftFunc(onchainProp: OnchainProp): Promise<() => number> {
+    const voteLen = await this._ctx.getVoteLength();    
+    return this._ctx.getVoteTimeLeftSync.bind(this._ctx, onchainProp, voteLen);
+  }
+
+  async vetoTimeLeftFunc(onchainProp: OnchainProp): Promise<() => number> {
+    const voteLen = await this._ctx.getVoteLength();    
+    const vetoLen = await this._ctx.getVetoLength();
+    return this._ctx.getVetoTimeLeftSync.bind(this._ctx, onchainProp, voteLen, vetoLen);
+  }
+
   async transformProp(nodeProp: NProposal): Promise<Proposal> {
     const propId = nodeProp.id;
     const onchainProp = await this._ctx.tryGetPropFromChain(propId);
@@ -449,7 +461,9 @@ export class NodeToClientTransformer {
         execError,
         voteStatus: "Passed",   // If execution happened, it was passed
         stage: "Expired",       // If execution happened it is expired
-        createTime: new Date(nodeProp.createTs)
+        createTime: new Date(nodeProp.createTs),
+        voteTimeLeftMs: () => { throw new NotVoteTimeError() },
+        vetoTimeLeftMs: () => { throw new NotVetoTimeError() },
       };
       
     } else {
@@ -459,6 +473,8 @@ export class NodeToClientTransformer {
         execError,
         stage: stageMap[onchainProp.stage],
         voteStatus: voteStatusMap[onchainProp.voteStatus],
+        voteTimeLeftMs: await this.voteTimeLeftFunc(onchainProp),
+        vetoTimeLeftMs: await this.vetoTimeLeftFunc(onchainProp),
       };
     }
 
