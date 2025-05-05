@@ -71,12 +71,18 @@ export function useOrclientWithBackup(
 
   useEffect(() => {
     if (fullOrclient === undefined) {
+      console.log("fullOrclient is undefined");
       createReader(deployment!, backupProviderURL, orclientConfig).then(
-        orclient => setOrclient(orclient),
+        orclient => {
+          setOrclient(orclient);
+          (window as any).orclient = orclient;
+        },
         err => console.error(err)
       )      
     } else {
-      setOrclient(fullOrclient)
+      console.log("fullOrclient is defined");
+      setOrclient(fullOrclient);
+      (window as any).orclient = fullOrclient;
     }
   }, [fullOrclient, deployment, backupProviderURL, orclientConfig]);
 

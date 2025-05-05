@@ -18,6 +18,7 @@ import {
   VStack,
   Center,
 } from '@chakra-ui/react'
+import copy from 'copy-to-clipboard'
 import {
   FiMenu,
 } from 'react-icons/fi'
@@ -26,6 +27,7 @@ import { ReactNode } from 'react'
 import { config } from '../../global/config';
 import { RouteIds, Link as RouterLink, useMatches, useRouter } from '@tanstack/react-router';
 import { routeTree } from '../../routeTree.gen'
+import { toaster } from '../ui/toaster'
 
 export interface MenuItemBase {
   id: string
@@ -56,7 +58,10 @@ interface NavItemProps extends FlexProps {
 }
 
 interface HeaderProps extends FlexProps {
-  onMenuOpen: () => void
+  onMenuOpen: () => void,
+  accountInfo?: AccountInfo
+  onLogin: () => void
+  onLogout: () => void
 }
 
 export type MenuSelectHandler = (id: string) => void;
@@ -154,7 +159,17 @@ const NavItem = ({ icon, children, selected, to, newTab, ...rest }: NavItemProps
   )
 }
 
-const Header = ({ onMenuOpen, ...rest }: HeaderProps) => {
+const Header = ({ onMenuOpen, accountInfo, onLogin, onLogout, ...rest }: HeaderProps) => {
+  function handleCopy(): void {
+    if (accountInfo?.fullName) {
+      copy(accountInfo.fullName)
+    }
+    toaster.create({
+      description: 'Copied to clipboard',
+      type: 'info'
+    })
+  }
+
   return (
     <Box w="100%" height="20" pos="fixed" zIndex={100}>
       <Flex
@@ -186,36 +201,56 @@ const Header = ({ onMenuOpen, ...rest }: HeaderProps) => {
           {config.appTitle}
         </Text>
 
-        <Menu.Root>
-          <Menu.Trigger asChild>
-            <Button variant="outline" size="sm">
-              0x00001
-            </Button>
-          </Menu.Trigger>
-          <Portal>
-            <Menu.Positioner>
-              <Menu.Content>
-                <Menu.Item fontSize="lg"value="copy">Copy</Menu.Item>
-                <Menu.Item fontSize="lg" value="logout">Logout</Menu.Item>
-              </Menu.Content>
-            </Menu.Positioner>
-          </Portal>
+        {accountInfo
+          ? (
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <Button variant="outline" size="sm">
+                  {accountInfo.displayName}
+                </Button>
+              </Menu.Trigger>
+              <Portal>
+                <Menu.Positioner>
+                  <Menu.Content>
+                    <Menu.Item fontSize="lg" value="copy" onClick={handleCopy}>
+                      Copy
+                    </Menu.Item>
+                    <Menu.Item fontSize="lg" value="logout" onClick={onLogout}>Logout</Menu.Item>
+                  </Menu.Content>
+                </Menu.Positioner>
+              </Portal>
 
-        </Menu.Root>
+            </Menu.Root>
+          )
+          : (
+            <Button fontSize="lg" onClick={onLogin} color="black">Login</Button>
+          )
+        }
       </Flex>
     </Box>
   )
 }
 
+export interface AccountInfo {
+  displayName: string,
+  fullName: string
+}
+
 export interface SidebarWithHeaderProps {
   children: ReactNode,
-  menuItems: MenuItem[]
-  selectedMenuItemId: string 
+  menuItems: MenuItem[],
+  selectedMenuItemId: string,
+  accountInfo?: AccountInfo,
+  onLogin: () => void
+  onLogout: () => void
 }
 
 const SidebarWithHeader = ({
   children,
   menuItems,
+  accountInfo,
+  onLogin,
+  onLogout
 }: SidebarWithHeaderProps) => {
   const { open: drawerOpen, onOpen: onDrawerOpen, onClose: onDrawerClose } = useDisclosure()
   
@@ -249,7 +284,7 @@ const SidebarWithHeader = ({
       </Drawer.Root>
       {/* Header which adjusts to screen size and manages a drawer */}
       <VStack>
-        <Header onMenuOpen={onDrawerOpen} />
+        <Header onMenuOpen={onDrawerOpen} onLogin={onLogin} onLogout={onLogout} accountInfo={accountInfo} />
 
         <Center ml={{ base: 0, lg: 80 }} p="2em" mt="20">
           {children}

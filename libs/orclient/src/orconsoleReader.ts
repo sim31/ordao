@@ -1,7 +1,7 @@
 import { stringify } from "@ordao/ts-utils";
 import { ordaoLibVersions } from "./libVersions.js";
-import { ORClient as ORClientReader, ORContext, Config, defaultConfig } from "./orclient.js";
-import { PACKAGE_VERSION } from "./version.js";
+import { ORContext } from "./orclient.js";
+import { ORClientReader } from "./orclientReader.js";
 
 // TODO: A lot of duplicate code between this file and orconsole.ts
 
@@ -26,8 +26,8 @@ function _printHelp() {
 // TODO: add intro to documentation and about how to use the console.
 export class ORConsoleReader extends ORClientReader {
 
-  constructor(context: ORContext, cfg: Config = defaultConfig) {
-    super(context, cfg);
+  constructor(context: ORContext) {
+    super(context);
 
     _printHelp();
   }

@@ -38,7 +38,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
-ReactDOM.createRoot(document.getElementById('root')!).render(<App />)
+ReactDOM.createRoot(document.getElementById('root')!).render((
+  <React.StrictMode>
+    <PrivyProvider
+      appId={config.privyAppId || ""}
+      config={{
+        embeddedWallets: {
+          // IMPORTANT: use this option if you don't want to deal with multiple wallets per user account
+          // and you want to prefer external wallet if user has one.
+          createOnLogin: "users-without-wallets",
+        },
+      }}
+    >
+      <Provider>
+        <App />
+      </Provider>
+    </PrivyProvider>
+  </React.StrictMode>
+))
 
 // eslint-disable-next-line react-refresh/only-export-components
 function App() {
@@ -67,35 +84,6 @@ function App() {
     orclientServer.setOrclient(orclient);
   }, [orclient]);
 
-  // It does not make sense that I need to do this here
-  // const router = useRouter();
-  // useEffect(() => {
-  //   if (orclient) {
-  //     router.invalidate();
-  //   }
-  // }, [orclient, router]);
 
-
-  if (orclient) {
-    console.log("orclient is defined")
-  }
-
-  return (
-    <React.StrictMode>
-      <PrivyProvider
-        appId={config.privyAppId || ""}
-        config={{
-          embeddedWallets: {
-            // IMPORTANT: use this option if you don't want to deal with multiple wallets per user account
-            // and you want to prefer external wallet if user has one.
-            createOnLogin: "users-without-wallets",
-          },
-        }}
-      >
-        <Provider>
-          <RouterProvider router={router} context={{ orclientServer }} />
-        </Provider>
-      </PrivyProvider>
-    </React.StrictMode>
-  )
+  return <RouterProvider router={router} context={{ orclientServer }} />;
 }

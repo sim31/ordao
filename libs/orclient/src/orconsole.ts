@@ -1,7 +1,6 @@
 import { stringify } from "@ordao/ts-utils";
 import { ordaoLibVersions } from "./libVersions.js";
 import { ORClient, ORContext, Config, defaultConfig } from "./orclient.js";
-import { PACKAGE_VERSION } from "./version.js";
 
 // TODO: A lot of duplicate code between this file and orconsoleReader.ts
 
