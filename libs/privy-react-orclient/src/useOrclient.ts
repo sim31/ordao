@@ -54,7 +54,7 @@ export function useOrclient(
     } else if (orclient !== undefined) {
       setOrclient(undefined);
     }
-  }, [deployment, wallet]);
+  }, [deployment, wallet, orclientConfig]);
 
   return orclient;
 }
@@ -68,6 +68,7 @@ export function useOrclientWithBackup(
   const [orclient, setOrclient] = useState<ORClientReader | undefined>(undefined);
 
   const fullOrclient = useOrclient(deployment, wallet, orclientConfig);
+
   useEffect(() => {
     if (fullOrclient === undefined) {
       createReader(deployment!, backupProviderURL, orclientConfig).then(
@@ -77,7 +78,7 @@ export function useOrclientWithBackup(
     } else {
       setOrclient(fullOrclient)
     }
-  }, [fullOrclient])
+  }, [fullOrclient, deployment, backupProviderURL, orclientConfig]);
 
   return orclient;
 }

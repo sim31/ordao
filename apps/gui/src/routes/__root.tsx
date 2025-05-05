@@ -1,4 +1,4 @@
-import { createRootRoute,  Outlet } from '@tanstack/react-router'
+import { createRootRouteWithContext,  Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import SidebarWithHeader, { MenuItem } from '../components/app-frame/SidebarWithHeader'
 import { FiHome } from 'react-icons/fi'
@@ -9,6 +9,7 @@ import { PiMedalFill, PiMedalThin } from 'react-icons/pi'
 // import { GiConfirmed } from 'react-icons/gi'
 import { Container } from '@chakra-ui/react'
 import { config } from '../global/config'
+import { ORClientServer } from '../utils/orclientServer'
 
 const menuItems: Array<MenuItem> = [
   { id: "/", name: 'Proposals', icon: FiHome },
@@ -22,9 +23,12 @@ const menuItems: Array<MenuItem> = [
   // { id: "confirm", name: 'Confirm parent Respect', icon: GiConfirmed },
 ]
 
-export const Route = createRootRoute({
-  component: () => {
+interface RouterContext {
+  orclientServer: ORClientServer
+}
 
+export const Route = createRootRouteWithContext<RouterContext>()({
+  component: () => {
     return (
       <Container minHeight="100vh" minWidth="100vw" padding="0px">
         <SidebarWithHeader

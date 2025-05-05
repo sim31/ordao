@@ -18,7 +18,9 @@ export const zConfig = z.object({
   privyAppId: z.string(),
   docsOrigin: z.string().url(),
   parentRespectLink: z.string().url(),
-  childRespectLink: z.string().url()
+  childRespectLink: z.string().url(),
+  defaultPropQuerySize: z.number().int().gt(0).default(6)
+
 });
 export type Config = z.infer<typeof zConfig>;
 
@@ -30,6 +32,7 @@ const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;
 const docsOrigin = import.meta.env.VITE_DOCS_ORIGIN;
 const parentRespectLink = import.meta.env.VITE_PARENT_RESPECT_LINK;
 const childRespectLink = import.meta.env.VITE_CHILD_RESPECT_LINK;
+const defaultPropQuerySize = import.meta.env.VITE_DEFAULT_PROP_QUERY_SIZE;
 
 const chainId = import.meta.env.VITE_CHAIN_ID;
 const rpcUrls = import.meta.env.VITE_RPC_URLS.split(",");
@@ -51,7 +54,8 @@ export const config = zConfig.parse({
   privyAppId,
   docsOrigin,
   parentRespectLink,
-  childRespectLink
+  childRespectLink,
+  defaultPropQuerySize
 });
 
 export const orclientConfig: CreateOrclientConfig = {
