@@ -5,8 +5,8 @@ import { Text } from '@chakra-ui/react'
 
 export const Route = createFileRoute('/')({
   component: Index,
-  loader: (async ({ context }) => {
-    const orclient = await context.orclientServer.getOrclient();
+  loader: (async ({ context: { appContext } }) => {
+    const orclient = await appContext.getOrclient();
     const proposals = await orclient.getProposals({ limit: config.defaultPropQuerySize });
     return { proposals };
   })

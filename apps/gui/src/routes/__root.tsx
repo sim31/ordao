@@ -9,11 +9,11 @@ import { PiMedalFill, PiMedalThin } from 'react-icons/pi'
 // import { GiConfirmed } from 'react-icons/gi'
 import { Container, Flex } from '@chakra-ui/react'
 import { config } from '../global/config'
-import { ORClientServer } from '../utils/orclientServer'
 import { Toaster } from '../components/ui/toaster'
 import { usePrivy, useWallets } from '@privy-io/react-auth'
 import { useEffect, useMemo } from 'react'
 import { formatEthAddress } from "eth-address";
+import { AppContext } from '../global/appContext'
 
 const menuItems: Array<MenuItem> = [
   { id: "/", name: 'Proposals', icon: FiHome },
@@ -27,8 +27,8 @@ const menuItems: Array<MenuItem> = [
   // { id: "confirm", name: 'Confirm parent Respect', icon: GiConfirmed },
 ]
 
-interface RouterContext {
-  orclientServer: ORClientServer
+export interface RouterContext {
+  appContext: AppContext
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

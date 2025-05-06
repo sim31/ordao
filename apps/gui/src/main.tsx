@@ -12,20 +12,18 @@ import NotFoundError from './components/NotFound'
 import { deploymentInfo, orclientConfig, config } from "./global/config.js";
 import { useOrclientWithBackup } from '@ordao/privy-react-orclient'
 import { Loading } from './components/Loading.js'
-import { ORClientServer } from './utils/orclientServer.js'
+import { AppContext } from './global/appContext.js'
 
 console.debug = console.log;
 console.debug("debug test")
 console.log("log test")
 
-const orclientServer = new ORClientServer();
+const appContext = new AppContext();
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: {
-    orclientServer
-  },
+  context: { appContext },
   defaultErrorComponent: Fallback,
   defaultNotFoundComponent: NotFoundError,
   defaultPendingComponent: Loading
@@ -81,9 +79,33 @@ function App() {
   );
 
   useEffect(() => {
-    orclientServer.setOrclient(orclient);
-  }, [orclient]);
+    const prevOrclient = appContext.getOrclientSync();
+    console.log("prevOrclient: ", prevOrclient, ", orclient: ", orclient);
+    let invalidate: boolean = false;
 
+    const prevPrivyReady = appContext.getPrivyReadSync();
+    if (prevPrivyReady !== privyReady) {
+      appContext.setPrivyReady(privyReady);
+      invalidate = true;
+    }
 
-  return <RouterProvider router={router} context={{ orclientServer }} />;
+    const prevUserWallet = appContext.getPrivyWalletSync();
+    if (prevUserWallet !== userWallet) {
+      appContext.setPrivyWallet(userWallet);
+      invalidate = true;
+    }
+
+    if (prevOrclient !== orclient) {
+      appContext.setOrclient(orclient);
+      invalidate = true;
+    }
+
+    if (invalidate) {
+      console.log("invalidating router context");
+      router.invalidate();
+    }
+
+  }, [privyReady, orclient, userWallet]);
+
+  return <RouterProvider router={router} />;
 }

@@ -1,7 +1,7 @@
 import { Badge, Flex, Text } from "@chakra-ui/react"
 import { Proposal } from "@ordao/ortypes/orclient.js"
 import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors"
-import { timeStr } from "../../utils/time"
+import { safeVetoTimeLeftStrFromProp, safeVoteTimeLeftStrFromProp } from "../../utils/time"
 import { ShortPropId } from "./ShortPropId"
 
 export interface ProposalStatusLineProps {
@@ -16,9 +16,9 @@ export function ProposalStatusLine({ proposal }: ProposalStatusLineProps) {
   const renderTimeLeft = () => {
     let tstr: string | undefined;
     if (proposal.stage === 'Voting') {
-      tstr = timeStr(proposal.voteTimeLeftMs())
+      tstr = safeVoteTimeLeftStrFromProp(proposal);
     } else if (proposal.stage === 'Veto') {
-      tstr = timeStr(proposal.vetoTimeLeftMs())
+      tstr = safeVetoTimeLeftStrFromProp(proposal);
     }
     if (tstr) {
       return `| ${tstr} left`
