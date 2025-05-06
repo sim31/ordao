@@ -1,12 +1,14 @@
 import { ProposalCard } from "./ProposalCard";
 import { Proposal } from "@ordao/orclient";
 
+
 export interface ProposalListProps {
   proposals: Proposal[]
-
 }
 
-export function ProposalList({ proposals }: ProposalListProps) {
+export function ProposalList({
+  proposals,
+}: ProposalListProps) {
   return (
     <>
       {proposals.map((prop) => (

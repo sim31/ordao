@@ -28,7 +28,7 @@ const menuItems: Array<MenuItem> = [
 ]
 
 export interface RouterContext {
-  appContext: AppContext
+  appContext: AppContext,
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({

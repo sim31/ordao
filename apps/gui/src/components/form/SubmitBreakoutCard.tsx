@@ -2,7 +2,7 @@ import { Card, Center, Fieldset, Flex, IconButton, Spacer, Text } from "@chakra-
 import { ORClient } from "@ordao/orclient";
 import { IoMdClose } from "react-icons/io";
 import SubmitBreakoutForm from "./SubmitBreakoutForm";
-import { SearchParams } from "../../global/searchParams";
+import { SearchParams } from "../../global/submitBreakoutSearchParams";
 
 interface SubmitBreakoutCardProps {
   orclient: ORClient;

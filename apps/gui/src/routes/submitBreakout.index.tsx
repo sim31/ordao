@@ -5,7 +5,7 @@ import { usePrivy } from '@privy-io/react-auth';
 import { useMemo } from 'react';
 import { isORClient, ORClient } from '@ordao/orclient';
 import { Button, Center } from '@chakra-ui/react';
-import { zSearchParams } from '../global/searchParams';
+import { zSearchParams } from '../global/submitBreakoutSearchParams';
 import { sleep } from '@ordao/ts-utils';
 
 export const Route = createFileRoute('/submitBreakout/')({

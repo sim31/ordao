@@ -21,7 +21,7 @@ import { linkToTx } from "../../utils/blockExplorerLink";
 import { FiExternalLink } from "react-icons/fi";
 import copy from "copy-to-clipboard";
 import { toaster } from "../ui/toaster";
-import { SearchParams, isSearchParamsKey } from "../../global/searchParams.js";
+import { SearchParams, isSearchParamsKey } from "../../global/submitBreakoutSearchParams.js";
 
 export type SubmitBreakoutFormProps = {
   orclient: ORClient;
