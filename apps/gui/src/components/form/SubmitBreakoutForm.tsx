@@ -1,27 +1,21 @@
-import { 
-  Stack,
-  Input,
+import {
   Button,
-  Text,
-  Link,
-  VStack,
-  Spinner,
   Field,
-  Icon,
+  Input,
+  Spinner,
+  Stack,
+  Text
 } from "@chakra-ui/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { ORClient, ProposeRes } from "@ordao/orclient";
 import { RespectBreakoutRequest, zRespectBreakoutRequest } from "@ordao/ortypes/orclient.js";
-import { ORClient } from "@ordao/orclient";
-import { fromError } from 'zod-validation-error';
-import { hashObject } from "../../utils/objectHash";
-import SubmitBreakoutResModal from "./SubmitBreakoutResModal";
-import TxProgressModal from "../TxProgressModal";
-import { decodeError } from "../../utils/decodeTxError";
-import { linkToTx } from "../../utils/blockExplorerLink";
-import { FiExternalLink } from "react-icons/fi";
 import copy from "copy-to-clipboard";
-import { toaster } from "../ui/toaster";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { fromError } from 'zod-validation-error';
 import { SearchParams, isSearchParamsKey } from "../../global/submitBreakoutSearchParams.js";
+import { hashObject } from "../../utils/objectHash";
+import OnchainActionModal from "../OnchainActionModal.js";
+import { toaster } from "../ui/toaster";
+import SubmitBreakoutResModal from "./SubmitBreakoutResModal";
 
 export type SubmitBreakoutFormProps = {
   orclient: ORClient;
@@ -37,12 +31,7 @@ export default function SubmitBreakoutForm({ orclient, onComplete, searchParams,
   const [submitOpen, setSubmitOpen] = useState<boolean>(false);
   const [consensusId, setConsensusId] = useState<string>("");
   const [request, setRequest] = useState<RespectBreakoutRequest>();
-  const [txProgressOpen, setTxProgressOpen] = useState<boolean>(false);
-  const [txProgressStr, setTxProgressStr] = useState("");
-  const [txProgressStatus, setTxProgressStatus] = 
-    useState<'submitting' | 'submitted' | 'error' | undefined>()
-  const [txHash, setTxHash] = useState("");
-
+  const [txPromise, setTxPromise] = useState<Promise<ProposeRes> | undefined>(undefined);
 
   useEffect(() => {
     const f = async () => {
@@ -64,11 +53,11 @@ export default function SubmitBreakoutForm({ orclient, onComplete, searchParams,
   }
 
   // This should only be called when tx is finished
-  const closeTxProgressModal = () => {
-    setTxProgressStr("");
-    setTxProgressStatus(undefined);
-    setTxProgressOpen(false);
-    onComplete();
+  const closeTxProgressModal = (success: boolean) => {
+    setTxPromise(undefined);
+    if (success) {
+      onComplete();
+    }
   }
 
   const onResSubmit = useCallback(async () => {
@@ -79,26 +68,7 @@ export default function SubmitBreakoutForm({ orclient, onComplete, searchParams,
       throw new Error("orclient not initialized");
     }
     closeSubmitModal();
-    setTxProgressStatus('submitting');
-    setTxProgressStr("");
-    setTxProgressOpen(true);
-    try {
-      const res = await orclient.proposeBreakoutResult(request);
-      // TODO: block explorer link
-      setTxProgressStatus('submitted');
-      setTxHash(res.txReceipt.hash);
-    } catch (err) {
-      setTxProgressStr("");
-      const decoded = decodeError(err);
-      if (decoded) {
-        // TODO: more friendly error message, explaining if it is a revert or what
-        setTxProgressStr(`Transaction failed. Error type: ${decoded.type}, reason: ${decoded.reason}`)
-        setTxProgressStatus('error');
-      } else {
-        setTxProgressOpen(false);
-        throw err;
-      }
-    }
+    setTxPromise(orclient.proposeBreakoutResult(request));
   }, [request, orclient, initialized])
 
   const onSubmitClick = async () => {
@@ -131,14 +101,6 @@ export default function SubmitBreakoutForm({ orclient, onComplete, searchParams,
     }
   }
 
-  const explorerLink = useMemo(() => {
-    if (typeof txHash === 'string' && txHash.length > 0) {
-      return linkToTx(txHash);
-    } else {
-      return undefined;
-    }
-  }, [txHash]);
-
   const fieldsFilled = useMemo(() => {
     return meeting !== "" && searchParams.groupNumber !== undefined
            && searchParams.vote1 !== "" && searchParams.vote2 !== ""
@@ -168,27 +130,11 @@ export default function SubmitBreakoutForm({ orclient, onComplete, searchParams,
           consensusId={consensusId}
         />
 
-        <TxProgressModal
-          isOpen={txProgressOpen}
-          operationStr="Voting"
-          done={txProgressStatus === 'error' || txProgressStatus === 'submitted'}
+        <OnchainActionModal
+          action={txPromise}
+          title="Submitting Breakout Results"
           onClose={closeTxProgressModal}
-        >
-          {txProgressStatus === 'submitting' || txProgressStatus === 'error'
-            ? <Text>{txProgressStr}</Text>
-            : (
-              <VStack>
-                <Text fontSize="md">Vote Submitted!</Text>
-                <Link fontSize="md" color="teal.500" href={explorerLink} target="_blank">
-                  Transaction in Block Explorer
-                  <Icon color="black" background="transparent" size="sm" marginLeft="1px">
-                    <FiExternalLink />
-                  </Icon>
-                </Link>
-              </VStack>
-            )
-          }
-        </TxProgressModal>
+        />
 
         <Field.Root>
           <Field.Label>Meeting number</Field.Label>

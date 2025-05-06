@@ -6,16 +6,23 @@ import { extractZodDescription } from "@ordao/zod-utils";
 import { ProposalStatusLine } from "./ProposalStatusLine.js";
 import { VoteButtons } from "./VoteButtons.js";
 import { ProposalVoteStat } from "./ProposalVoteStat.js";
+import { Link } from "@tanstack/react-router";
+import { ExecuteButton } from "../ExecuteButton.js";
+import { ORClientType } from "@ordao/orclient";
 
 export interface ProposalCardProps {
   proposal: Proposal,
+  onExecuteClick: () => void;
+  orclient: ORClientType;
+  // onVoteYesClick: () => void;
 }
 
-export function ProposalCard({ proposal }: ProposalCardProps) {
+export function ProposalCard({ proposal, onExecuteClick, orclient }: ProposalCardProps) {
   const propType = proposal.decoded?.propType;
   const zPropType = propType && propSchemaMap[propType];
   const desc = zPropType && extractZodDescription(zPropType);
   const propTitle = desc?.title !== undefined ? desc.title : 'Unknown proposal type';
+  // TODO: would be good not to depend on router here
 
   const propKnown = proposal.cdata && proposal.addr && proposal.memo;
 
@@ -52,12 +59,15 @@ export function ProposalCard({ proposal }: ProposalCardProps) {
       </Card.Body>
 
       <Card.Footer mb="0" pb="0.5em">
-        <VoteButtons proposal={proposal} />
-        <Button variant="outline" onClick={() => console.log("More info clicked")}>
-          Details
+        <VoteButtons proposal={proposal} orclient={orclient}/>
+        <ExecuteButton proposal={proposal} orclient={orclient} onClick={onExecuteClick} />
+        <Button variant="outline" asChild>
+          <Link to={`/proposal/$propId`} params={ { propId: proposal.id }} color="black">
+            Details
+          </Link>  
         </Button>
 
-        <Clipboard.Root value="https://chakra-ui.com">
+        <Clipboard.Root value={`${window.location.origin}/proposal/${proposal.id}`}>
           <Clipboard.Trigger asChild>
             <Button variant="surface" size="sm">
               <Clipboard.Indicator />

@@ -43,6 +43,14 @@ export type ExecRes = OnchainActionRes & {
   execError?: ExecError
 };
 
+export function isProposalRes(res: OnchainActionRes): res is ProposeRes {
+  return (res as ProposeRes).proposal !== undefined;
+}
+
+export function isExecRes(res: OnchainActionRes): res is ExecRes {
+  return (res as ExecRes).execStatus !== undefined;
+}
+
 /**
  * Client for ORDAO system.
  */

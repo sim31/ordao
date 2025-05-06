@@ -72,6 +72,8 @@ interface SidebarProps extends BoxProps {
   onMenuSelect: MenuSelectHandler
 }
 
+// const removeTrailingBracesRegex = /\{\s*\}$/;
+
 const SidebarContent = ({
   onClose,
   menuItems,
@@ -239,7 +241,6 @@ export interface AccountInfo {
 export interface SidebarWithHeaderProps {
   children: ReactNode,
   menuItems: MenuItem[],
-  selectedMenuItemId: string,
   accountInfo?: AccountInfo,
   onLogin: () => void
   onLogout: () => void

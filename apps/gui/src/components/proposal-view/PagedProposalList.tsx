@@ -1,10 +1,11 @@
 import { Text, VStack } from "@chakra-ui/react";
-import { Proposal } from "@ordao/orclient";
+import { ORClientType, Proposal } from "@ordao/orclient";
 import { ProposalList } from "./ProposalList";
 
 
 export interface PagedProposalListProps {
   proposals: Proposal[]
+  orclient: ORClientType
   // forwardEnabled: boolean,
   // backEnabled: boolean
   // onForward: () => void
@@ -13,6 +14,7 @@ export interface PagedProposalListProps {
 
 export function PagedProposalList({
   proposals,
+  orclient
   // forwardEnabled,
   // backEnabled,
   // onForward,
@@ -36,7 +38,7 @@ export function PagedProposalList({
       {
         proposals.length === 0
         ? <Text>No proposals found</Text>
-        : <ProposalList proposals={proposals} />
+        : <ProposalList orclient={orclient} proposals={proposals} />
       }
     </VStack>
   );

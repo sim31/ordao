@@ -15,6 +15,7 @@ import { Route as NewProposalImport } from './routes/newProposal'
 import { Route as IndexImport } from './routes/index'
 import { Route as SubmitBreakoutIndexImport } from './routes/submitBreakout.index'
 import { Route as NewProposalIndexImport } from './routes/newProposal/index'
+import { Route as ProposalPropIdImport } from './routes/proposal/$propId'
 import { Route as NewProposalPropTypeIndexImport } from './routes/newProposal/$propType.index'
 
 // Create/Update Routes
@@ -43,6 +44,12 @@ const NewProposalIndexRoute = NewProposalIndexImport.update({
   getParentRoute: () => NewProposalRoute,
 } as any)
 
+const ProposalPropIdRoute = ProposalPropIdImport.update({
+  id: '/proposal/$propId',
+  path: '/proposal/$propId',
+  getParentRoute: () => rootRoute,
+} as any)
+
 const NewProposalPropTypeIndexRoute = NewProposalPropTypeIndexImport.update({
   id: '/$propType/',
   path: '/$propType/',
@@ -65,6 +72,13 @@ declare module '@tanstack/react-router' {
       path: '/newProposal'
       fullPath: '/newProposal'
       preLoaderRoute: typeof NewProposalImport
+      parentRoute: typeof rootRoute
+    }
+    '/proposal/$propId': {
+      id: '/proposal/$propId'
+      path: '/proposal/$propId'
+      fullPath: '/proposal/$propId'
+      preLoaderRoute: typeof ProposalPropIdImport
       parentRoute: typeof rootRoute
     }
     '/newProposal/': {
@@ -110,6 +124,7 @@ const NewProposalRouteWithChildren = NewProposalRoute._addFileChildren(
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/newProposal': typeof NewProposalRouteWithChildren
+  '/proposal/$propId': typeof ProposalPropIdRoute
   '/newProposal/': typeof NewProposalIndexRoute
   '/submitBreakout': typeof SubmitBreakoutIndexRoute
   '/newProposal/$propType': typeof NewProposalPropTypeIndexRoute
@@ -117,6 +132,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/proposal/$propId': typeof ProposalPropIdRoute
   '/newProposal': typeof NewProposalIndexRoute
   '/submitBreakout': typeof SubmitBreakoutIndexRoute
   '/newProposal/$propType': typeof NewProposalPropTypeIndexRoute
@@ -126,6 +142,7 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
   '/newProposal': typeof NewProposalRouteWithChildren
+  '/proposal/$propId': typeof ProposalPropIdRoute
   '/newProposal/': typeof NewProposalIndexRoute
   '/submitBreakout/': typeof SubmitBreakoutIndexRoute
   '/newProposal/$propType/': typeof NewProposalPropTypeIndexRoute
@@ -136,15 +153,22 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/newProposal'
+    | '/proposal/$propId'
     | '/newProposal/'
     | '/submitBreakout'
     | '/newProposal/$propType'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/newProposal' | '/submitBreakout' | '/newProposal/$propType'
+  to:
+    | '/'
+    | '/proposal/$propId'
+    | '/newProposal'
+    | '/submitBreakout'
+    | '/newProposal/$propType'
   id:
     | '__root__'
     | '/'
     | '/newProposal'
+    | '/proposal/$propId'
     | '/newProposal/'
     | '/submitBreakout/'
     | '/newProposal/$propType/'
@@ -154,12 +178,14 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   NewProposalRoute: typeof NewProposalRouteWithChildren
+  ProposalPropIdRoute: typeof ProposalPropIdRoute
   SubmitBreakoutIndexRoute: typeof SubmitBreakoutIndexRoute
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   NewProposalRoute: NewProposalRouteWithChildren,
+  ProposalPropIdRoute: ProposalPropIdRoute,
   SubmitBreakoutIndexRoute: SubmitBreakoutIndexRoute,
 }
 
@@ -175,6 +201,7 @@ export const routeTree = rootRoute
       "children": [
         "/",
         "/newProposal",
+        "/proposal/$propId",
         "/submitBreakout/"
       ]
     },
@@ -187,6 +214,9 @@ export const routeTree = rootRoute
         "/newProposal/",
         "/newProposal/$propType/"
       ]
+    },
+    "/proposal/$propId": {
+      "filePath": "proposal/$propId.tsx"
     },
     "/newProposal/": {
       "filePath": "newProposal/index.tsx",
