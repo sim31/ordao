@@ -17,6 +17,7 @@ import { IoMdClose } from 'react-icons/io';
 import { decodeError } from '../utils/decodeTxError';
 import { FiExternalLink } from 'react-icons/fi';
 import { linkToTx } from '../utils/blockExplorerLink';
+import { stringify } from '@ordao/ts-utils';
 
 export type OnchainActionModalProps = {
   onClose: (success: boolean) => void;
@@ -70,7 +71,8 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
           setTxProgressStr(`Transaction failed. Error type: ${decoded.type}, reason: ${decoded.reason}`)
           setTxProgressStatus('error');
         } else {
-          throw err;
+          setTxProgressStr(`Transaction failed. Error: ${stringify(err)}`)
+          setTxProgressStatus('error');
         }
       }
     }

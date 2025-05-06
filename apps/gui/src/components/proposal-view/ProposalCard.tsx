@@ -1,5 +1,5 @@
 import { Button, Card, Text, Clipboard } from "@chakra-ui/react";
-import { Proposal, propSchemaMap } from "@ordao/ortypes/orclient.js";
+import { Proposal, propSchemaMap, ValidVoteType } from "@ordao/ortypes/orclient.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";
 import { PropTable } from "./PropTable.js";
 import { extractZodDescription } from "@ordao/zod-utils";
@@ -14,10 +14,10 @@ export interface ProposalCardProps {
   proposal: Proposal,
   onExecuteClick: () => void;
   orclient: ORClientType;
-  // onVoteYesClick: () => void;
+  onVoteClick: (vote: ValidVoteType) => void;
 }
 
-export function ProposalCard({ proposal, onExecuteClick, orclient }: ProposalCardProps) {
+export function ProposalCard({ proposal, onExecuteClick, orclient, onVoteClick }: ProposalCardProps) {
   const propType = proposal.decoded?.propType;
   const zPropType = propType && propSchemaMap[propType];
   const desc = zPropType && extractZodDescription(zPropType);
@@ -59,7 +59,7 @@ export function ProposalCard({ proposal, onExecuteClick, orclient }: ProposalCar
       </Card.Body>
 
       <Card.Footer mb="0" pb="0.5em">
-        <VoteButtons proposal={proposal} orclient={orclient}/>
+        <VoteButtons proposal={proposal} orclient={orclient} onVoteClick={onVoteClick}/>
         <ExecuteButton proposal={proposal} orclient={orclient} onClick={onExecuteClick} />
         <Button variant="outline" asChild>
           <Link to={`/proposal/$propId`} params={ { propId: proposal.id }} color="black">

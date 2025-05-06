@@ -1,7 +1,7 @@
 import { useState } from "react";
 import OnchainActionModal from "../OnchainActionModal";
 import { ProposalCard } from "./ProposalCard";
-import { isORClient, OnchainActionRes, ORClientType, Proposal } from "@ordao/orclient";
+import { isORClient, OnchainActionRes, ORClientType, Proposal, ValidVoteType } from "@ordao/orclient";
 import { PropId } from "@ordao/ortypes";
 import { useNavigate } from "@tanstack/react-router";
 
@@ -46,6 +46,18 @@ export function ProposalList({
     }
   }
 
+  const onVoteClick = (propId: PropId, vote: ValidVoteType) => {
+    if (isORClient(orclient)) {
+      setActionPromise({
+        title: "Voting on proposal",
+        propId,
+        action: orclient.vote(propId, vote),
+      });
+    } else {
+      throw new Error("ORClient cannot write");
+    }
+  }
+
   return (
     <>
       <OnchainActionModal
@@ -59,6 +71,7 @@ export function ProposalList({
           key={prop.id}
           proposal={prop}
           onExecuteClick={() => onExecuteClick(prop.id)}
+          onVoteClick={(vote) => onVoteClick(prop.id, vote)}
           orclient={orclient}
         />
       ))}
