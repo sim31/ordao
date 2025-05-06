@@ -1,8 +1,8 @@
 import { ExecStatus, Stage, VoteStatus } from "@ordao/ortypes/orclient.js";
 
 export const stageColors: Record<Stage, string> = {
-  Voting: "orange",
-  Veto: "yellow",
+  Voting: "yellow",
+  Veto: "orange",
   Execution: "green",
   Expired: "black"
 };

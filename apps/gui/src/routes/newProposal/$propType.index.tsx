@@ -1,5 +1,5 @@
 import { createFileRoute, notFound } from '@tanstack/react-router'
-import { ProposalForm } from '../../components/form/ProposalForm'
+import { ProposalZodCard } from '../../components/form/ProposalZodCard'
 import { propRequestSchemaMap } from '@ordao/ortypes/orclient.js'
 import { zPropType } from '@ordao/ortypes';
 
@@ -20,7 +20,7 @@ function RouteComponent() {
   const navigate = Route.useNavigate();
 
   return (
-    <ProposalForm
+    <ProposalZodCard
       schema={propRequestSchemaMap[propType]}
       onSubmit={console.log}
       onCancel={() => navigate({ to: '/newProposal' })}

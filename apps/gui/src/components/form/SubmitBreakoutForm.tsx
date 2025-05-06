@@ -1,46 +1,38 @@
 import { 
   Stack,
   Input,
-  FormControl,
-  FormLabel,
   Button,
   Text,
   Link,
   VStack,
   Spinner,
-  useToast
+  Field,
+  Icon,
 } from "@chakra-ui/react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { RespectBreakoutRequest, zRespectBreakoutRequest } from "@ordao/ortypes/orclient.js";
 import { ORClient } from "@ordao/orclient";
-import { useSearchParamsState, SearchParamsStateType } from 'react-use-search-params-state'
 import { fromError } from 'zod-validation-error';
-import { hashObject } from "../utils/objectHash";
+import { hashObject } from "../../utils/objectHash";
 import SubmitBreakoutResModal from "./SubmitBreakoutResModal";
-import TxProgressModal from "./TxProgressModal";
-import { decodeError } from "../utils/decodeTxError";
-import { linkToTx } from "../utils/blockExplorerLink";
-import { ExternalLinkIcon } from '@chakra-ui/icons'
+import TxProgressModal from "../TxProgressModal";
+import { decodeError } from "../../utils/decodeTxError";
+import { linkToTx } from "../../utils/blockExplorerLink";
+import { FiExternalLink } from "react-icons/fi";
 import copy from "copy-to-clipboard";
+import { toaster } from "../ui/toaster";
+import { SearchParams, isSearchParamsKey } from "../../global/searchParams.js";
 
-const resultDefaults: SearchParamsStateType = {
-  groupnumber: { type: 'number', default: null },
-  vote1: { type: 'string', default: "" },
-  vote2: { type: 'string', default: "" },
-  vote3: { type: 'string', default: "" },
-  vote4: { type: 'string', default: "" },
-  vote5: { type: 'string', default: "" },
-  vote6: { type: 'string', default: "" },
+export type SubmitBreakoutFormProps = {
+  orclient: ORClient;
+  searchParams: SearchParams;
+  setSearchParams: (searchParams: object) => void
+  onComplete: () => void;
 }
 
-export type RespectBreakoutFormProps = {
-  orclient: ORClient
-}
-
-export default function RespectBreakoutForm({ orclient }: RespectBreakoutFormProps) {
+export default function SubmitBreakoutForm({ orclient, onComplete, searchParams, setSearchParams}: SubmitBreakoutFormProps) {
   const [meeting, setMeeting] = useState<string>("");
   const [initialized, setInitialized] = useState<boolean>(false);
-  const [results, setResults] = useSearchParamsState(resultDefaults);
   const [errorStr, setErrorStr] = useState<string | undefined>(undefined);
   const [submitOpen, setSubmitOpen] = useState<boolean>(false);
   const [consensusId, setConsensusId] = useState<string>("");
@@ -67,14 +59,16 @@ export default function RespectBreakoutForm({ orclient }: RespectBreakoutFormPro
 
   const openSubmitModal = async (req: RespectBreakoutRequest) => {
     setRequest(req);
-    setConsensusId(await hashObject(results));
+    setConsensusId(await hashObject(searchParams));
     setSubmitOpen(true);
   }
 
+  // This should only be called when tx is finished
   const closeTxProgressModal = () => {
     setTxProgressStr("");
     setTxProgressStatus(undefined);
     setTxProgressOpen(false);
+    onComplete();
   }
 
   const onResSubmit = useCallback(async () => {
@@ -111,15 +105,16 @@ export default function RespectBreakoutForm({ orclient }: RespectBreakoutFormPro
     const rankings: Array<string> = [];
     for (let i = 1; i <= 6; i++) {
       const key = `vote${i}`;
-      if (typeof results[key] === 'string' && results[key].length > 0) {
-        rankings.push(results[key]);
+      if (isSearchParamsKey(key) && typeof searchParams[key] === 'string' && searchParams[key].length > 0) {
+        rankings.push(searchParams[key]);
       } else {
         break;
       }
     }
     const request: RespectBreakoutRequest = {
+      // Will be validated below
       meetingNum: (meeting as unknown) as number,
-      groupNum: (results.groupnumber as unknown) as number,
+      groupNum: (searchParams.groupNumber as unknown) as number,
       rankings
     }
 
@@ -145,28 +140,26 @@ export default function RespectBreakoutForm({ orclient }: RespectBreakoutFormPro
   }, [txHash]);
 
   const fieldsFilled = useMemo(() => {
-    return meeting !== "" && results.groupnumber !== null
-           && results.vote1 !== "" && results.vote2 !== ""
-           && results.vote3 !== "";
-  }, [meeting, results])
-
-  const toast = useToast();
+    return meeting !== "" && searchParams.groupNumber !== undefined
+           && searchParams.vote1 !== "" && searchParams.vote2 !== ""
+           && searchParams.vote3 !== "";
+  }, [meeting, searchParams])
 
   const copyUrl = useCallback(() => {
     copy(window.location.href);
-    toast({
-      title: 'Link copied to clipboard!',
-      status: 'success',
-      duration: 9000,
-      isClosable: true,
+
+    toaster.create({
+      description: 'Link copied to clipboard!',
+      type: 'info',
+      closable: true
     })
-  }, [toast]);
+  }, []);
 
   console.log("fieldsFilled: ", fieldsFilled);
 
   return (
     initialized ? (
-      <Stack direction="column" spacing="1em" width="34em">
+      <Stack direction="column" gap="1em" width="34em">
 
         <SubmitBreakoutResModal
           isOpen={submitOpen}
@@ -182,95 +175,101 @@ export default function RespectBreakoutForm({ orclient }: RespectBreakoutFormPro
           onClose={closeTxProgressModal}
         >
           {txProgressStatus === 'submitting' || txProgressStatus === 'error'
-            ? <Text noOfLines={4}>{txProgressStr}</Text>
+            ? <Text>{txProgressStr}</Text>
             : (
               <VStack>
-                <Text >Vote Submitted!</Text>
-                <Link color="teal.500" isExternal href={explorerLink}>
+                <Text fontSize="md">Vote Submitted!</Text>
+                <Link fontSize="md" color="teal.500" href={explorerLink} target="_blank">
                   Transaction in Block Explorer
-                  <ExternalLinkIcon marginLeft="2px"/>
+                  <Icon color="black" background="transparent" size="sm" marginLeft="1px">
+                    <FiExternalLink />
+                  </Icon>
                 </Link>
               </VStack>
             )
           }
         </TxProgressModal>
 
-        <FormControl>
-          <FormLabel>Meeting number</FormLabel>
+        <Field.Root>
+          <Field.Label>Meeting number</Field.Label>
           <Input
             type="number"
             value={meeting}
             onChange={e => setMeeting(e.target.value)}
           />
-        </FormControl>
+        </Field.Root>
 
-        <FormControl>
-          <FormLabel>Group number</FormLabel>
+        <Field.Root>
+          <Field.Label>Group number</Field.Label>
           <Input
             type="number"
-            value={results.groupnumber ?? ""}
-            onChange={e => setResults({ groupnumber: e.target.value })}
+            value={searchParams.groupNumber ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, groupNumber: e.target.value })}
           />
-        </FormControl>
+        </Field.Root>
 
-        <FormControl>
-          <FormLabel>Level 6</FormLabel>
+        <Field.Root>
+          <Field.Label>Level 6</Field.Label>
           <Input
             placeholder="Level 6 account"
-            value={results.vote1 ?? ""}
-            onChange={e => setResults({ vote1: e.target.value })}
+            value={searchParams.vote1 ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, vote1: e.target.value })}
           />
-        </FormControl>
+          <Field.HelperText>Who contributed the most?</Field.HelperText>
+        </Field.Root>
 
-        <FormControl>
-          <FormLabel>Level 5</FormLabel>
+        <Field.Root>
+          <Field.Label>Level 5</Field.Label>
           <Input
             placeholder="Level 5 account"
-            value={results.vote2 ?? ""}
-            onChange={e => setResults({ vote2: e.target.value })}
+            value={searchParams.vote2 ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, vote2: e.target.value })}
           />
-        </FormControl>
+          <Field.HelperText>Who contributed the 2nd most?</Field.HelperText>
+        </Field.Root>
 
-        <FormControl>
-          <FormLabel>Level 4</FormLabel>
+        <Field.Root>
+          <Field.Label>Level 4</Field.Label>
           <Input
             placeholder="Level 4 account"
-            value={results.vote3 ?? ""}
-            onChange={e => setResults({ vote3: e.target.value })}
+            value={searchParams.vote3 ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, vote3: e.target.value })}
           />
-        </FormControl>
+        </Field.Root>
         
-        <FormControl>
-          <FormLabel>Level 3</FormLabel>
+        <Field.Root>
+          <Field.Label>Level 3</Field.Label>
           <Input
             placeholder="Level 3 account"
-            value={results.vote4 ?? ""}
-            onChange={e => setResults({ vote4: e.target.value })}
+            value={searchParams.vote4 ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, vote4: e.target.value })}
           />
-        </FormControl>
+        </Field.Root>
 
-        <FormControl>
-          <FormLabel>Level 2</FormLabel>
+        <Field.Root>
+          <Field.Label>Level 2</Field.Label>
           <Input
             placeholder="Level 2 account"
-            value={results.vote5 ?? ""}
-            onChange={e => setResults({ vote5: e.target.value })}
+            value={searchParams.vote5 ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, vote5: e.target.value })}
           />
-        </FormControl>
+        </Field.Root>
 
-        <FormControl>
-          <FormLabel>Level 1</FormLabel>
+        <Field.Root>
+          <Field.Label>Level 1</Field.Label>
           <Input
             placeholder="Level 1 account"
-            value={results.vote6 ?? ""}
-            onChange={e => setResults({ vote6: e.target.value })}
+            value={searchParams.vote6 ?? ""}
+            onChange={e => setSearchParams({ ...searchParams, vote6: e.target.value })}
           />
-        </FormControl>
+        </Field.Root>
 
         <Text color="red">{errorStr ?? ""}</Text>
 
-        <Button onClick={onSubmitClick} isDisabled={!fieldsFilled || !initialized}>Submit</Button>
-        <Button onClick={copyUrl}>Share</Button>
+        <Button onClick={onSubmitClick} color="black" disabled={!fieldsFilled || !initialized}>
+          Submit
+        </Button>
+        <Button onClick={copyUrl} color="black">Share</Button>
 
       </Stack>
     )

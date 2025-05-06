@@ -20,6 +20,10 @@ export class ORClientServer {
     return this._orclientPromise;
   }
 
+  getOrclientSync(): ORClientType | undefined {
+    return this._orclient;
+  }
+
   setOrclient(orclient: ORClientType | undefined) {
     if (orclient) {
       // Setting a new orclient

@@ -21,6 +21,7 @@
     "@ordao/zod-utils": "^1.0.0",
     "@tanstack/react-router": "^1.119.0",
     "@tanstack/react-router-devtools": "^1.119.1",
+    "@tanstack/zod-adapter": "^1.119.0",
     "copy-to-clipboard": "^3.3.3",
     "eth-address": "^1.0.1",
     "ethers": "^6.13.1",

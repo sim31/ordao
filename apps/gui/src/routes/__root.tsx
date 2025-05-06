@@ -7,7 +7,7 @@ import { TbContract } from 'react-icons/tb'
 import { PiMedalFill, PiMedalThin } from 'react-icons/pi'
 // import { FaRegHandRock } from 'react-icons/fa'
 // import { GiConfirmed } from 'react-icons/gi'
-import { Container } from '@chakra-ui/react'
+import { Container, Flex } from '@chakra-ui/react'
 import { config } from '../global/config'
 import { ORClientServer } from '../utils/orclientServer'
 import { Toaster } from '../components/ui/toaster'
@@ -19,7 +19,7 @@ const menuItems: Array<MenuItem> = [
   { id: "/", name: 'Proposals', icon: FiHome },
   { id: "/newProposal", name: 'New Proposal', icon: TbContract },
   // TODO:
-  { id: "submitBreakout", name: 'Submit Breakout Results', icon: FaRankingStar, externalLink: window.location.origin },
+  { id: "/submitBreakout/", name: 'Submit Breakout Results', icon: FaRankingStar },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill, externalLink: config.parentRespectLink },
   { id: "childRespect", name: 'Child Respect', icon: PiMedalThin, externalLink: config.childRespectLink },
   // TODO:
@@ -88,7 +88,9 @@ function RootComponent() {
         menuItems={menuItems}
         selectedMenuItemId={"proposals"}
       >
-        <Outlet />
+        <Flex direction="column" gap={4}>
+          <Outlet />
+        </Flex>
       </SidebarWithHeader>
       <Toaster />
       <TanStackRouterDevtools />

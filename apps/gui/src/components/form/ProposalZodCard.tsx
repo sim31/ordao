@@ -7,13 +7,13 @@ import { useState } from "react";
 import { ObjectTable } from "../proposal-view/ObjectTable";
 import { IoMdClose } from "react-icons/io";
 
-interface ProposalFormProps<T extends z.AnyZodObject> {
+interface ProposalZodCardProps<T extends z.AnyZodObject> {
   schema: T
   onSubmit: (data: z.infer<T>) => void;
   onCancel: () => void;
 }
 
-export function ProposalForm<T extends z.AnyZodObject>({ schema, onSubmit, onCancel }: ProposalFormProps<T>) {
+export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onSubmit, onCancel }: ProposalZodCardProps<T>) {
   const desc = extractZodDescription(schema);
   const propTitle = desc?.title;
   const description = desc?.description;

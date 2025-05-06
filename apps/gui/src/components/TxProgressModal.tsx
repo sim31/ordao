@@ -1,15 +1,14 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
+  Dialog,
+  Portal,
   Button,
   Center,
+  DialogOpenChangeDetails,
+  IconButton,
 } from '@chakra-ui/react'
 import { Spinner } from '@chakra-ui/react'
 import { ReactNode } from 'react';
+import { IoMdClose } from 'react-icons/io';
 
 export type TxProgressModalProps = {
   isOpen: boolean;
@@ -20,34 +19,51 @@ export type TxProgressModalProps = {
 }
 
 export default function TxProgressModal(props: TxProgressModalProps) {
+  function onOpenChange({ open }: DialogOpenChangeDetails) {
+    if (!open) {
+      props.onClose();
+    }
+  }
 
   return (
-    <Modal
-      isOpen={props.isOpen}
-      onClose={props.onClose}
-      closeOnOverlayClick={false}
+    <Dialog.Root
+      lazyMount
+      open={props.isOpen}
+      onOpenChange={onOpenChange}
+      closeOnEscape={false}
+      closeOnInteractOutside={false}
     >
-      <ModalOverlay />
-      <ModalContent>
-        <ModalHeader fontSize="2xl">
-          {props.operationStr}
-        </ModalHeader>
-        <ModalBody>
-          <Center>
-            {props.children}          
-            <br></br>
-            {!props.done && <Spinner/>}
-          </Center>
-        </ModalBody>
-
-        <ModalFooter>
-          {props.done &&
-            <Button onClick={props.onClose}>
-              Close
-            </Button>
-          }
-        </ModalFooter>
-      </ModalContent>
-    </Modal>
+      <Portal>
+        <Dialog.Backdrop />
+        <Dialog.Positioner>
+          <Dialog.Content>
+            <Dialog.Header>
+              <Dialog.Title>{props.operationStr}</Dialog.Title>
+            </Dialog.Header>
+            <Dialog.Body>
+              <Center>
+                {props.children}          
+                <br></br>
+                {!props.done && <Spinner/>}
+              </Center>
+            </Dialog.Body>
+            <Dialog.Footer>
+              {props.done &&
+                <Button color="black" onClick={props.onClose}>
+                  Close
+                </Button>
+              }
+            </Dialog.Footer>
+            {props.done &&
+              <Dialog.CloseTrigger asChild>
+                <IconButton variant="ghost" color="black">
+                  <IoMdClose />
+                </IconButton>
+              </Dialog.CloseTrigger>
+            }
+          </Dialog.Content>
+        </Dialog.Positioner>
+      </Portal>
+    </Dialog.Root>
   )
 }
