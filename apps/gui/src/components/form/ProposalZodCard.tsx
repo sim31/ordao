@@ -6,14 +6,20 @@ import { extractZodDescription } from "@ordao/zod-utils";
 import { useState } from "react";
 import { ObjectTable } from "../proposal-view/ObjectTable";
 import { IoMdClose } from "react-icons/io";
+import OnchainActionModal from "../OnchainActionModal";
+import { ORClient, ProposeRes, VoteWithPropRequest } from "@ordao/orclient";
+import { PropType } from "@ordao/ortypes";
+import { assertUnreachable } from "@ordao/ts-utils";
 
 interface ProposalZodCardProps<T extends z.AnyZodObject> {
   schema: T
-  onSubmit: (data: z.infer<T>) => void;
+  onComplete: () => void;
   onCancel: () => void;
+  propType: PropType;
+  orclient: ORClient;
 }
 
-export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onSubmit, onCancel }: ProposalZodCardProps<T>) {
+export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, onCancel, orclient, propType }: ProposalZodCardProps<T>) {
   const desc = extractZodDescription(schema);
   const propTitle = desc?.title;
   const description = desc?.description;
@@ -21,13 +27,56 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onSubmit, on
   const [step, setStep] = useState<'edit' | 'confirm'>('edit');
   const [withVote, setWithVote] = useState<boolean>(true);
 
+  const [actionPromise, setActionPromise] = useState<Promise<ProposeRes> | undefined>(undefined);
+
   const handleZodFormSubmit = (data: z.infer<T>) => {
     setPropRequest(data);
     setStep('confirm');
   }
 
+  const vote: VoteWithPropRequest = withVote ? { vote: 'Yes' } : { vote: 'No' }
+
+  const handleConfirmSubmit = () => {
+    if (propRequest === undefined) {
+      return;
+    }
+    switch (propType) {
+      case 'tick':
+        setActionPromise(orclient.proposeTick(propRequest));
+        break;
+      case 'respectAccount':
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setActionPromise(orclient.proposeRespectTo(propRequest as any, vote));
+        break;
+      case 'respectBreakout':
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setActionPromise(orclient.proposeBreakoutResult(propRequest as any, vote));
+        break;
+      case 'burnRespect':
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setActionPromise(orclient.proposeBurnRespect(propRequest as any, vote));
+        break;
+      case 'customCall':
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setActionPromise(orclient.proposeCustomCall(propRequest as any, vote));
+        break;
+      case 'customSignal':
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        setActionPromise(orclient.proposeCustomSignal(propRequest as any, vote));
+        break;
+      default:
+        assertUnreachable(propType);
+        break;
+    }
+  }
+
   return (
     <Center>
+      <OnchainActionModal
+        title={"Creating a proposal"}
+        onClose={() => { setActionPromise(undefined); onComplete() } }
+        action={actionPromise}
+      />
       <Card.Root
         variant="outline"
         padding={4}
@@ -65,7 +114,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onSubmit, on
                 </Fieldset.Content>
               </Fieldset.Root>
               <HStack>
-                <Button color="black" mt="2em" as="button" onClick={() => onSubmit(propRequest)}>Submit</Button>
+                <Button color="black" mt="2em" as="button" onClick={handleConfirmSubmit}>Submit</Button>
                 <Button color="black" mt="2em" as="button" onClick={() => setStep('edit')}>Edit</Button>
               </HStack>
             </>

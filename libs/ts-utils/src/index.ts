@@ -45,7 +45,7 @@ export function withoutProperty<T extends object, K extends keyof T>(
 }
 
 export function assertUnreachable(x: never): never {
-    throw new Error("Didn't expect to get here");
+  throw new Error("Didn't expect to get here");
 }
 
 export const flattenObj = (obj: any) => {
