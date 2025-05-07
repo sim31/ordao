@@ -34,6 +34,17 @@ if (!process.env.DEBUGLOG) {
 chai.config.truncateThreshold = 0;
 chai.config.includeStack = true;
 
+const placeholderF = () => 0;
+
+function propWithoutFunctions(proposal: Proposal): Proposal {
+  return {
+    ...proposal,
+    voteTimeLeftMs: placeholderF,
+    vetoTimeLeftMs: placeholderF
+  }
+
+}
+
 async function confirm<T>(
   promise: Promise<T>,
   increaseTimeS: number = 2
@@ -259,7 +270,7 @@ describe("orclient", function() {
       it("should return proposals from lsProposals by id", async function() {
         for (const [index, prop] of resultProps.entries()) {
           const prop2 = await cl.getProposal(prop.id);
-          expect(prop2).to.deep.equal(prop);
+          expect(propWithoutFunctions(prop2)).to.deep.equal(propWithoutFunctions(prop));
         }
       })
     });
