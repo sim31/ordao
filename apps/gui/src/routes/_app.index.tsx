@@ -3,20 +3,14 @@ import { config } from '../global/config'
 import { zodValidator } from '@tanstack/zod-adapter'
 import { PagedProposalList } from '../components/proposal-view/PagedProposalList'
 import { zSearchParams } from '../global/proposalListSearchParams'
-import { OrclientUndefined } from '../errors'
+import { assertOrclientBeforeLoad } from '../global/routerContext'
 // import { sleep } from '@ordao/ts-utils'
 
-export const Route = createFileRoute('/')({
+export const Route = createFileRoute('/_app/')({
   component: Index,
   validateSearch: zodValidator(zSearchParams),
   loaderDeps: ({ search }) => search,
-  beforeLoad: async ({ context }) => {
-    if (context.orclient === undefined) {
-      throw new OrclientUndefined();
-    }
-
-    return { orclient: context.orclient };
-  },
+  beforeLoad: assertOrclientBeforeLoad,
   loader: (async ({ context: { orclient }, deps }) => {
     const limit = deps.limit === undefined ? config.defaultPropQuerySize : deps.limit;
     const spec = {
@@ -30,11 +24,9 @@ export const Route = createFileRoute('/')({
 })
 
 function Index() {
-  const { proposals, orclient } = Route.useLoaderData();
+  const { proposals } = Route.useLoaderData();
 
   return (
-    <ContextChecker value={{ proposals, orclient }}>
-      <PagedProposalList />
-    </ContextChecker>
+    <PagedProposalList proposals={proposals} />
   )
 }

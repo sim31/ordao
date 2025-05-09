@@ -6,7 +6,7 @@ import {
   Stack,
   Text
 } from "@chakra-ui/react";
-import { ORClient, ProposeRes } from "@ordao/orclient";
+import { ProposeRes } from "@ordao/orclient";
 import { RespectBreakoutRequest, zRespectBreakoutRequest } from "@ordao/ortypes/orclient.js";
 import copy from "copy-to-clipboard";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,15 +16,17 @@ import { hashObject } from "../../utils/objectHash";
 import OnchainActionModal from "../OnchainActionModal.js";
 import { toaster } from "../ui/toaster";
 import SubmitBreakoutResModal from "./SubmitBreakoutResModal";
+import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 export type SubmitBreakoutFormProps = {
-  orclient: ORClient;
   searchParams: SearchParams;
   setSearchParams: (searchParams: object) => void
   onComplete: () => void;
 }
 
-export default function SubmitBreakoutForm({ orclient, onComplete, searchParams, setSearchParams}: SubmitBreakoutFormProps) {
+export default function SubmitBreakoutForm({ onComplete, searchParams, setSearchParams}: SubmitBreakoutFormProps) {
+  const orclient = useAssertFullOrclient();
+
   const [meeting, setMeeting] = useState<string>("");
   const [initialized, setInitialized] = useState<boolean>(false);
   const [errorStr, setErrorStr] = useState<string | undefined>(undefined);

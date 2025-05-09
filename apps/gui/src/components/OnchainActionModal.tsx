@@ -98,7 +98,7 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
               <Center>
                 <VStack>
 
-                  {txProgressStatus === 'submitting' && <Spinner/>}
+                  {txProgressStatus === 'submitting' && <Spinner size="lg" />}
 
                   <Text>{txProgressStr}</Text>
 

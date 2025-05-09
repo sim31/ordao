@@ -30,8 +30,8 @@
         "default": "./dist/cjs/backup-provider/*"
       },
       "import": {
-        "types": "./dist/esm/provider/*",
-        "default": "./dist/esm/provider/*"
+        "types": "./dist/esm/backup-provider/*",
+        "default": "./dist/esm/backup-provider/*"
       }
     },
     "./*": {

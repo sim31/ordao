@@ -1,14 +1,16 @@
 import { Button, Flex } from "@chakra-ui/react";
-import { isORClient, ORClientType } from "@ordao/orclient";
+import { isORClient } from "@ordao/orclient";
 import { Proposal, ValidVoteType } from "@ordao/ortypes/orclient.js";
+import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 export interface VoteButtonsProps {
   proposal: Proposal;
-  orclient: ORClientType
   onVoteClick: (vote: ValidVoteType) => void
 }
 
-export function VoteButtons({ proposal, orclient, onVoteClick } : VoteButtonsProps) {
+export function VoteButtons({ proposal, onVoteClick } : VoteButtonsProps) {
+  const orclient = useAssertOrclient();
+
   const renderYesButton = () => {
     if (isORClient(orclient)) {
       if (proposal.stage === 'Voting') {

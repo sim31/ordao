@@ -1,23 +1,23 @@
-import { Box, Card, Text, Flex } from "@chakra-ui/react";
+import { Box, Card, Flex, Text } from "@chakra-ui/react";
+import { isORClient, OnchainActionRes } from "@ordao/orclient";
+import { PropId } from "@ordao/ortypes";
 import { Proposal, propSchemaMap, ValidVoteType } from "@ordao/ortypes/orclient.js";
+import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 import { getTypeInfo } from "@ordao/zod-utils";
+import { useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
+import { ExecuteButton } from "../ExecuteButton";
+import OnchainActionModal from "../OnchainActionModal";
 import { DecodedPropTable } from "./DecodedPropTable";
-import { PropTable } from "./PropTable";
-import { ShortPropId } from "./ShortPropId";
+import { ObjectTable } from "./ObjectTable";
 import { ProposalStatusLine } from "./ProposalStatusLine";
 import { ProposalVoteStat } from "./ProposalVoteStat";
+import { PropTable } from "./PropTable";
+import { ShortPropId } from "./ShortPropId";
 import { VoteButtons } from "./VoteButtons";
-import { ObjectTable } from "./ObjectTable";
-import { isORClient, OnchainActionRes, ORClientType } from "@ordao/orclient";
-import { ExecuteButton } from "../ExecuteButton";
-import { useState } from "react";
-import { PropId } from "@ordao/ortypes";
-import { useNavigate } from "@tanstack/react-router";
-import OnchainActionModal from "../OnchainActionModal";
 
 export interface FullProposalCardProps {
   proposal: Proposal,
-  orclient: ORClientType,
 }
 
 interface ActionDetail {
@@ -26,7 +26,8 @@ interface ActionDetail {
   title: string
 }
 
-export function FullProposalCard({ proposal, orclient }: FullProposalCardProps) {
+export function FullProposalCard({ proposal }: FullProposalCardProps) {
+  const orclient = useAssertOrclient();
 
   const propType = proposal.decoded?.propType;
   const zPropType = propType && propSchemaMap[propType];
@@ -133,8 +134,8 @@ export function FullProposalCard({ proposal, orclient }: FullProposalCardProps) 
             <Text fontWeight="bold" fontSize="xl" mb="0.5em">Status</Text>
             <ProposalStatusLine proposal={proposal} />
             <ProposalVoteStat proposal={proposal} />
-            <ExecuteButton proposal={proposal} orclient={orclient} onClick={onExecuteClick}/>
-            <VoteButtons proposal={proposal} orclient={orclient} onVoteClick={onVoteClick} />
+            <ExecuteButton proposal={proposal} onClick={onExecuteClick}/>
+            <VoteButtons proposal={proposal} onVoteClick={onVoteClick} />
           </Box>
 
 

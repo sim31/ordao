@@ -1,11 +1,9 @@
 import { Card, Center, Fieldset, Flex, IconButton, Spacer, Text } from "@chakra-ui/react";
-import { ORClient } from "@ordao/orclient";
 import { IoMdClose } from "react-icons/io";
 import SubmitBreakoutForm from "./SubmitBreakoutForm";
 import { SearchParams } from "../../global/submitBreakoutSearchParams";
 
 interface SubmitBreakoutCardProps {
-  orclient: ORClient;
   searchParams: SearchParams;
   setSearchParams: (searchParams: object) => void;
   onComplete: () => void;
@@ -13,7 +11,6 @@ interface SubmitBreakoutCardProps {
 }
 
 export function SubmitBreakoutCard({
-  orclient,
   onComplete,
   onCancel,
   searchParams,
@@ -49,7 +46,6 @@ export function SubmitBreakoutCard({
         <Fieldset.Root>
           <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
           <SubmitBreakoutForm
-            orclient={orclient}
             onComplete={onComplete}
             setSearchParams={setSearchParams}
             searchParams={searchParams}

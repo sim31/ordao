@@ -1,18 +1,20 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider as ChakraProvider } from './components/ui/provider'
 import './index.css'
 // import BreakoutSubmitApp from './BreakoutSubmitApp'
-import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth'
+import { PrivyProvider, usePrivy } from '@privy-io/react-auth'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 // Import the generated route tree
 import Fallback from './components/Fallback'
 import { Loading } from './components/Loading.js'
 import NotFoundError from './components/NotFound'
 import { config, deploymentInfo, orclientConfig } from "./global/config.js"
-import { routeTree } from './routeTree.gen'
-import { useOrclientWithBackup } from '@ordao/privy-react-orclient'
 import { RouterContext } from './global/routerContext.js'
+import { routeTree } from './routeTree.gen'
+import { OrclientProvider } from '@ordao/privy-react-orclient/backup-provider/OrclientProvider.js';
+import { useUserWallet } from '@ordao/privy-react-orclient/useUserWallet.js';
+import { useOrclient } from '@ordao/privy-react-orclient/backup-provider/useOrclient.js';
 
 console.debug = console.log;
 console.debug("debug test")
@@ -51,11 +53,16 @@ ReactDOM.createRoot(document.getElementById('root')!).render((
         },
       }}
     >
-      <ORClientProvider>
+      <OrclientProvider
+        backupProviderURL={config.chainInfo.rpcUrls[0]}
+        orclientConfig={orclientConfig}
+        deployment={deploymentInfo}
+        timeout={3000}
+      >
         <ChakraProvider>
           <Main />
         </ChakraProvider>
-      </ORClientProvider>
+      </OrclientProvider>
     </PrivyProvider>
   </React.StrictMode>
 ))
@@ -80,6 +87,16 @@ function Main() {
   const [context, setContext] = useState<RouterContext | undefined>();
 
   useEffect(() => {
+    console.log("Setting context");
+    setContext({
+      orclient,
+      userWallet,
+      authenticated,
+      privyReady
+    });
+  }, [orclient, userWallet, authenticated, privyReady, isMounted])
+
+  useEffect(() => {
     const invalidateFn = async () => {
       console.log("Invalidating router");
       await router.invalidate({ sync: true });
@@ -87,15 +104,9 @@ function Main() {
     }
 
     if (isMounted) {
-      setContext({
-        orclient,
-        userWallet,
-        authenticated,
-        privyReady
-      });
       invalidateFn();
     }
-  }, [orclient, userWallet, authenticated, privyReady, isMounted])
+  }, [context, isMounted])
 
   return <RouterProvider
     router={router}

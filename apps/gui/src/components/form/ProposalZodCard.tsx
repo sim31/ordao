@@ -7,19 +7,21 @@ import { useState } from "react";
 import { ObjectTable } from "../proposal-view/ObjectTable";
 import { IoMdClose } from "react-icons/io";
 import OnchainActionModal from "../OnchainActionModal";
-import { ORClient, ProposeRes, VoteWithPropRequest } from "@ordao/orclient";
+import { ProposeRes, VoteWithPropRequest } from "@ordao/orclient";
 import { PropType } from "@ordao/ortypes";
 import { assertUnreachable } from "@ordao/ts-utils";
+import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 interface ProposalZodCardProps<T extends z.AnyZodObject> {
   schema: T
   onComplete: () => void;
   onCancel: () => void;
   propType: PropType;
-  orclient: ORClient;
 }
 
-export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, onCancel, orclient, propType }: ProposalZodCardProps<T>) {
+export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, onCancel, propType }: ProposalZodCardProps<T>) {
+  const orclient = useAssertFullOrclient();
+
   const desc = extractZodDescription(schema);
   const propTitle = desc?.title;
   const description = desc?.description;
@@ -34,7 +36,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
     setStep('confirm');
   }
 
-  const vote: VoteWithPropRequest = withVote ? { vote: 'Yes' } : { vote: 'No' }
+  const vote: VoteWithPropRequest = withVote ? { vote: 'Yes' } : { vote: 'None' }
 
   const handleConfirmSubmit = () => {
     if (propRequest === undefined) {
@@ -42,7 +44,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
     }
     switch (propType) {
       case 'tick':
-        setActionPromise(orclient.proposeTick(propRequest));
+        setActionPromise(orclient.proposeTick(propRequest, vote));
         break;
       case 'respectAccount':
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

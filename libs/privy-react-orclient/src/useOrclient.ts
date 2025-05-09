@@ -87,19 +87,20 @@ export function useOrclientWithBackup(
 
   useEffect(() => {
     const createBackup = () => {
-      if (fullOrclient === undefined && orclient === undefined) {
-        createReader(deployment!, backupProviderURL, orclientConfig).then(
-          orclient => {
-            setOrclient(orclient);
-            (window as any).orclient = orclient;
-          },
-          err => console.error(err)
-        )      
-      }
+      createReader(deployment!, backupProviderURL, orclientConfig).then(
+        orclient => {
+          setOrclient(orclient);
+          (window as any).orclient = orclient;
+        },
+        err => console.error(err)
+      )      
     }
 
     if (fullOrclient === undefined) {
-      setTimeout(createBackup, timeout);
+      const timer = setTimeout(createBackup, timeout);
+      return () => clearTimeout(timer);
+    } else {
+      setOrclient(fullOrclient);
     }
   }, [fullOrclient, deployment, backupProviderURL, orclientConfig]);
 

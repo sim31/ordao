@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import ProposalFormMenu from '../../components/proposal-type-view/ProposalFormMenu'
 import { PropType } from '@ordao/ortypes';
 
-export const Route = createFileRoute('/newProposal/')({
+export const Route = createFileRoute('/_app/newProposal/')({
   component: NewProposal,
 })
 

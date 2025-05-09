@@ -1,15 +1,14 @@
-// ORClientProvider.tsx
 import React, { createContext, useState, useEffect } from 'react';
 import { ORClientType } from '@ordao/orclient';
-import { useUserWallet } from 'src/useUserWallet';
-import { useOrclientWithBackup } from 'src/useOrclient';
+import { useUserWallet } from '../useUserWallet.js';
+import { useOrclientWithBackup } from '../useOrclient';
 import { CreateOrclientConfig, DeploymentSpec } from '@ordao/orclient/createOrclient.js';
 
 export interface OrclientContextType {
   orclient?: ORClientType;
 }
 
-export const OrclientBackupContext = createContext<OrclientContextType>({ orclient: undefined });
+export const OrclientContext = createContext<OrclientContextType>({ orclient: undefined });
 
 export interface OrclientProviderProps {
   backupProviderURL: string;
@@ -26,8 +25,6 @@ export function OrclientProvider({
   orclientConfig,
   timeout
 }: OrclientProviderProps) {
-  const [orclient, setOrclient] =/*  */ useState<ORClientType | undefined>(undefined);
-
   const userWallet = useUserWallet();
 
   const value = useOrclientWithBackup(
@@ -38,7 +35,7 @@ export function OrclientProvider({
     timeout
   );
 
-  const Provider = OrclientBackupContext.Provider;
+  const Provider = OrclientContext.Provider;
 
   return (
     <Provider value={{ orclient: value }}>

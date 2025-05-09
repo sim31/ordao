@@ -8,16 +8,14 @@ import { VoteButtons } from "./VoteButtons.js";
 import { ProposalVoteStat } from "./ProposalVoteStat.js";
 import { Link } from "@tanstack/react-router";
 import { ExecuteButton } from "../ExecuteButton.js";
-import { ORClientType } from "@ordao/orclient";
 
 export interface ProposalCardProps {
   proposal: Proposal,
   onExecuteClick: () => void;
-  orclient: ORClientType;
   onVoteClick: (vote: ValidVoteType) => void;
 }
 
-export function ProposalCard({ proposal, onExecuteClick, orclient, onVoteClick }: ProposalCardProps) {
+export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: ProposalCardProps) {
   const propType = proposal.decoded?.propType;
   const zPropType = propType && propSchemaMap[propType];
   const desc = zPropType && extractZodDescription(zPropType);
@@ -59,8 +57,8 @@ export function ProposalCard({ proposal, onExecuteClick, orclient, onVoteClick }
       </Card.Body>
 
       <Card.Footer mb="0" pb="0.5em">
-        <VoteButtons proposal={proposal} orclient={orclient} onVoteClick={onVoteClick}/>
-        <ExecuteButton proposal={proposal} orclient={orclient} onClick={onExecuteClick} />
+        <VoteButtons proposal={proposal} onVoteClick={onVoteClick}/>
+        <ExecuteButton proposal={proposal} onClick={onExecuteClick} />
         <Button variant="outline" asChild>
           <Link to={`/proposal/$propId`} params={ { propId: proposal.id }} color="black">
             Details

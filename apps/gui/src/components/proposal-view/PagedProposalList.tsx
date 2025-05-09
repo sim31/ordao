@@ -1,5 +1,5 @@
 import { Text, VStack } from "@chakra-ui/react";
-import { ORClientType, Proposal } from "@ordao/orclient";
+import { Proposal } from "@ordao/orclient";
 import { ProposalList } from "./ProposalList";
 
 export interface PagedProposalListProps {

@@ -1,9 +1,10 @@
 import { useState } from "react";
 import OnchainActionModal from "../OnchainActionModal";
 import { ProposalCard } from "./ProposalCard";
-import { isORClient, OnchainActionRes, ORClientType, Proposal, ValidVoteType } from "@ordao/orclient";
+import { isORClient, OnchainActionRes, Proposal, ValidVoteType } from "@ordao/orclient";
 import { PropId } from "@ordao/ortypes";
 import { useNavigate } from "@tanstack/react-router";
+import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 export interface ProposalListProps {
   proposals: Proposal[],
@@ -21,7 +22,7 @@ export function ProposalList({
   const [ actionPromise, setActionPromise ] = useState<ActionDetail | undefined>();
   const navigate = useNavigate();
 
-  const orclient = useDefOrclient();
+  const orclient = useAssertOrclient();
 
   const onActionModalClose = async (success: boolean) => {
     if (success && actionPromise) {
@@ -72,7 +73,6 @@ export function ProposalList({
           proposal={prop}
           onExecuteClick={() => onExecuteClick(prop.id)}
           onVoteClick={(vote) => onVoteClick(prop.id, vote)}
-          orclient={orclient}
         />
       ))}
     </>

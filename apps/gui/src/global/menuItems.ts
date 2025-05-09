@@ -25,10 +25,10 @@ export type MenuItem = MenuItemExternalLink | MenuItemInternalLink;
 
 
 export const menuItems: Array<MenuItem> = [
-  { id: "/", name: 'Proposals', icon: FiHome },
-  { id: "/newProposal", name: 'New Proposal', icon: TbContract },
+  { id: "/_app/", name: 'Proposals', icon: FiHome },
+  { id: "/_app/newProposal", name: 'New Proposal', icon: TbContract },
   // TODO:
-  { id: "/submitBreakout/", name: 'Submit Breakout Results', icon: FaRankingStar },
+  { id: "/_app/submitBreakout/", name: 'Submit Breakout Results', icon: FaRankingStar },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill, externalLink: config.parentRespectLink },
   { id: "childRespect", name: 'Child Respect', icon: PiMedalThin, externalLink: config.childRespectLink },
   // TODO:
