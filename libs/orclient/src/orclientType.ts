@@ -1,9 +1,9 @@
 import { ORClient } from "./orclient";
 import { ORClientReader } from "./orclientReader";
 
-export type ORClientType = ORClient | ORClientReader | undefined;
+export type ORClientType = ORClient | ORClientReader;
 
-export function isORClient(value: ORClientType): value is ORClient {
+export function isORClient(value: ORClientType | undefined): value is ORClient {
   if (value === undefined) {
     return false;
   } else {

@@ -1,4 +1,4 @@
-import { createRootRouteWithContext, Outlet, useRouter } from '@tanstack/react-router'
+import { createRootRouteWithContext, Outlet } from '@tanstack/react-router'
 import { TanStackRouterDevtools } from '@tanstack/react-router-devtools'
 import { FaRankingStar } from 'react-icons/fa6'
 import { FiHome } from 'react-icons/fi'
@@ -7,14 +7,14 @@ import { TbContract } from 'react-icons/tb'
 import SidebarWithHeader, { AccountInfo, MenuItem } from '../components/app-frame/SidebarWithHeader'
 // import { FaRegHandRock } from 'react-icons/fa'
 // import { GiConfirmed } from 'react-icons/gi'
-import { Container, Flex } from '@chakra-ui/react'
-import { useOrclientWithBackup } from '@ordao/privy-react-orclient'
-import { usePrivy, useWallets } from '@privy-io/react-auth'
+import { Button, Container, Flex, Spinner, Text, VStack } from '@chakra-ui/react'
+import { isORClient } from '@ordao/orclient'
+import { usePrivy } from '@privy-io/react-auth'
 import { formatEthAddress } from "eth-address"
 import { useEffect, useMemo } from 'react'
 import { Toaster } from '../components/ui/toaster'
-import { AppContext } from '../global/appContext'
-import { config, deploymentInfo, orclientConfig } from '../global/config'
+import { config } from '../global/config'
+import { RouterContext } from '../global/routerContext'
 
 const menuItems: Array<MenuItem> = [
   { id: "/", name: 'Proposals', icon: FiHome },
@@ -28,74 +28,20 @@ const menuItems: Array<MenuItem> = [
   // { id: "confirm", name: 'Confirm parent Respect', icon: GiConfirmed },
 ]
 
-export interface RouterContext {
-  appContext: AppContext,
-}
-
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: RootComponent,
 })
 
 function RootComponent() {
-  const { appContext } = Route.useRouteContext();
-  const router = useRouter();
+  const { userWallet, orclient } = Route.useRouteContext();
 
-  router.load();
   const {
     ready: privyReady,
-    user,
     authenticated,
     login: privyLogin,
     logout: privyLogout
   } = usePrivy();
-  const conWallets = useWallets();
-  // TODO: should figure out how to deal with multiple wallets.
-  // User should be able to select one of them.
-  const userWallet = useMemo(() =>{
-    if (privyReady && authenticated && conWallets && conWallets.ready) {
-      return conWallets.wallets.find(w => w.address === user?.wallet?.address);
-    }
-  }, [user, conWallets, privyReady, authenticated]);
-  
-  const orclient = useOrclientWithBackup(
-    config.chainInfo.rpcUrls[0],
-    deploymentInfo,
-    userWallet,
-    orclientConfig
-  );
 
-  useEffect(() => {
-    const prevOrclient = appContext.getOrclientSync();
-    console.log("prevOrclient: ", prevOrclient, ", orclient: ", orclient);
-    let invalidate: boolean = false;
-
-    const prevPrivyReady = appContext.getPrivyReadSync();
-    if (prevPrivyReady !== privyReady) {
-      console.log("setting privyReady");
-      appContext.setPrivyReady(privyReady);
-      invalidate = true;
-    }
-
-    const prevUserWallet = appContext.getPrivyWalletSync();
-    if (prevUserWallet !== userWallet) {
-      console.log("setting uer wallet");
-      appContext.setPrivyWallet(userWallet);
-      invalidate = true;
-    }
-
-    if (prevOrclient !== orclient) {
-      console.log("setting orclient");
-      appContext.setOrclient(orclient);
-      invalidate = true;
-    }
-
-    if (invalidate) {
-      console.log("invalidating router context");
-      router.invalidate();
-    }
-
-  }, [privyReady, orclient, userWallet, router, appContext]);
-  
   useEffect(() => {
     console.log("login effect! authenticated: ", authenticated);
     if (privyReady && !authenticated) {
@@ -123,6 +69,28 @@ function RootComponent() {
     }
   }, [userWallet]);
 
+  const orclientUnsynced = privyReady && authenticated && !isORClient(orclient);
+  // const orclientSyncedWithPrivy = false;
+
+  const renderContent = () => {
+    if (orclient === undefined) {
+      return <Spinner />;
+    } else if (orclientUnsynced) {
+      return (
+        <VStack>
+          <Text>
+            Something went wrong with wallet connection. Please try logging in again.
+          </Text>
+          <Button color="black" onClick={privyLogout}>
+            Logout
+          </Button>
+        </VStack>
+      )
+    } else {
+      return <Outlet />
+    }
+  }
+
   return (
     <Container minHeight="100vh" minWidth="100vw" padding="0px">
       <SidebarWithHeader
@@ -132,7 +100,7 @@ function RootComponent() {
         menuItems={menuItems}
       >
         <Flex direction="column" gap={4}>
-          <Outlet />
+          {renderContent()}
         </Flex>
       </SidebarWithHeader>
       <Toaster />

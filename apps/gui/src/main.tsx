@@ -1,28 +1,32 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import ReactDOM from 'react-dom/client'
 import { Provider } from './components/ui/provider'
 import './index.css'
 // import BreakoutSubmitApp from './BreakoutSubmitApp'
-import { PrivyProvider } from '@privy-io/react-auth'
+import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 // Import the generated route tree
 import Fallback from './components/Fallback'
 import { Loading } from './components/Loading.js'
 import NotFoundError from './components/NotFound'
-import { AppContext } from './global/appContext.js'
-import { config } from "./global/config.js"
+import { config, deploymentInfo, orclientConfig } from "./global/config.js"
 import { routeTree } from './routeTree.gen'
+import { useOrclientWithBackup } from '@ordao/privy-react-orclient'
+import { RouterContext } from './global/routerContext.js'
 
 console.debug = console.log;
 console.debug("debug test")
 console.log("log test")
 
-const appContext = new AppContext();
+const defaultCtx: RouterContext = {
+  authenticated: false,
+  privyReady: false
+} 
 
 // Create a new router instance
 const router = createRouter({
   routeTree,
-  context: { appContext },
+  context: defaultCtx,
   defaultErrorComponent: Fallback,
   defaultNotFoundComponent: NotFoundError,
   defaultPendingComponent: Loading
@@ -56,5 +60,54 @@ ReactDOM.createRoot(document.getElementById('root')!).render((
 
 // eslint-disable-next-line react-refresh/only-export-components
 function App() {
-  return <RouterProvider router={router} />;
+  const {
+    ready: privyReady,
+    user,
+    authenticated,
+  } = usePrivy();
+  const conWallets = useWallets();
+  // TODO: should figure out how to deal with multiple wallets.
+  // User should be able to select one of them.
+  const userWallet = useMemo(() =>{
+    if (privyReady && authenticated && conWallets && conWallets.ready) {
+      return conWallets.wallets.find(w => w.address === user?.wallet?.address);
+    }
+  }, [user, conWallets, privyReady, authenticated]);
+  
+  const orclient = useOrclientWithBackup(
+    config.chainInfo.rpcUrls[0],
+    deploymentInfo,
+    userWallet,
+    orclientConfig
+  );
+
+  const [context, setContext] = useState<RouterContext | undefined>();
+
+  useEffect(() => {
+    setContext({
+      orclient,
+      userWallet,
+      authenticated,
+      privyReady,
+    })
+  }, [orclient, userWallet, authenticated, privyReady])
+
+  useEffect(() => {
+    const invalidateFn = async () => {
+      console.log("Invalidating router");
+      await router.invalidate({ sync: true });
+      console.log("Invalidated router");
+    }
+
+    // Should prevent invalidation on the first render
+    if (context !== undefined) {
+      invalidateFn();
+    }
+  }, [context]);
+
+
+  return <RouterProvider
+    router={router}
+    context={context ?? defaultCtx}
+  />;
 }
