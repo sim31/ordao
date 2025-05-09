@@ -25,29 +25,10 @@ import {
 import { IconType } from 'react-icons'
 import { ReactNode } from 'react'
 import { config } from '../../global/config';
-import { RouteIds, Link as RouterLink, useMatches, useRouter } from '@tanstack/react-router';
-import { routeTree } from '../../routeTree.gen'
+import { Link as RouterLink, useMatches, useRouter } from '@tanstack/react-router';
 import { toaster } from '../ui/toaster'
+import { isExternalLink, MenuItem } from '../../global/menuItems'
 
-export interface MenuItemBase {
-  id: string
-  name: string
-  icon: IconType
-}
-
-export interface MenuItemExternalLink extends MenuItemBase {
-  externalLink: string
-}
-
-export interface MenuItemInternalLink extends MenuItemBase {
-  id: RouteIds<typeof routeTree>
-}
-
-export type MenuItem = MenuItemExternalLink | MenuItemInternalLink;
-
-function isExternalLink(item: MenuItem): item is MenuItemExternalLink {
-  return 'externalLink' in item;
-}
 
 interface NavItemProps extends FlexProps {
   icon: IconType

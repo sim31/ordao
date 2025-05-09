@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { Provider } from './components/ui/provider'
+import { Provider as ChakraProvider } from './components/ui/provider'
 import './index.css'
 // import BreakoutSubmitApp from './BreakoutSubmitApp'
 import { PrivyProvider, usePrivy, useWallets } from '@privy-io/react-auth'
@@ -51,46 +51,33 @@ ReactDOM.createRoot(document.getElementById('root')!).render((
         },
       }}
     >
-      <Provider>
-        <App />
-      </Provider>
+      <ORClientProvider>
+        <ChakraProvider>
+          <Main />
+        </ChakraProvider>
+      </ORClientProvider>
     </PrivyProvider>
   </React.StrictMode>
 ))
 
 // eslint-disable-next-line react-refresh/only-export-components
-function App() {
+function Main() {
   const {
     ready: privyReady,
-    user,
     authenticated,
   } = usePrivy();
-  const conWallets = useWallets();
-  // TODO: should figure out how to deal with multiple wallets.
-  // User should be able to select one of them.
-  const userWallet = useMemo(() =>{
-    if (privyReady && authenticated && conWallets && conWallets.ready) {
-      return conWallets.wallets.find(w => w.address === user?.wallet?.address);
-    }
-  }, [user, conWallets, privyReady, authenticated]);
-  
-  const orclient = useOrclientWithBackup(
-    config.chainInfo.rpcUrls[0],
-    deploymentInfo,
-    userWallet,
-    orclientConfig
-  );
 
-  const [context, setContext] = useState<RouterContext | undefined>();
+  const userWallet = useUserWallet();
+
+  const orclient = useOrclient();
+
+  const [isMounted, setIsMounted] = useState<boolean>(false);
 
   useEffect(() => {
-    setContext({
-      orclient,
-      userWallet,
-      authenticated,
-      privyReady,
-    })
-  }, [orclient, userWallet, authenticated, privyReady])
+    setIsMounted(true);
+  }, []);
+  
+  const [context, setContext] = useState<RouterContext | undefined>();
 
   useEffect(() => {
     const invalidateFn = async () => {
@@ -99,12 +86,16 @@ function App() {
       console.log("Invalidated router");
     }
 
-    // Should prevent invalidation on the first render
-    if (context !== undefined) {
+    if (isMounted) {
+      setContext({
+        orclient,
+        userWallet,
+        authenticated,
+        privyReady
+      });
       invalidateFn();
     }
-  }, [context]);
-
+  }, [orclient, userWallet, authenticated, privyReady, isMounted])
 
   return <RouterProvider
     router={router}

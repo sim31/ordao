@@ -7,7 +7,6 @@ import { useNavigate } from "@tanstack/react-router";
 
 export interface ProposalListProps {
   proposals: Proposal[],
-  orclient: ORClientType
 }
 
 interface ActionDetail {
@@ -18,10 +17,11 @@ interface ActionDetail {
 
 export function ProposalList({
   proposals,
-  orclient
 }: ProposalListProps) {
   const [ actionPromise, setActionPromise ] = useState<ActionDetail | undefined>();
   const navigate = useNavigate();
+
+  const orclient = useDefOrclient();
 
   const onActionModalClose = async (success: boolean) => {
     if (success && actionPromise) {

@@ -12,6 +12,7 @@
 
 import { Route as rootRoute } from './routes/__root'
 import { Route as NewProposalImport } from './routes/newProposal'
+import { Route as AppImport } from './routes/_app'
 import { Route as IndexImport } from './routes/index'
 import { Route as SubmitBreakoutIndexImport } from './routes/submitBreakout.index'
 import { Route as NewProposalIndexImport } from './routes/newProposal/index'
@@ -23,6 +24,11 @@ import { Route as NewProposalPropTypeIndexImport } from './routes/newProposal/$p
 const NewProposalRoute = NewProposalImport.update({
   id: '/newProposal',
   path: '/newProposal',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const AppRoute = AppImport.update({
+  id: '/_app',
   getParentRoute: () => rootRoute,
 } as any)
 
@@ -65,6 +71,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/_app': {
+      id: '/_app'
+      path: ''
+      fullPath: ''
+      preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
     }
     '/newProposal': {
@@ -123,6 +136,7 @@ const NewProposalRouteWithChildren = NewProposalRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '': typeof AppRoute
   '/newProposal': typeof NewProposalRouteWithChildren
   '/proposal/$propId': typeof ProposalPropIdRoute
   '/newProposal/': typeof NewProposalIndexRoute
@@ -132,6 +146,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '': typeof AppRoute
   '/proposal/$propId': typeof ProposalPropIdRoute
   '/newProposal': typeof NewProposalIndexRoute
   '/submitBreakout': typeof SubmitBreakoutIndexRoute
@@ -141,6 +156,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/': typeof IndexRoute
+  '/_app': typeof AppRoute
   '/newProposal': typeof NewProposalRouteWithChildren
   '/proposal/$propId': typeof ProposalPropIdRoute
   '/newProposal/': typeof NewProposalIndexRoute
@@ -152,6 +168,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | ''
     | '/newProposal'
     | '/proposal/$propId'
     | '/newProposal/'
@@ -160,6 +177,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | ''
     | '/proposal/$propId'
     | '/newProposal'
     | '/submitBreakout'
@@ -167,6 +185,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_app'
     | '/newProposal'
     | '/proposal/$propId'
     | '/newProposal/'
@@ -177,6 +196,7 @@ export interface FileRouteTypes {
 
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AppRoute: typeof AppRoute
   NewProposalRoute: typeof NewProposalRouteWithChildren
   ProposalPropIdRoute: typeof ProposalPropIdRoute
   SubmitBreakoutIndexRoute: typeof SubmitBreakoutIndexRoute
@@ -184,6 +204,7 @@ export interface RootRouteChildren {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
   NewProposalRoute: NewProposalRouteWithChildren,
   ProposalPropIdRoute: ProposalPropIdRoute,
   SubmitBreakoutIndexRoute: SubmitBreakoutIndexRoute,
@@ -200,6 +221,7 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/_app",
         "/newProposal",
         "/proposal/$propId",
         "/submitBreakout/"
@@ -207,6 +229,9 @@ export const routeTree = rootRoute
     },
     "/": {
       "filePath": "index.tsx"
+    },
+    "/_app": {
+      "filePath": "_app.tsx"
     },
     "/newProposal": {
       "filePath": "newProposal.tsx",
