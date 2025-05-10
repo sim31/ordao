@@ -32,7 +32,8 @@
     "dev:orclient-docs": "npx -w @ordao/orclient-docs http-server ./dist/ -p 5174",
     "dev:watch": "lerna watch --ignore=@ordao/gui -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
     "dev:run": "",
-    "publish": "lerna publish --no-private",
+    "version": "lerna version --no-private --no-push --no-git-tag-version && lerna run prebuild && git add . && git commit -m \"Prepare release\"",
+    "publish": "echo \"!!!!RUN version script and commit FIRST!!!!!!!\"  && lerna publish --no-private from-package",
     "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
     "local-unpublish-all": "lerna exec -- npm unpublish -f --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}\""

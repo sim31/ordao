@@ -3,7 +3,7 @@
   "version": "1.2.0",
   "description": "Solidity smart contract for Respect non-transferrable token. Based on ERC1155 standard.",
   "scripts": {
-    "clean": "rimraf dist && npx hardhat --tsconfig tsconfig.cjs.json clean",
+    "clean": "rimraf dist && npx hardhat clean",
     "build": "npx hardhat compile",
     "build-clean": "npm run clean && npm run build",
     "prepack": "npm run build-clean",
