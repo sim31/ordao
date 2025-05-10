@@ -32,7 +32,7 @@
     "dev:orclient-docs": "npx -w @ordao/orclient-docs http-server ./dist/ -p 5174",
     "dev:watch": "lerna watch --ignore=@ordao/gui -- lerna run build --scope=\\$LERNA_PACKAGE_NAME --include-dependents",
     "dev:run": "",
-    "version": "lerna version --no-private --no-push --no-git-tag-version && lerna run prebuild && git add . && git commit -m \"Prepare release\"",
+    "version": "echo \"TODO: 1) create a file for this script, 2) add commands to read version and tag with it the commit being made here.\" && lerna version --no-private --no-push --no-git-tag-version && lerna run prebuild && git add . && git commit -m \"Prepare release\"",
     "publish": "echo \"!!!!RUN version script and commit FIRST!!!!!!!\"  && lerna publish --no-private from-package",
     "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
