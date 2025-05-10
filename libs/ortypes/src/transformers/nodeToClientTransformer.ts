@@ -461,7 +461,7 @@ export class NodeToClientTransformer {
         execError,
         voteStatus: "Passed",   // If execution happened, it was passed
         stage: "Expired",       // If execution happened it is expired
-        createTime: new Date(nodeProp.createTs),
+        createTime: new Date(nodeProp.createTs * 1000),
         voteTimeLeftMs: () => { throw new NotVoteTimeError() },
         vetoTimeLeftMs: () => { throw new NotVetoTimeError() },
       };

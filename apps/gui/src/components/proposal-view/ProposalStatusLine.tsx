@@ -55,6 +55,8 @@ export function ProposalStatusLine({ proposal }: ProposalStatusLineProps) {
         Created: {createTime}
       </Text>
 
+      <Text fontSize="lg" color="gray.500"> | </Text>
+
       <ShortPropId id={proposal.id} />
       
     </Flex>
