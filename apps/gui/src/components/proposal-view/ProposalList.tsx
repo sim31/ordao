@@ -28,7 +28,7 @@ export function ProposalList({
     if (success && actionPromise) {
       console.log("success");
       navigate({
-        to: `/proposal/$propId`,
+        to: `/proposals/$propId`,
         params: { propId: actionPromise.propId }
       })
     }

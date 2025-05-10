@@ -63,7 +63,7 @@ const SidebarContent = ({
 }: SidebarProps) => {
   const matches = useMatches()
   const activeMenuItem = menuItems.find((item) => {
-    const m = matches.find(match => match.id === item.id);
+    const m = matches.find(match => match.routeId === item.id);
     return m !== undefined;
   })
   const activeMenuItemId = activeMenuItem?.id;

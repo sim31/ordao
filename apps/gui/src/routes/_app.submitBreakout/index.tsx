@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { zodValidator } from '@tanstack/zod-adapter';
-import { SubmitBreakoutCard } from '../components/form/SubmitBreakoutCard';
-import FullOrclientAsserter from '../components/FullOrclientAsserter';
-import { assertOrclientBeforeLoad } from '../global/routerContext';
-import { zSearchParams } from '../global/submitBreakoutSearchParams';
+import { SubmitBreakoutCard } from '../../components/form/SubmitBreakoutCard';
+import FullOrclientAsserter from '../../components/FullOrclientAsserter';
+import { assertOrclientBeforeLoad } from '../../global/routerContext';
+import { zSearchParams } from '../../global/submitBreakoutSearchParams';
 
 export const Route = createFileRoute('/_app/submitBreakout/')({
   component: RouteComponent,

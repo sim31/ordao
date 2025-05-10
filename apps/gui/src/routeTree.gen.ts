@@ -13,10 +13,13 @@
 import { Route as rootRoute } from './routes/__root'
 import { Route as AppImport } from './routes/_app'
 import { Route as AppIndexImport } from './routes/_app.index'
+import { Route as AppSubmitBreakoutImport } from './routes/_app.submitBreakout'
+import { Route as AppProposalsImport } from './routes/_app.proposals'
 import { Route as AppNewProposalImport } from './routes/_app.newProposal'
-import { Route as AppSubmitBreakoutIndexImport } from './routes/_app.submitBreakout.index'
+import { Route as AppSubmitBreakoutIndexImport } from './routes/_app.submitBreakout/index'
+import { Route as AppProposalsIndexImport } from './routes/_app.proposals/index'
 import { Route as AppNewProposalIndexImport } from './routes/_app.newProposal/index'
-import { Route as AppProposalPropIdImport } from './routes/_app.proposal/$propId'
+import { Route as AppProposalsPropIdImport } from './routes/_app.proposals/$propId'
 import { Route as AppNewProposalPropTypeIndexImport } from './routes/_app.newProposal/$propType.index'
 
 // Create/Update Routes
@@ -32,6 +35,18 @@ const AppIndexRoute = AppIndexImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
+const AppSubmitBreakoutRoute = AppSubmitBreakoutImport.update({
+  id: '/submitBreakout',
+  path: '/submitBreakout',
+  getParentRoute: () => AppRoute,
+} as any)
+
+const AppProposalsRoute = AppProposalsImport.update({
+  id: '/proposals',
+  path: '/proposals',
+  getParentRoute: () => AppRoute,
+} as any)
+
 const AppNewProposalRoute = AppNewProposalImport.update({
   id: '/newProposal',
   path: '/newProposal',
@@ -39,9 +54,15 @@ const AppNewProposalRoute = AppNewProposalImport.update({
 } as any)
 
 const AppSubmitBreakoutIndexRoute = AppSubmitBreakoutIndexImport.update({
-  id: '/submitBreakout/',
-  path: '/submitBreakout/',
-  getParentRoute: () => AppRoute,
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppSubmitBreakoutRoute,
+} as any)
+
+const AppProposalsIndexRoute = AppProposalsIndexImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => AppProposalsRoute,
 } as any)
 
 const AppNewProposalIndexRoute = AppNewProposalIndexImport.update({
@@ -50,10 +71,10 @@ const AppNewProposalIndexRoute = AppNewProposalIndexImport.update({
   getParentRoute: () => AppNewProposalRoute,
 } as any)
 
-const AppProposalPropIdRoute = AppProposalPropIdImport.update({
-  id: '/proposal/$propId',
-  path: '/proposal/$propId',
-  getParentRoute: () => AppRoute,
+const AppProposalsPropIdRoute = AppProposalsPropIdImport.update({
+  id: '/$propId',
+  path: '/$propId',
+  getParentRoute: () => AppProposalsRoute,
 } as any)
 
 const AppNewProposalPropTypeIndexRoute =
@@ -81,6 +102,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNewProposalImport
       parentRoute: typeof AppImport
     }
+    '/_app/proposals': {
+      id: '/_app/proposals'
+      path: '/proposals'
+      fullPath: '/proposals'
+      preLoaderRoute: typeof AppProposalsImport
+      parentRoute: typeof AppImport
+    }
+    '/_app/submitBreakout': {
+      id: '/_app/submitBreakout'
+      path: '/submitBreakout'
+      fullPath: '/submitBreakout'
+      preLoaderRoute: typeof AppSubmitBreakoutImport
+      parentRoute: typeof AppImport
+    }
     '/_app/': {
       id: '/_app/'
       path: '/'
@@ -88,12 +123,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppIndexImport
       parentRoute: typeof AppImport
     }
-    '/_app/proposal/$propId': {
-      id: '/_app/proposal/$propId'
-      path: '/proposal/$propId'
-      fullPath: '/proposal/$propId'
-      preLoaderRoute: typeof AppProposalPropIdImport
-      parentRoute: typeof AppImport
+    '/_app/proposals/$propId': {
+      id: '/_app/proposals/$propId'
+      path: '/$propId'
+      fullPath: '/proposals/$propId'
+      preLoaderRoute: typeof AppProposalsPropIdImport
+      parentRoute: typeof AppProposalsImport
     }
     '/_app/newProposal/': {
       id: '/_app/newProposal/'
@@ -102,12 +137,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNewProposalIndexImport
       parentRoute: typeof AppNewProposalImport
     }
+    '/_app/proposals/': {
+      id: '/_app/proposals/'
+      path: '/'
+      fullPath: '/proposals/'
+      preLoaderRoute: typeof AppProposalsIndexImport
+      parentRoute: typeof AppProposalsImport
+    }
     '/_app/submitBreakout/': {
       id: '/_app/submitBreakout/'
-      path: '/submitBreakout'
-      fullPath: '/submitBreakout'
+      path: '/'
+      fullPath: '/submitBreakout/'
       preLoaderRoute: typeof AppSubmitBreakoutIndexImport
-      parentRoute: typeof AppImport
+      parentRoute: typeof AppSubmitBreakoutImport
     }
     '/_app/newProposal/$propType/': {
       id: '/_app/newProposal/$propType/'
@@ -135,18 +177,43 @@ const AppNewProposalRouteWithChildren = AppNewProposalRoute._addFileChildren(
   AppNewProposalRouteChildren,
 )
 
+interface AppProposalsRouteChildren {
+  AppProposalsPropIdRoute: typeof AppProposalsPropIdRoute
+  AppProposalsIndexRoute: typeof AppProposalsIndexRoute
+}
+
+const AppProposalsRouteChildren: AppProposalsRouteChildren = {
+  AppProposalsPropIdRoute: AppProposalsPropIdRoute,
+  AppProposalsIndexRoute: AppProposalsIndexRoute,
+}
+
+const AppProposalsRouteWithChildren = AppProposalsRoute._addFileChildren(
+  AppProposalsRouteChildren,
+)
+
+interface AppSubmitBreakoutRouteChildren {
+  AppSubmitBreakoutIndexRoute: typeof AppSubmitBreakoutIndexRoute
+}
+
+const AppSubmitBreakoutRouteChildren: AppSubmitBreakoutRouteChildren = {
+  AppSubmitBreakoutIndexRoute: AppSubmitBreakoutIndexRoute,
+}
+
+const AppSubmitBreakoutRouteWithChildren =
+  AppSubmitBreakoutRoute._addFileChildren(AppSubmitBreakoutRouteChildren)
+
 interface AppRouteChildren {
   AppNewProposalRoute: typeof AppNewProposalRouteWithChildren
+  AppProposalsRoute: typeof AppProposalsRouteWithChildren
+  AppSubmitBreakoutRoute: typeof AppSubmitBreakoutRouteWithChildren
   AppIndexRoute: typeof AppIndexRoute
-  AppProposalPropIdRoute: typeof AppProposalPropIdRoute
-  AppSubmitBreakoutIndexRoute: typeof AppSubmitBreakoutIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
   AppNewProposalRoute: AppNewProposalRouteWithChildren,
+  AppProposalsRoute: AppProposalsRouteWithChildren,
+  AppSubmitBreakoutRoute: AppSubmitBreakoutRouteWithChildren,
   AppIndexRoute: AppIndexRoute,
-  AppProposalPropIdRoute: AppProposalPropIdRoute,
-  AppSubmitBreakoutIndexRoute: AppSubmitBreakoutIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
@@ -154,17 +221,21 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
   '/newProposal': typeof AppNewProposalRouteWithChildren
+  '/proposals': typeof AppProposalsRouteWithChildren
+  '/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
   '/': typeof AppIndexRoute
-  '/proposal/$propId': typeof AppProposalPropIdRoute
+  '/proposals/$propId': typeof AppProposalsPropIdRoute
   '/newProposal/': typeof AppNewProposalIndexRoute
-  '/submitBreakout': typeof AppSubmitBreakoutIndexRoute
+  '/proposals/': typeof AppProposalsIndexRoute
+  '/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
   '/newProposal/$propType': typeof AppNewProposalPropTypeIndexRoute
 }
 
 export interface FileRoutesByTo {
   '/': typeof AppIndexRoute
-  '/proposal/$propId': typeof AppProposalPropIdRoute
+  '/proposals/$propId': typeof AppProposalsPropIdRoute
   '/newProposal': typeof AppNewProposalIndexRoute
+  '/proposals': typeof AppProposalsIndexRoute
   '/submitBreakout': typeof AppSubmitBreakoutIndexRoute
   '/newProposal/$propType': typeof AppNewProposalPropTypeIndexRoute
 }
@@ -173,9 +244,12 @@ export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_app': typeof AppRouteWithChildren
   '/_app/newProposal': typeof AppNewProposalRouteWithChildren
+  '/_app/proposals': typeof AppProposalsRouteWithChildren
+  '/_app/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
   '/_app/': typeof AppIndexRoute
-  '/_app/proposal/$propId': typeof AppProposalPropIdRoute
+  '/_app/proposals/$propId': typeof AppProposalsPropIdRoute
   '/_app/newProposal/': typeof AppNewProposalIndexRoute
+  '/_app/proposals/': typeof AppProposalsIndexRoute
   '/_app/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
   '/_app/newProposal/$propType/': typeof AppNewProposalPropTypeIndexRoute
 }
@@ -185,25 +259,32 @@ export interface FileRouteTypes {
   fullPaths:
     | ''
     | '/newProposal'
-    | '/'
-    | '/proposal/$propId'
-    | '/newProposal/'
+    | '/proposals'
     | '/submitBreakout'
+    | '/'
+    | '/proposals/$propId'
+    | '/newProposal/'
+    | '/proposals/'
+    | '/submitBreakout/'
     | '/newProposal/$propType'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/proposal/$propId'
+    | '/proposals/$propId'
     | '/newProposal'
+    | '/proposals'
     | '/submitBreakout'
     | '/newProposal/$propType'
   id:
     | '__root__'
     | '/_app'
     | '/_app/newProposal'
+    | '/_app/proposals'
+    | '/_app/submitBreakout'
     | '/_app/'
-    | '/_app/proposal/$propId'
+    | '/_app/proposals/$propId'
     | '/_app/newProposal/'
+    | '/_app/proposals/'
     | '/_app/submitBreakout/'
     | '/_app/newProposal/$propType/'
   fileRoutesById: FileRoutesById
@@ -234,9 +315,9 @@ export const routeTree = rootRoute
       "filePath": "_app.tsx",
       "children": [
         "/_app/newProposal",
-        "/_app/",
-        "/_app/proposal/$propId",
-        "/_app/submitBreakout/"
+        "/_app/proposals",
+        "/_app/submitBreakout",
+        "/_app/"
       ]
     },
     "/_app/newProposal": {
@@ -247,21 +328,40 @@ export const routeTree = rootRoute
         "/_app/newProposal/$propType/"
       ]
     },
+    "/_app/proposals": {
+      "filePath": "_app.proposals.tsx",
+      "parent": "/_app",
+      "children": [
+        "/_app/proposals/$propId",
+        "/_app/proposals/"
+      ]
+    },
+    "/_app/submitBreakout": {
+      "filePath": "_app.submitBreakout.tsx",
+      "parent": "/_app",
+      "children": [
+        "/_app/submitBreakout/"
+      ]
+    },
     "/_app/": {
       "filePath": "_app.index.tsx",
       "parent": "/_app"
     },
-    "/_app/proposal/$propId": {
-      "filePath": "_app.proposal/$propId.tsx",
-      "parent": "/_app"
+    "/_app/proposals/$propId": {
+      "filePath": "_app.proposals/$propId.tsx",
+      "parent": "/_app/proposals"
     },
     "/_app/newProposal/": {
       "filePath": "_app.newProposal/index.tsx",
       "parent": "/_app/newProposal"
     },
+    "/_app/proposals/": {
+      "filePath": "_app.proposals/index.tsx",
+      "parent": "/_app/proposals"
+    },
     "/_app/submitBreakout/": {
-      "filePath": "_app.submitBreakout.index.tsx",
-      "parent": "/_app"
+      "filePath": "_app.submitBreakout/index.tsx",
+      "parent": "/_app/submitBreakout"
     },
     "/_app/newProposal/$propType/": {
       "filePath": "_app.newProposal/$propType.index.tsx",

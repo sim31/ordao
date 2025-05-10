@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { FullProposalCard } from '../../components/proposal-view/FullProposalCard';
 import { assertOrclientBeforeLoad } from '../../global/routerContext';
 
-export const Route = createFileRoute('/_app/proposal/$propId')({
+export const Route = createFileRoute('/_app/proposals/$propId')({
   component: RouteComponent,
   beforeLoad: assertOrclientBeforeLoad,
   loader: async ({ context, params }) => {

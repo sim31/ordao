@@ -60,7 +60,7 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
         <VoteButtons proposal={proposal} onVoteClick={onVoteClick}/>
         <ExecuteButton proposal={proposal} onClick={onExecuteClick} />
         <Button variant="outline" asChild>
-          <Link to={`/proposal/$propId`} params={ { propId: proposal.id }} color="black">
+          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }} color="black">
             Details
           </Link>  
         </Button>
