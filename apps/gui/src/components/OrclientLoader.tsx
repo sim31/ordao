@@ -4,6 +4,7 @@ import { useOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrcl
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { Loading } from "./Loading";
+import { useUserWallet } from "@ordao/privy-react-orclient";
 
 export type OrclientLoaderProps = React.PropsWithChildren & {
   orclient?: ORClientType | null;
@@ -17,17 +18,18 @@ export type OrclientLoaderProps = React.PropsWithChildren & {
  */
 export default function OrclientLoader({ children, orclient: propsOrclient }: OrclientLoaderProps) {
   const {
-    authenticated,
     logout: privyLogout,
     ready: privyReady,
   } = usePrivy();
+
+  const userWallet = useUserWallet();
 
   const ctxOrclient = useOrclient();
   const orclient = propsOrclient !== undefined
     ? (propsOrclient === null ? undefined : propsOrclient)
     : ctxOrclient;
 
-  const orclientUnsynced = privyReady && authenticated && !isORClient(orclient);
+  const orclientUnsynced = privyReady && userWallet && !isORClient(orclient);
 
   const [relogin, setRelogin] = useState<boolean>(false);
 
