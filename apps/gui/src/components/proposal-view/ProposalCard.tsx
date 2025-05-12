@@ -49,7 +49,11 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
       </Card.Header>
 
       <Card.Body pt="0" pl="1em" gap="1em">
-        <Card.Title fontSize="2xl">{propTitle}</Card.Title>
+        <Card.Title fontSize="2xl" asChild color="black">
+          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }} color="black">
+            {propTitle}
+          </Link>
+        </Card.Title>
 
         {renderProposalContent()}
 
