@@ -254,11 +254,27 @@ export const zGetVotesSpec = z.object({
 }).strict();
 export type GetVotesSpec = z.infer<typeof zGetVotesSpec>;
 
-export const zGetProposalsSpec = z.object({
+export const zGetProposalsSpecBase = z.object({
+  execStatusFilter: z.array(zExecStatusStr).optional(),
+  limit: z.number().int().gt(0).optional()
+}).strict()
+export type GetProposalsSpecBase = z.infer<typeof zGetProposalsSpecBase>;
+
+export const zGetProposalsSpecBefore = zGetProposalsSpecBase.extend({
   before: zTimestamp.optional(),
-  limit: z.number().int().gt(0).optional(),
-  execStatusFilter: z.array(zExecStatusStr).optional()
+}).strict()
+export type GetProposalsSpecBefore = z.infer<typeof zGetProposalsSpecBefore>;
+
+export const zGetProposalsSpecSkip = zGetProposalsSpecBase.extend({
+  skip: z.number().int().gt(0).optional(),
 }).strict();
+export type GetProposalsSpecSkip = z.infer<typeof zGetProposalsSpecSkip>;
+
+export const zGetProposalsSpec = z.union([
+  zGetProposalsSpecBefore,
+  zGetProposalsSpecSkip,
+  zGetProposalsSpecBase,
+]);
 export type GetProposalsSpec = z.infer<typeof zGetProposalsSpec>;
 
 export const zGetAwardsSpec = z.object({

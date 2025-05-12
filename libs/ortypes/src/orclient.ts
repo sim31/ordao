@@ -350,17 +350,37 @@ export const zGetVotesSpec = z.object({
 }).strict();
 export type GetVotesSpec = z.infer<typeof zGetVotesSpec>;
 
-export const zGetProposalsSpec = z.object({
-  before: z.date().optional(),
-  limit: z.number().int().gt(0).optional(),
+export const zGetProposalsSpecBase = z.object({
   execStatFilter: z.array(zExecStatus).optional(),
   voteStatFilter: z.array(zVoteStatus).optional(),
-  stageFilter: z.array(zStage).optional()
+  stageFilter: z.array(zStage).optional(),
+  limit: z.number().int().gt(0).optional(),
+}).strict()
+
+export const zGetProposalsSpecBefore = zGetProposalsSpecBase.extend({
+  before: zTimestamp.optional(),
 }).strict();
-/**
- * Some description
- */
+export type GetProposalsSpecBefore = z.infer<typeof zGetProposalsSpecBefore>;
+
+export const zGetProposalsSpecSkip = zGetProposalsSpecBase.extend({
+  skip: z.number().int().gt(0).optional(),
+}).strict();
+export type GetProposalSpecSkip = z.infer<typeof zGetProposalsSpecSkip>;
+
+export const zGetProposalsSpec = z.union([
+  zGetProposalsSpecBefore,
+  zGetProposalsSpecSkip,
+  zGetProposalsSpecBase,
+]);
 export type GetProposalsSpec = z.infer<typeof zGetProposalsSpec>;
+
+export function isGetPropSpecBefore(spec: GetProposalsSpec): spec is GetProposalsSpecBefore {
+  return 'before' in spec;
+}
+
+export function isGetPropSpecSkip(spec: GetProposalsSpec): spec is GetProposalSpecSkip {
+  return 'skip' in spec;
+}
 
 export const zGetAwardsSpec = z.object({
   before: z.date().optional(),

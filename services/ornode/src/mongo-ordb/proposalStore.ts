@@ -46,7 +46,7 @@ export class ProposalStore implements IProposalStore {
   async getProposals(spec: GetProposalsSpec): Promise<Proposal[]> {
     const filter: any = {};
 
-    if (spec.before !== undefined) {
+    if ('before' in spec && spec.before !== undefined) {
       filter['createTs'] = { $lt: spec.before }
     }
 
@@ -56,9 +56,10 @@ export class ProposalStore implements IProposalStore {
 
     const limit = spec.limit ? Math.min(spec.limit, this._cfg.maxDocLimit) : this._cfg.defaultDocLimit;
 
-    const docs = await this.proposals.find(filter)
-      .sort({ createTs: -1 })
-      .limit(limit);
+    const docs = 'skip' in spec && spec.skip !== undefined
+      ? await this.proposals.find(filter).sort({ createTs: -1 }).skip(spec.skip).limit(limit)
+      : await this.proposals.find(filter).sort({ createTs: -1 }).limit(limit);
+
     const dtos = docs.map(ent => {
       return zProposal.parse(withoutId(ent));
     });

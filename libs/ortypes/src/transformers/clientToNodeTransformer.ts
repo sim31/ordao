@@ -15,14 +15,16 @@ import {
   zTickRequest,
   zVoteType as zCVoteType,
   VoteType as CVoteType,
-  GetProposalsSpec as CGetProposalsSpec,
   zGetProposalsSpec as zCGetProposalsSpec,
   zGetAwardsSpec as zCGetAwardsSpec,
   GetAwardsSpec as CGetAwardsSpec,
   zGetVotesSpec as zCGetVotesSpec,
   GetVotesSpec as CGetVotesSpec,
+  GetProposalsSpec as CGetProposalsSpec,
+  isGetPropSpecBefore,
+  isGetPropSpecSkip,
 } from "../orclient.js";
-import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfCustomCallAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec } from "../ornode.js";
+import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfCustomCallAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec, GetProposalsSpecBefore, zGetProposalsSpecSkip, GetProposalsSpecSkip, GetProposalsSpecBase } from "../ornode.js";
 import { ConfigWithOrnode, ORContext as OrigORContext } from "../orContext.js";
 import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, strToVtMap, zStrToVoteType } from "../orec.js";
 import { BurnRespectArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
@@ -346,12 +348,26 @@ function mkzCCustomCallReqToProposal(orctx: ORContext) {
 
 // zCGetProposalSepc is strict, so this checks that no unknown fields are specified
 export const zCGetProposalsSpecToNodeSpec = zCGetProposalsSpec.transform(spec => {
-  const r: GetProposalsSpec = {
-    before: spec.before !== undefined ? spec.before.valueOf() / 1000 : undefined,
+  let base: GetProposalsSpecBase = {
     limit: spec.limit,
     execStatusFilter: spec.execStatFilter
+  };
+
+  if (isGetPropSpecBefore(spec)) {
+    const r: GetProposalsSpecBefore = {
+      ...base,
+      before: spec.before
+    }
+    return r;
+  } else if (isGetPropSpecSkip(spec)) {
+    const r: GetProposalsSpecSkip = {
+      ...base,
+      skip: spec.skip,
+    }
+    return r;
+  } else {
+    return base;
   }
-  return r;
 }).pipe(zGetProposalsSpec);
 
 export const zCGetAwardsSpecToNodeSpec = zCGetAwardsSpec.transform(spec => {

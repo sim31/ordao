@@ -19,7 +19,7 @@ export const zConfig = z.object({
   docsOrigin: z.string().url(),
   parentRespectLink: z.string().url(),
   childRespectLink: z.string().url(),
-  defaultPropQuerySize: z.number().int().gt(0).default(6)
+  defaultPropQuerySize: z.coerce.number().int().gt(0).default(6)
 
 });
 export type Config = z.infer<typeof zConfig>;

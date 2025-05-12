@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate, useRouterState } from '@tanstack/react-router'
 import { config } from '../../global/config'
 import { zodValidator } from '@tanstack/zod-adapter'
 import { PagedProposalList } from '../../components/proposal-view/PagedProposalList'
@@ -16,17 +16,48 @@ export const Route = createFileRoute('/_app/proposals/')({
     const spec = {
       ...deps,
       limit,
-      before: deps.before === undefined ? undefined : new Date(deps.before)
     };
     const proposals = await orclient.getProposals(spec);
-    return { proposals, spec, orclient };
+    const proposalsLeft = proposals.length >= limit;
+    const proposalsSkipped = 'skip' in spec && spec.skip ? spec.skip : 0;
+    return { proposals, spec, orclient, proposalsLeft, proposalsSkipped };
   }),
 })
 
 function Index() {
-  const { proposals } = Route.useLoaderData();
+  const { proposals, proposalsLeft, proposalsSkipped, spec } = Route.useLoaderData();
+
+  const { isLoading } = useRouterState();
+
+  const navigate = useNavigate();
+
+  const forwardEnabled = proposalsLeft;
+  const backEnabled = !!proposalsSkipped;
+
+  const onForward = () => {
+    const skip = proposalsSkipped + config.defaultPropQuerySize;
+    navigate({ to: '/proposals', search: { skip, limit: config.defaultPropQuerySize } });
+  }
+  
+  const onBack = () => {
+    const minSkip = proposalsSkipped - config.defaultPropQuerySize;
+    const skip = minSkip <= 0 ? undefined : minSkip;
+    navigate({ to: '/proposals', search: { skip, limit: config.defaultPropQuerySize } });
+  }
+
+  const onRefresh = () => {
+    navigate({ to: '/proposals', search: spec });
+  }
 
   return (
-    <PagedProposalList proposals={proposals} />
+    <PagedProposalList
+      proposals={proposals}
+      forwardEnabled={forwardEnabled}
+      backEnabled={backEnabled}
+      onBack={onBack}
+      onForward={onForward}
+      onRefresh={onRefresh}
+      isLoading={isLoading}
+    />
   )
 }
