@@ -217,11 +217,21 @@ Tick
 
 Increment period number (and meeting number) by 1.
 `
+const tickBytesDesc = `
+Data
+
+Optional data to send with the tick. If not specified, it will be filled with next meeting number.
+`;
+const tickLinkDesc = `
+Link
+
+Optional link to signal with the signal.
+`
 
 export const zTick = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.tick),
-  link: z.string().optional().describe(linkDesc),
-  data: zBytes.optional().describe(signalBytesDesc)
+  link: z.string().optional().describe(tickLinkDesc),
+  data: zBytes.optional().describe(tickBytesDesc)
 }).describe(tickDescription)
 export type Tick = z.infer<typeof zTick>;
 

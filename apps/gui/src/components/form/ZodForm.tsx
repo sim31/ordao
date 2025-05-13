@@ -41,11 +41,23 @@ function ZodForm<T extends z.AnyZodObject>({
     return prefix !== undefined ? `${prefix}.${str}` : str;
   }
 
+  const setValueAsForStr = (value: unknown) => {
+    if (typeof value === 'string') {
+      if (value.trim() === '') {
+        return undefined;
+      } else {
+        return value;
+      }
+    } else {
+      return undefined;
+    }
+  }
+
   // TODO: create component for each type of input.
   // Currently not doing that because not sure how to pass values returned from useForm
   const renderStringInput = (fieldName: string) => {
     return (
-      <Input {...register(fieldName)}/>
+      <Input {...register(fieldName, { setValueAs: setValueAsForStr })}/>
     )
   }
 
@@ -53,7 +65,7 @@ function ZodForm<T extends z.AnyZodObject>({
   const renderTextArea = (fieldName: string, _maxLength?: number) => {
     // TODO: Adjust size based on maxLength
     return (
-      <Textarea minHeight="8em" {...register(fieldName)}/>
+      <Textarea minHeight="8em" {...register(fieldName, { setValueAs: setValueAsForStr })}/>
     )
   }
 
