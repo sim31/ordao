@@ -6,6 +6,7 @@ import { config } from "./config";
 import { RouteIds } from "@tanstack/react-router";
 import { routeTree } from "../routeTree.gen";
 import { IconType } from "react-icons";
+import { MdGroups } from "react-icons/md";
 
 export interface MenuItemBase {
   id: string
@@ -27,10 +28,11 @@ export type MenuItem = MenuItemExternalLink | MenuItemInternalLink;
 export const menuItems: Array<MenuItem> = [
   { id: "/_app/proposals", name: 'Proposals', icon: FiHome },
   { id: "/_app/newProposal", name: 'New Proposal', icon: TbContract },
-  // TODO:
+  { id: "playRespectGame", name: 'Play Respect Game', icon: MdGroups, externalLink: config.respectGameLink },
   { id: "/_app/submitBreakout", name: 'Submit Breakout Results', icon: FaRankingStar },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill, externalLink: config.parentRespectLink },
   { id: "childRespect", name: 'Child Respect', icon: PiMedalThin, externalLink: config.childRespectLink },
+
   // TODO:
   // { id: "claim", name: 'Claim parent Respect', icon: FaRegHandRock },
   // { id: "confirm", name: 'Confirm parent Respect', icon: GiConfirmed },
