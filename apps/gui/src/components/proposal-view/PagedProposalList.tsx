@@ -3,7 +3,6 @@ import { Proposal } from "@ordao/orclient";
 import { ProposalList } from "./ProposalList";
 import { IoIosArrowBack, IoIosArrowForward, IoIosRefresh } from "react-icons/io";
 
-
 export interface PagedProposalListProps {
   proposals: Proposal[]
   forwardEnabled: boolean,
@@ -14,41 +13,59 @@ export interface PagedProposalListProps {
   isLoading: boolean
 }
 
-export function PagedProposalList({
-  proposals,
-  forwardEnabled,
-  backEnabled,
-  onForward,
-  onBack,
-  onRefresh,
-  isLoading
-}: PagedProposalListProps) {
+
+
+export function PageControls(props: PagedProposalListProps) {
+  const {
+    forwardEnabled,
+    backEnabled,
+    onForward,
+    onBack,
+    onRefresh,
+  } = props;
+
+  return (
+    <Flex
+      mb="1em"
+      alignItems="center"
+      justifyContent="flex-end"
+      w="100%"
+    >
+      <IconButton color="black" onClick={onRefresh}>
+        <IoIosRefresh />
+      </IconButton>
+
+      <IconButton color="black" disabled={!backEnabled} onClick={onBack}>
+        <IoIosArrowBack />
+      </IconButton>
+      <IconButton color="black" disabled={!forwardEnabled} onClick={onForward}>
+        <IoIosArrowForward />
+      </IconButton>
+    </Flex>
+  )
+
+}
+
+export function PagedProposalList(props: PagedProposalListProps) {
+  const {
+    proposals,
+    isLoading
+  } = props;
+
   const renderHeader = () => {
     if (isLoading) {
       return <Center><Spinner /></Center>
     } else {
-      return (
-        <Flex
-          mb="1em"
-          alignItems="center"
-          justifyContent="flex-end"
-          w="100%"
-        >
-          <IconButton color="black" onClick={onRefresh}>
-            <IoIosRefresh />
-          </IconButton>
-
-          <IconButton color="black" disabled={!backEnabled} onClick={onBack}>
-            <IoIosArrowBack />
-          </IconButton>
-          <IconButton color="black" disabled={!forwardEnabled} onClick={onForward}>
-            <IoIosArrowForward />
-          </IconButton>
-        </Flex>
-      )
+      return <PageControls {...props} />
     }
-
   }
+
+  const renderFooter = () => {
+    if (!isLoading) {
+      return <PageControls {...props} />
+    }
+  }
+
   return (
     <VStack>
       {renderHeader()}
@@ -57,6 +74,7 @@ export function PagedProposalList({
         ? <Text>No proposals found</Text>
         : <ProposalList proposals={proposals} />
       }
+      {renderFooter()}
     </VStack>
   );
 }
