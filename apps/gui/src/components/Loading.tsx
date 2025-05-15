@@ -3,7 +3,7 @@ import { Center, Spinner } from "@chakra-ui/react"
 export function Loading() {
   return (
     <Center>
-      <Spinner size="xl" color="black" />
+      <Spinner margin="1em" size="xl" color="black" backgroundColor="transparent" />
     </Center>
   );
 }

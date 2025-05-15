@@ -20,7 +20,7 @@ export default function ProposalFormMenu({ onSelect }: ProposalFormMenuProps) {
   })
 
   return (
-    <SimpleGrid gap="2em" columns={2}>
+    <SimpleGrid minChildWidth="xs" margin="2em" gap="2em">
       {cards}
     </SimpleGrid>
   )

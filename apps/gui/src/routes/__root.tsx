@@ -10,7 +10,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   return (
-    <Container minHeight="100vh" minWidth="100vw" padding="0px">
+    <Container fluid margin={0} padding={0}>
       <Outlet />
       <Toaster />
       <TanStackRouterDevtools />

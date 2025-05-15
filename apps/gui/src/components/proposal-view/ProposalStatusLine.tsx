@@ -28,7 +28,7 @@ export function ProposalStatusLine({ proposal }: ProposalStatusLineProps) {
   }
 
   return (
-    <Flex gap={2} alignItems="center" mb={0.5}>
+    <Flex gap={2} alignItems="center" mb={0.5} wrap="wrap">
       <Badge 
         variant="solid" 
         colorPalette={voteStatusColors[proposal.voteStatus]} 

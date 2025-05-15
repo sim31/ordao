@@ -5,6 +5,7 @@ import { isORClient, OnchainActionRes, Proposal, ValidVoteType } from "@ordao/or
 import { PropId } from "@ordao/ortypes";
 import { useNavigate } from "@tanstack/react-router";
 import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
+import { SimpleGrid } from "@chakra-ui/react";
 
 export interface ProposalListProps {
   proposals: Proposal[],
@@ -67,14 +68,16 @@ export function ProposalList({
         onClose={onActionModalClose}
       />
 
-      {proposals.map((prop) => (
-        <ProposalCard
-          key={prop.id}
-          proposal={prop}
-          onExecuteClick={() => onExecuteClick(prop.id)}
-          onVoteClick={(vote) => onVoteClick(prop.id, vote)}
-        />
-      ))}
+      <SimpleGrid columns={1} gap="1em">
+        {proposals.map((prop) => (
+          <ProposalCard
+            key={prop.id}
+            proposal={prop}
+            onExecuteClick={() => onExecuteClick(prop.id)}
+            onVoteClick={(vote) => onVoteClick(prop.id, vote)}
+          />
+        ))}
+      </SimpleGrid>
     </>
   );
 }

@@ -13,7 +13,7 @@ import {
   Menu,
   Portal,
   VStack,
-  Center,
+  Container,
 } from '@chakra-ui/react'
 import { Button } from "../Button.js";
 import { IconButton } from "../IconButton.js";
@@ -76,7 +76,9 @@ const SidebarContent = ({
       borderRight="1px/*  */"
       borderRightColor={{ base: 'gray.400', _dark: 'gray.700' }}
       boxShadow="md"
-      w={{ base: 'full', lg: 80 }}
+      w={{ base: '100vw', lg: 80 }}
+      left={0}
+      top={0}
       pos="fixed"
       h="full"
       zIndex={200}
@@ -154,7 +156,7 @@ const Header = ({ onMenuOpen, accountInfo, onLogin, onLogout, ...rest }: HeaderP
   }
 
   return (
-    <Box w="100%" height="20" pos="fixed" zIndex={100}>
+    <Box width="100vw" left="0" top="0" height="20" pos="fixed" zIndex={100}>
       <Flex
         ml={{ base: 0, lg: 79 }}
         px={{ base: 4, lg: 4 }}
@@ -244,7 +246,7 @@ const SidebarWithHeader = ({
   }
 
   return (
-    <Box minH="100vh" bg={{ base: 'gray.100', _dark: 'gray.900' }}>
+    <Container minHeight="100vh" fluid padding="0" bg={{ base: 'gray.100', _dark: 'gray.900' }}>
       {/* Sidebar displayed on larger screens. Contains title displayed on larger screens */}
       <SidebarContent
         onClose={onDrawerClose}
@@ -269,12 +271,12 @@ const SidebarWithHeader = ({
       <VStack>
         <Header onMenuOpen={onDrawerOpen} onLogin={onLogin} onLogout={onLogout} accountInfo={accountInfo} />
 
-        <Center ml={{ base: 0, lg: 80 }} p="2em" mt="20">
+        <Container fluid pl={{ base: 0, lg: 80 }} pt={20} pr="0" margin="0">
           {children}
-        </Center>
+        </Container>
 
       </VStack>
-    </Box>
+    </Container>
   )
 }
 

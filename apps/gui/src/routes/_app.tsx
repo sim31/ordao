@@ -58,12 +58,10 @@ function RouteComponent() {
         onLogout={privyLogout}
         menuItems={menuItems}
       >
-        <Flex direction="column" gap={4}>
-          <OrclientLoader orclient={orclient ?? null}>
-            {/* // This is rendered only when orclient is defined */}
-            <Outlet />
-          </OrclientLoader>
-        </Flex>
+        <OrclientLoader orclient={orclient ?? null}>
+          {/* // This is rendered only when orclient is defined */}
+          <Outlet />
+        </OrclientLoader>
       </SidebarWithHeader>
   );
 }

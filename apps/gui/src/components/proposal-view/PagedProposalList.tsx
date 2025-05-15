@@ -28,7 +28,6 @@ export function PageControls(props: PagedProposalListProps) {
 
   return (
     <Flex
-      mb="1em"
       alignItems="center"
       justifyContent="flex-end"
       w="100%"
@@ -69,7 +68,7 @@ export function PagedProposalList(props: PagedProposalListProps) {
   }
 
   return (
-    <VStack>
+    <VStack mt="0.5em" mb="0.5em">
       {renderHeader()}
       {
         proposals.length === 0
