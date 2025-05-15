@@ -34,6 +34,7 @@
     "dev:run": "",
     "dev-op-sepolia:ornode": "npm run -w @ordao/ornode dev:op-sepolia",
     "dev-op-sepolia:gui": "npm run -w @ordao/gui dev-op-sepolia",
+    "op-sepolia-pub:gui": "npm run -w @ordao/gui dev-op-sepolia-pub",
     "publish": "lerna publish --no-private",
     "local-publish": "lerna publish --no-git-tag-version --no-push --registry=\"http://localhost:4873/\"",
     "local-unpublish": "lerna exec -- npm unpublish --registry=\"http://localhost:4873/\" \"\\${LERNA_PACKAGE_NAME}@\\$(npm view \\$LERNA_PACKAGE_NAME version)\"",
