@@ -1,4 +1,5 @@
-import { Card, Center, Fieldset, Flex, IconButton, Spacer, Text } from "@chakra-ui/react";
+import { Card, Center, Fieldset, Flex, Spacer, Text } from "@chakra-ui/react";
+import { IconButton } from "../IconButton";
 import { IoMdClose } from "react-icons/io";
 import SubmitBreakoutForm from "./SubmitBreakoutForm";
 import { SearchParams } from "../../global/submitBreakoutSearchParams";
@@ -38,7 +39,6 @@ export function SubmitBreakoutCard({
             onClick={onCancel}
             aria-label="Open menu"
             variant="ghost"
-            color="black"
           >
             <IoMdClose />
           </IconButton>

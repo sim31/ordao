@@ -3,7 +3,8 @@ import { ArrayTypeInfo, extractZodDescription, isPrimitive, ObjectTypeInfo, Prim
 import { DefaultValues, FieldErrors, GlobalError, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { assertUnreachable } from '@ordao/ts-utils';
-import { Button, Field, Fieldset, HStack, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
+import { Field, Fieldset, HStack, Input, NumberInput, Stack, Textarea } from '@chakra-ui/react';
+import { Button } from "../Button";
 
 // TODO: extract zod reflection stuff to separate library
 
@@ -146,8 +147,8 @@ function ZodForm<T extends z.AnyZodObject>({
             );
           })}
         <HStack>
-          <Button width="50%" color="black" onClick={() => setValue(fieldName, [...arrayValues, ''])}>Add</Button>
-          <Button width="50%" color="black" onClick={() => setValue(fieldName, arrayValues.slice(0, -1))}>Remove</Button>
+          <Button width="50%" onClick={() => setValue(fieldName, [...arrayValues, ''])}>Add</Button>
+          <Button width="50%" onClick={() => setValue(fieldName, arrayValues.slice(0, -1))}>Remove</Button>
         </HStack>
         </Fieldset.Content>
       </Fieldset.Root>

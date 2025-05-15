@@ -1,5 +1,5 @@
-import { Button } from "@chakra-ui/react";
 import { isORClient, Proposal } from "@ordao/orclient";
+import { Button } from "./Button.js";
 import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 export interface ExecuteButtonProps {
@@ -14,8 +14,6 @@ export function ExecuteButton({ proposal, onClick } : ExecuteButtonProps) {
     if (proposal.stage === 'Execution') {
       return (
         <Button
-          variant="outline"
-          color="black"
           onClick={onClick}
         >
           Execute

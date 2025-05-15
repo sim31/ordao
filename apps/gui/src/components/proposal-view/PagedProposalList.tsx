@@ -1,7 +1,9 @@
-import { Center, Flex, IconButton, Spinner, Text, VStack } from "@chakra-ui/react";
+import { Flex, Text, VStack } from "@chakra-ui/react";
+import { IconButton } from "../IconButton";
 import { Proposal } from "@ordao/orclient";
 import { ProposalList } from "./ProposalList";
 import { IoIosArrowBack, IoIosArrowForward, IoIosRefresh } from "react-icons/io";
+import { Loading } from "../Loading";
 
 export interface PagedProposalListProps {
   proposals: Proposal[]
@@ -31,14 +33,14 @@ export function PageControls(props: PagedProposalListProps) {
       justifyContent="flex-end"
       w="100%"
     >
-      <IconButton color="black" onClick={onRefresh}>
+      <IconButton onClick={onRefresh}>
         <IoIosRefresh />
       </IconButton>
 
-      <IconButton color="black" disabled={!backEnabled} onClick={onBack}>
+      <IconButton disabled={!backEnabled} onClick={onBack}>
         <IoIosArrowBack />
       </IconButton>
-      <IconButton color="black" disabled={!forwardEnabled} onClick={onForward}>
+      <IconButton disabled={!forwardEnabled} onClick={onForward}>
         <IoIosArrowForward />
       </IconButton>
     </Flex>
@@ -54,7 +56,7 @@ export function PagedProposalList(props: PagedProposalListProps) {
 
   const renderHeader = () => {
     if (isLoading) {
-      return <Center><Spinner /></Center>
+      return <Loading/>
     } else {
       return <PageControls {...props} />
     }

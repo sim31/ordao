@@ -1,16 +1,15 @@
 import {
   Dialog,
   Portal,
-  Button,
   Center,
   DialogOpenChangeDetails,
-  IconButton,
   Text,
   VStack,
   Link,
   Icon,
 } from '@chakra-ui/react'
-import { Spinner } from '@chakra-ui/react'
+import { Button } from './Button.js';
+import { IconButton } from './IconButton';
 import { OnchainActionRes } from '@ordao/orclient';
 import { useEffect, useMemo, useState } from 'react';
 import { IoMdClose } from 'react-icons/io';
@@ -18,6 +17,7 @@ import { decodeError } from '../utils/decodeTxError';
 import { FiExternalLink } from 'react-icons/fi';
 import { linkToTx } from '../utils/blockExplorerLink';
 import { stringify } from '@ordao/ts-utils';
+import { Loading } from './Loading';
 
 export type OnchainActionModalProps = {
   onClose: (success: boolean) => void;
@@ -90,7 +90,7 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content color="black">
             <Dialog.Header>
               <Dialog.Title>{props.title}</Dialog.Title>
             </Dialog.Header>
@@ -98,7 +98,7 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
               <Center>
                 <VStack>
 
-                  {txProgressStatus === 'submitting' && <Spinner size="lg" />}
+                  {txProgressStatus === 'submitting' && <Loading/>}
 
                   <Text>{txProgressStr}</Text>
 
@@ -106,7 +106,7 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
                     && (
                       <Link fontSize="md" color="teal.500" href={explorerLink} target="_blank">
                         Transaction in Block Explorer
-                        <Icon color="black" background="transparent" size="sm" marginLeft="1px">
+                        <Icon background="transparent" size="sm" marginLeft="1px">
                           <FiExternalLink />
                         </Icon>
                       </Link>
@@ -117,14 +117,14 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
             </Dialog.Body>
             <Dialog.Footer>
               {done &&
-                <Button color="black" onClick={() => props.onClose(success)}>
+                <Button onClick={() => props.onClose(success)}>
                   Close
                 </Button>
               }
             </Dialog.Footer>
             {done &&
               <Dialog.CloseTrigger asChild>
-                <IconButton variant="ghost" color="black">
+                <IconButton variant="ghost">
                   <IoMdClose />
                 </IconButton>
               </Dialog.CloseTrigger>

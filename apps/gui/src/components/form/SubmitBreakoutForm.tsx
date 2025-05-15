@@ -1,11 +1,11 @@
 import {
-  Button,
   Field,
   Input,
   Spinner,
   Stack,
   Text
 } from "@chakra-ui/react";
+import { Button } from "../Button.js";
 import { ProposeRes } from "@ordao/orclient";
 import { RespectBreakoutRequest, zRespectBreakoutRequest } from "@ordao/ortypes/orclient.js";
 import copy from "copy-to-clipboard";
@@ -152,7 +152,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
           <Input
             type="number"
             value={searchParams.groupnumber ?? ""}
-            onChange={e => setSearchParams({ ...searchParams, groupNumber: e.target.value })}
+            onChange={e => setSearchParams({ ...searchParams, groupnumber: e.target.value })}
           />
         </Field.Root>
 
@@ -214,10 +214,10 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
 
         <Text color="red">{errorStr ?? ""}</Text>
 
-        <Button onClick={onSubmitClick} color="black" disabled={!fieldsFilled || !initialized}>
+        <Button onClick={onSubmitClick} disabled={!fieldsFilled || !initialized}>
           Submit
         </Button>
-        <Button onClick={copyUrl} color="black">Share</Button>
+        <Button onClick={copyUrl}>Share</Button>
 
       </Stack>
     )

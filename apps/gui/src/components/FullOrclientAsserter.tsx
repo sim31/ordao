@@ -1,4 +1,5 @@
-import { Button, Center } from "@chakra-ui/react";
+import { Center } from "@chakra-ui/react";
+import { Button } from "./Button";
 import { isORClient, ORClientType } from "@ordao/orclient";
 import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 import { usePrivy } from "@privy-io/react-auth";
@@ -28,7 +29,7 @@ export default function FullOrclientAsserter({ children, orclient: propsOrclient
   if (!fullOrclient) {
     return (
       <Center>
-        <Button size="xl" color="black" variant="outline" onClick={privyLogin}>Login</Button>
+        <Button size="xl" onClick={privyLogin}>Login</Button>
       </Center>
     );
   } else {

@@ -2,10 +2,10 @@ import {
   Dialog,
   Portal,
   Text,
-  Button,
   DialogOpenChangeDetails,
-  IconButton,
 } from '@chakra-ui/react'
+import { Button } from '../Button';
+import { IconButton } from '../IconButton';
 import { IoMdClose } from "react-icons/io";
 
 export type SubmitBreakoutResModal = {
@@ -27,7 +27,7 @@ export default function SubmitBreakoutResModal(props: SubmitBreakoutResModal) {
       <Portal>
         <Dialog.Backdrop />
         <Dialog.Positioner>
-          <Dialog.Content>
+          <Dialog.Content color="black">
             <Dialog.Header fontSize="xl">
               <Dialog.Title>Submit Breakout Results</Dialog.Title>
             </Dialog.Header>
@@ -43,7 +43,6 @@ export default function SubmitBreakoutResModal(props: SubmitBreakoutResModal) {
             <Dialog.Footer>
               <Button
                 width="100%"
-                color="black"
                 onClick={props.onSubmit}
                 fontSize="md"
               >
@@ -51,7 +50,7 @@ export default function SubmitBreakoutResModal(props: SubmitBreakoutResModal) {
               </Button>
             </Dialog.Footer>
             <Dialog.CloseTrigger asChild>
-              <IconButton variant="ghost" color="black">
+              <IconButton variant="ghost">
                 <IoMdClose />
               </IconButton>
             </Dialog.CloseTrigger>

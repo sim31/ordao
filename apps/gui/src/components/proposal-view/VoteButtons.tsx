@@ -1,4 +1,5 @@
-import { Button, Flex } from "@chakra-ui/react";
+import { Flex } from "@chakra-ui/react";
+import { Button } from "../Button";
 import { isORClient } from "@ordao/orclient";
 import { Proposal, ValidVoteType } from "@ordao/ortypes/orclient.js";
 import { useAssertOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";

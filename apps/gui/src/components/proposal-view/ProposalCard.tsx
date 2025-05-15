@@ -1,4 +1,5 @@
-import { Button, Card, Text, Clipboard } from "@chakra-ui/react";
+import { Card, Text, Clipboard } from "@chakra-ui/react";
+import { Button } from "../Button.js";
 import { Proposal, propSchemaMap, ValidVoteType } from "@ordao/ortypes/orclient.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";
 import { PropTable } from "./PropTable.js";
@@ -6,7 +7,7 @@ import { extractZodDescription } from "@ordao/zod-utils";
 import { ProposalStatusLine } from "./ProposalStatusLine.js";
 import { VoteButtons } from "./VoteButtons.js";
 import { ProposalVoteStat } from "./ProposalVoteStat.js";
-import { Link } from "@tanstack/react-router";
+import { Link } from "../Link.js";
 import { ExecuteButton } from "../ExecuteButton.js";
 
 export interface ProposalCardProps {
@@ -51,7 +52,7 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
 
       <Card.Body pt="0" pl="1em" gap="1em">
         <Card.Title fontSize="2xl" asChild color="black">
-          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }} color="black">
+          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }}>
             {propTitle}
           </Link>
         </Card.Title>
@@ -61,18 +62,18 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
         <ProposalVoteStat proposal={proposal} />
       </Card.Body>
 
-      <Card.Footer mb="0" pb="0.5em">
+      <Card.Footer mb="0" pb="0.5em" pl="1em" ml="0">
         <VoteButtons proposal={proposal} onVoteClick={onVoteClick}/>
         <ExecuteButton proposal={proposal} onClick={onExecuteClick} />
-        <Button variant="outline" asChild>
-          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }} color="black">
+        <Button asChild>
+          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }}>
             Details
           </Link>  
         </Button>
 
         <Clipboard.Root value={`${window.location.origin}/proposals/${proposal.id}`}>
           <Clipboard.Trigger asChild>
-            <Button variant="surface" size="sm">
+            <Button size="sm">
               <Clipboard.Indicator />
               <Text>Copy Link</Text>
             </Button>

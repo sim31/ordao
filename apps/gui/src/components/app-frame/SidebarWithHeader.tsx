@@ -1,9 +1,7 @@
 'use client'
 
 import {
-  IconButton,
   Box,
-  CloseButton,
   Flex,
   Icon,
   Text,
@@ -13,11 +11,13 @@ import {
   BoxProps,
   FlexProps,
   Menu,
-  Button,
   Portal,
   VStack,
   Center,
 } from '@chakra-ui/react'
+import { Button } from "../Button.js";
+import { IconButton } from "../IconButton.js";
+import { CloseButton } from '../CloseButton.js';
 import copy from 'copy-to-clipboard'
 import {
   FiMenu,
@@ -83,7 +83,7 @@ const SidebarContent = ({
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontWeight="bold">
+        <Text fontSize="2xl" fontWeight="bold" color="black">
           {config.appTitle}
         </Text>
         <CloseButton display={{ base: 'flex', lg: 'none' }} onClick={onClose} />
@@ -170,7 +170,6 @@ const Header = ({ onMenuOpen, accountInfo, onLogin, onLogout, ...rest }: HeaderP
         <IconButton
           display={{ base: 'flex', lg: 'none' }} // displayed only on small screens
           onClick={onMenuOpen}
-          variant="outline"
           aria-label="open menu"
         >
           <FiMenu />
@@ -180,7 +179,9 @@ const Header = ({ onMenuOpen, accountInfo, onLogin, onLogout, ...rest }: HeaderP
           display={{ base: 'flex', lg: 'none' }} // displayed only on small screens
           fontSize="2xl"
           fontFamily="monospace"
-          fontWeight="bold">
+          fontWeight="bold"
+          color="black"   
+        >
           {config.appTitle}
         </Text>
 
@@ -188,7 +189,7 @@ const Header = ({ onMenuOpen, accountInfo, onLogin, onLogout, ...rest }: HeaderP
           ? (
             <Menu.Root>
               <Menu.Trigger asChild>
-                <Button variant="outline" size="sm">
+                <Button size="sm">
                   {accountInfo.displayName}
                 </Button>
               </Menu.Trigger>

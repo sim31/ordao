@@ -1,4 +1,6 @@
-import { Button, Card, Center, Checkbox, Fieldset, Flex, HStack, IconButton, Spacer, Text } from "@chakra-ui/react";
+import { Card, Center, Checkbox, Fieldset, Flex, HStack, Spacer, Text } from "@chakra-ui/react";
+import { Button } from "../Button";
+import { IconButton } from "../IconButton";
 import { DefaultValues } from 'react-hook-form';
 import { TypeOf, z } from "zod";
 import ZodForm from "./ZodForm";
@@ -96,7 +98,6 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
             onClick={onCancel}
             aria-label="Open menu"
             variant="ghost"
-            color="black"
           >
             <IoMdClose />
           </IconButton>
@@ -116,8 +117,8 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
                 </Fieldset.Content>
               </Fieldset.Root>
               <HStack>
-                <Button color="black" mt="2em" as="button" onClick={handleConfirmSubmit}>Submit</Button>
-                <Button color="black" mt="2em" as="button" onClick={() => setStep('edit')}>Edit</Button>
+                <Button mt="2em" as="button" onClick={handleConfirmSubmit}>Submit</Button>
+                <Button mt="2em" as="button" onClick={() => setStep('edit')}>Edit</Button>
               </HStack>
             </>
           )

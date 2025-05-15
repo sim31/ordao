@@ -1,4 +1,5 @@
-import { Button, VStack, Text } from "@chakra-ui/react";
+import { VStack, Text } from "@chakra-ui/react";
+import { Button } from "./Button.js";
 import { isORClient, ORClientType } from "@ordao/orclient";
 import { useOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 import { usePrivy } from "@privy-io/react-auth";
@@ -54,7 +55,7 @@ export default function OrclientLoader({ children, orclient: propsOrclient }: Or
         <Text>
           Something went wrong with wallet connection. Please try logging in again.
         </Text>
-        <Button color="black" onClick={privyLogout}>
+        <Button onClick={privyLogout}>
           Logout
         </Button>
       </VStack>
