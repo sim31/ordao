@@ -4,12 +4,14 @@ import { PropTableRow } from "./PropTableRow";
 // import { formatEthAddress } from "eth-address";
 import { zRankNumToValue } from "@ordao/ortypes";
 import { zodObjectFields } from "@ordao/zod-utils";
+import { formatEthAddress } from "eth-address";
 
 export interface ProposalContentTableProps {
   dprop: DecodedProposal
+  shortenAddrs?: boolean
 }
 
-export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
+export function DecodedPropTable({ dprop, shortenAddrs }: ProposalContentTableProps) {
   const zPropSchema = propSchemaMap[dprop.propType]; 
   const fields = zodObjectFields(zPropSchema);
 
@@ -17,7 +19,8 @@ export function DecodedPropTable({ dprop }: ProposalContentTableProps) {
     let val = value;
     if (dprop.propType === 'respectBreakout' && key === 'rankings') {
       val = dprop.rankings.map((addr, i) => {
-        return `${addr}    (+${zRankNumToValue.parse(i + 1)} Respect)`;
+        const addrStr = shortenAddrs ? formatEthAddress(addr, 6) : addr;
+        return `${addrStr}    (+${zRankNumToValue.parse(i + 1)} Respect)`;
       })      
     }
     const fieldName = fields[key].title || key;

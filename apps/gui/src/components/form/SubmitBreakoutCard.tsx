@@ -23,11 +23,12 @@ export function SubmitBreakoutCard({
   return (
     <Center>
       <Card.Root
+        mt="2em"
         variant="outline"
         padding={4}
         gap={2}
         flexDirection="column"
-        minWidth="40em"
+        width={{ base: "sm", md: "40em"}}
         boxShadow="sm"
       >
         <Flex gap={2} alignItems="center" mb={2}>

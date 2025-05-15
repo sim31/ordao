@@ -53,7 +53,7 @@ export default function OrclientLoader({ children, orclient: propsOrclient }: Or
     return (
       <VStack>
         <Text>
-          Something went wrong with wallet connection. Please try logging in again.
+          Something went wrong with wallet connection. Please try refreshing or logging in again.
         </Text>
         <Button onClick={privyLogout}>
           Logout

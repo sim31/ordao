@@ -1,4 +1,3 @@
-import { Flex } from '@chakra-ui/react';
 import { useUserWallet } from '@ordao/privy-react-orclient';
 import { usePrivy } from '@privy-io/react-auth';
 import { createFileRoute, Outlet } from '@tanstack/react-router';

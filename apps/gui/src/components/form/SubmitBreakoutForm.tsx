@@ -123,7 +123,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
 
   return (
     initialized ? (
-      <Stack direction="column" gap="1em" width="34em">
+      <Stack direction="column" gap="1em">
 
         <SubmitBreakoutResModal
           isOpen={submitOpen}
