@@ -2,7 +2,7 @@ import { zGroupNum } from "@ordao/ortypes";
 import { z } from "zod";
 
 export const zSearchParams = z.object({
-  groupNumber: zGroupNum.optional().catch(undefined),
+  groupnumber: zGroupNum.optional().catch(undefined),
   vote1: z.string().optional().catch(''),
   vote2: z.string().optional().catch(''),
   vote3: z.string().optional().catch(''),

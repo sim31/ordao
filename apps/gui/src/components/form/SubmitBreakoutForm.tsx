@@ -86,7 +86,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
     const request: RespectBreakoutRequest = {
       // Will be validated below
       meetingNum: (meeting as unknown) as number,
-      groupNum: (searchParams.groupNumber as unknown) as number,
+      groupNum: (searchParams.groupnumber as unknown) as number,
       rankings
     }
 
@@ -104,7 +104,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
   }
 
   const fieldsFilled = useMemo(() => {
-    return meeting !== "" && searchParams.groupNumber !== undefined
+    return meeting !== "" && searchParams.groupnumber !== undefined
            && searchParams.vote1 !== "" && searchParams.vote2 !== ""
            && searchParams.vote3 !== "";
   }, [meeting, searchParams])
@@ -151,7 +151,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
           <Field.Label>Group number</Field.Label>
           <Input
             type="number"
-            value={searchParams.groupNumber ?? ""}
+            value={searchParams.groupnumber ?? ""}
             onChange={e => setSearchParams({ ...searchParams, groupNumber: e.target.value })}
           />
         </Field.Root>
