@@ -6,18 +6,18 @@ import { ngrok } from 'vite-plugin-ngrok'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
-  const { VITE_NGROK, VITE_NGROK_AUTH_TOKEN, VITE_NGROK_DOMAIN } = loadEnv(mode, process.cwd());
+  const { NGROK, NGROK_AUTH_TOKEN, NGROK_DOMAIN } = loadEnv(mode, process.cwd(), '');
   const plugins = () => {
     const pl = [
       // Please make sure that '@tanstack/router-plugin' is passed before '@vitejs/plugin-react'
       TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
       react(),
     ]
-    if (VITE_NGROK === 'true') {
+    if (NGROK === 'true' && NGROK_AUTH_TOKEN) {
       console.log("Using ngrok");
       pl.push(ngrok({
-        authtoken: VITE_NGROK_AUTH_TOKEN,
-        domain: VITE_NGROK_DOMAIN
+        authtoken: NGROK_AUTH_TOKEN,
+        domain: NGROK_DOMAIN
       }))
     } else {
       console.log("Not using ngrok");
@@ -38,7 +38,7 @@ export default defineConfig(({ mode }) => {
       watch: {
         followSymlinks: true
       },
-      allowedHosts: VITE_NGROK === 'true' ? [VITE_NGROK_DOMAIN] : undefined
+      allowedHosts: NGROK === 'true' && NGROK_DOMAIN ? [NGROK_DOMAIN] : undefined
     }
   }
 })
