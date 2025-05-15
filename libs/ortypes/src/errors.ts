@@ -8,7 +8,9 @@ export class NotVoteTimeError extends Error {
 }
 
 export class NotVetoTimeError extends Error {
-  constructor() {
-    super("Not veto time");
+  timeRem?: number;
+  constructor(timeRem_?: number) {
+    super("Not veto time." + "Time remaining: " + timeRem_);
+    this.timeRem = timeRem_;
   }
 }

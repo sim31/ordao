@@ -328,8 +328,10 @@ export const zOnchainProp = zNOnchainProp.extend({
   voteStatus: zVoteStatus,
   stage: zStage, 
   execError: zExecError.optional(),
-  voteTimeLeftMs: z.function().args().returns(z.number()),
+  voteTimeLeftMs: z.function().args().returns(z.number())
+    .describe("Time left in ms to vote on this proposal. Negative number means voting is over that that number of ms."),
   vetoTimeLeftMs: z.function().args().returns(z.number())
+    .describe("Time left in ms to veto this proposal. Negative number means voting is over that that number of ms.")
 });
 
 export const zProposal = zOnchainProp.merge(zProposedMsgBase.partial()).extend({

@@ -31,17 +31,17 @@ export function ProposalStatusLine({ proposal }: ProposalStatusLineProps) {
     <Flex gap={2} alignItems="center" mb={0.5}>
       <Badge 
         variant="solid" 
-        colorPalette={stageColors[proposal.stage]} 
-        size="lg"
-      >
-        {proposal.stage} {renderTimeLeft()}
-      </Badge>
-      <Badge 
-        variant="solid" 
         colorPalette={voteStatusColors[proposal.voteStatus]} 
         size="lg"
       >
         {proposal.voteStatus}
+      </Badge>
+      <Badge 
+        variant="solid" 
+        colorPalette={stageColors[proposal.stage]} 
+        size="lg"
+      >
+        {proposal.stage} {renderTimeLeft()}
       </Badge>
       <Badge 
         variant={proposal.status === "NotExecuted" ? "outline" : "solid"} 

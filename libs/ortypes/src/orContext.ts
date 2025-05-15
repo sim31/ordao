@@ -242,25 +242,26 @@ export class ORContext<CT extends Config> {
   }
 
 
+  /**
+   * Time left in ms to vote on this proposal. Negative number means voting is over that that number of ms.
+   */
   getVoteTimeLeftSync(prop: OnchainProp, voteLen: number): number {
     const age = Date.now() - prop.createTime.getTime();
     const voteRem = (voteLen * 1000) - age;
-    if (voteRem < 0) {
-      throw new NotVoteTimeError();
-    }
     return voteRem;
   }
 
+  /**
+   * Time left in ms to veto this proposal. Negative number veto period is over that that number of ms.
+   * Throws NotVetoTimeError if proposal is still in voting period.
+   */
   getVetoTimeLeftSync(prop: OnchainProp, voteLen: number, vetoLen: number): number {
     const age = Date.now() - prop.createTime.getTime();
     const voteRem = (voteLen * 1000) - age;
     if (voteRem > 0) {
-      throw new NotVetoTimeError();
+      throw new NotVetoTimeError(voteRem);
     }
     const vetoRem = ((voteLen + vetoLen) * 1000) - age;
-    if (vetoRem < 0) {
-      throw new NotVetoTimeError()
-    }
     return vetoRem;
   }
 
