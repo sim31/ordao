@@ -70,7 +70,7 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
           </Link>  
         </Button>
 
-        <Clipboard.Root value={`${window.location.origin}/proposal/${proposal.id}`}>
+        <Clipboard.Root value={`${window.location.origin}/proposals/${proposal.id}`}>
           <Clipboard.Trigger asChild>
             <Button variant="surface" size="sm">
               <Clipboard.Indicator />
