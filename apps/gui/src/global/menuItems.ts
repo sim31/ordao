@@ -7,6 +7,8 @@ import { RouteIds } from "@tanstack/react-router";
 import { routeTree } from "../routeTree.gen";
 import { IconType } from "react-icons";
 import { MdGroups } from "react-icons/md";
+import { MdOutlineInfo } from "react-icons/md";
+
 
 export interface MenuItemBase {
   id: string
@@ -32,6 +34,8 @@ export const menuItems: Array<MenuItem> = [
   { id: "/_app/submitBreakout", name: 'Submit Breakout Results', icon: FaRankingStar },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill, externalLink: config.parentRespectLink },
   { id: "childRespect", name: 'Child Respect', icon: PiMedalThin, externalLink: config.childRespectLink },
+  { id: "/_app/about", name: 'About', icon: MdOutlineInfo },
+
 
   // TODO:
   // { id: "claim", name: 'Claim parent Respect', icon: FaRegHandRock },

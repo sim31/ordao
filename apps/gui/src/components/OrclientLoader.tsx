@@ -13,7 +13,7 @@ export type OrclientLoaderProps = React.PropsWithChildren & {
 }
 
 /**
- * Provides loading screen until orclient becomes available and handles case where user is logged in but orclient is not available..
+ * Provides loading screen until orclient becomes available and handles case where user is logged in but orclient is not available.
  * 
  * If orclient is provided through props, it will be used instead of the one from context.
  * It's up to the external code to ensure access of the same orclient to children.

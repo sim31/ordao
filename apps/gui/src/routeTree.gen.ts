@@ -16,10 +16,15 @@ import { Route as AppIndexImport } from './routes/_app.index'
 import { Route as AppSubmitBreakoutImport } from './routes/_app.submitBreakout'
 import { Route as AppProposalsImport } from './routes/_app.proposals'
 import { Route as AppNewProposalImport } from './routes/_app.newProposal'
+import { Route as AppAboutImport } from './routes/_app.about'
 import { Route as AppSubmitBreakoutIndexImport } from './routes/_app.submitBreakout/index'
 import { Route as AppProposalsIndexImport } from './routes/_app.proposals/index'
 import { Route as AppNewProposalIndexImport } from './routes/_app.newProposal/index'
 import { Route as AppProposalsPropIdImport } from './routes/_app.proposals/$propId'
+import { Route as AppAboutUserGuideImport } from './routes/_app.about/userGuide'
+import { Route as AppAboutIntentImport } from './routes/_app.about/intent'
+import { Route as AppAboutCommunitiesImport } from './routes/_app.about/communities'
+import { Route as AppAboutAppStateImport } from './routes/_app.about/appState'
 import { Route as AppNewProposalPropTypeIndexImport } from './routes/_app.newProposal/$propType.index'
 
 // Create/Update Routes
@@ -53,6 +58,12 @@ const AppNewProposalRoute = AppNewProposalImport.update({
   getParentRoute: () => AppRoute,
 } as any)
 
+const AppAboutRoute = AppAboutImport.update({
+  id: '/about',
+  path: '/about',
+  getParentRoute: () => AppRoute,
+} as any)
+
 const AppSubmitBreakoutIndexRoute = AppSubmitBreakoutIndexImport.update({
   id: '/',
   path: '/',
@@ -77,6 +88,30 @@ const AppProposalsPropIdRoute = AppProposalsPropIdImport.update({
   getParentRoute: () => AppProposalsRoute,
 } as any)
 
+const AppAboutUserGuideRoute = AppAboutUserGuideImport.update({
+  id: '/userGuide',
+  path: '/userGuide',
+  getParentRoute: () => AppAboutRoute,
+} as any)
+
+const AppAboutIntentRoute = AppAboutIntentImport.update({
+  id: '/intent',
+  path: '/intent',
+  getParentRoute: () => AppAboutRoute,
+} as any)
+
+const AppAboutCommunitiesRoute = AppAboutCommunitiesImport.update({
+  id: '/communities',
+  path: '/communities',
+  getParentRoute: () => AppAboutRoute,
+} as any)
+
+const AppAboutAppStateRoute = AppAboutAppStateImport.update({
+  id: '/appState',
+  path: '/appState',
+  getParentRoute: () => AppAboutRoute,
+} as any)
+
 const AppNewProposalPropTypeIndexRoute =
   AppNewProposalPropTypeIndexImport.update({
     id: '/$propType/',
@@ -94,6 +129,13 @@ declare module '@tanstack/react-router' {
       fullPath: ''
       preLoaderRoute: typeof AppImport
       parentRoute: typeof rootRoute
+    }
+    '/_app/about': {
+      id: '/_app/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AppAboutImport
+      parentRoute: typeof AppImport
     }
     '/_app/newProposal': {
       id: '/_app/newProposal'
@@ -122,6 +164,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof AppIndexImport
       parentRoute: typeof AppImport
+    }
+    '/_app/about/appState': {
+      id: '/_app/about/appState'
+      path: '/appState'
+      fullPath: '/about/appState'
+      preLoaderRoute: typeof AppAboutAppStateImport
+      parentRoute: typeof AppAboutImport
+    }
+    '/_app/about/communities': {
+      id: '/_app/about/communities'
+      path: '/communities'
+      fullPath: '/about/communities'
+      preLoaderRoute: typeof AppAboutCommunitiesImport
+      parentRoute: typeof AppAboutImport
+    }
+    '/_app/about/intent': {
+      id: '/_app/about/intent'
+      path: '/intent'
+      fullPath: '/about/intent'
+      preLoaderRoute: typeof AppAboutIntentImport
+      parentRoute: typeof AppAboutImport
+    }
+    '/_app/about/userGuide': {
+      id: '/_app/about/userGuide'
+      path: '/userGuide'
+      fullPath: '/about/userGuide'
+      preLoaderRoute: typeof AppAboutUserGuideImport
+      parentRoute: typeof AppAboutImport
     }
     '/_app/proposals/$propId': {
       id: '/_app/proposals/$propId'
@@ -163,6 +233,24 @@ declare module '@tanstack/react-router' {
 
 // Create and export the route tree
 
+interface AppAboutRouteChildren {
+  AppAboutAppStateRoute: typeof AppAboutAppStateRoute
+  AppAboutCommunitiesRoute: typeof AppAboutCommunitiesRoute
+  AppAboutIntentRoute: typeof AppAboutIntentRoute
+  AppAboutUserGuideRoute: typeof AppAboutUserGuideRoute
+}
+
+const AppAboutRouteChildren: AppAboutRouteChildren = {
+  AppAboutAppStateRoute: AppAboutAppStateRoute,
+  AppAboutCommunitiesRoute: AppAboutCommunitiesRoute,
+  AppAboutIntentRoute: AppAboutIntentRoute,
+  AppAboutUserGuideRoute: AppAboutUserGuideRoute,
+}
+
+const AppAboutRouteWithChildren = AppAboutRoute._addFileChildren(
+  AppAboutRouteChildren,
+)
+
 interface AppNewProposalRouteChildren {
   AppNewProposalIndexRoute: typeof AppNewProposalIndexRoute
   AppNewProposalPropTypeIndexRoute: typeof AppNewProposalPropTypeIndexRoute
@@ -203,6 +291,7 @@ const AppSubmitBreakoutRouteWithChildren =
   AppSubmitBreakoutRoute._addFileChildren(AppSubmitBreakoutRouteChildren)
 
 interface AppRouteChildren {
+  AppAboutRoute: typeof AppAboutRouteWithChildren
   AppNewProposalRoute: typeof AppNewProposalRouteWithChildren
   AppProposalsRoute: typeof AppProposalsRouteWithChildren
   AppSubmitBreakoutRoute: typeof AppSubmitBreakoutRouteWithChildren
@@ -210,6 +299,7 @@ interface AppRouteChildren {
 }
 
 const AppRouteChildren: AppRouteChildren = {
+  AppAboutRoute: AppAboutRouteWithChildren,
   AppNewProposalRoute: AppNewProposalRouteWithChildren,
   AppProposalsRoute: AppProposalsRouteWithChildren,
   AppSubmitBreakoutRoute: AppSubmitBreakoutRouteWithChildren,
@@ -220,10 +310,15 @@ const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
 export interface FileRoutesByFullPath {
   '': typeof AppRouteWithChildren
+  '/about': typeof AppAboutRouteWithChildren
   '/newProposal': typeof AppNewProposalRouteWithChildren
   '/proposals': typeof AppProposalsRouteWithChildren
   '/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
   '/': typeof AppIndexRoute
+  '/about/appState': typeof AppAboutAppStateRoute
+  '/about/communities': typeof AppAboutCommunitiesRoute
+  '/about/intent': typeof AppAboutIntentRoute
+  '/about/userGuide': typeof AppAboutUserGuideRoute
   '/proposals/$propId': typeof AppProposalsPropIdRoute
   '/newProposal/': typeof AppNewProposalIndexRoute
   '/proposals/': typeof AppProposalsIndexRoute
@@ -232,7 +327,12 @@ export interface FileRoutesByFullPath {
 }
 
 export interface FileRoutesByTo {
+  '/about': typeof AppAboutRouteWithChildren
   '/': typeof AppIndexRoute
+  '/about/appState': typeof AppAboutAppStateRoute
+  '/about/communities': typeof AppAboutCommunitiesRoute
+  '/about/intent': typeof AppAboutIntentRoute
+  '/about/userGuide': typeof AppAboutUserGuideRoute
   '/proposals/$propId': typeof AppProposalsPropIdRoute
   '/newProposal': typeof AppNewProposalIndexRoute
   '/proposals': typeof AppProposalsIndexRoute
@@ -243,10 +343,15 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRoute
   '/_app': typeof AppRouteWithChildren
+  '/_app/about': typeof AppAboutRouteWithChildren
   '/_app/newProposal': typeof AppNewProposalRouteWithChildren
   '/_app/proposals': typeof AppProposalsRouteWithChildren
   '/_app/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
   '/_app/': typeof AppIndexRoute
+  '/_app/about/appState': typeof AppAboutAppStateRoute
+  '/_app/about/communities': typeof AppAboutCommunitiesRoute
+  '/_app/about/intent': typeof AppAboutIntentRoute
+  '/_app/about/userGuide': typeof AppAboutUserGuideRoute
   '/_app/proposals/$propId': typeof AppProposalsPropIdRoute
   '/_app/newProposal/': typeof AppNewProposalIndexRoute
   '/_app/proposals/': typeof AppProposalsIndexRoute
@@ -258,10 +363,15 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | ''
+    | '/about'
     | '/newProposal'
     | '/proposals'
     | '/submitBreakout'
     | '/'
+    | '/about/appState'
+    | '/about/communities'
+    | '/about/intent'
+    | '/about/userGuide'
     | '/proposals/$propId'
     | '/newProposal/'
     | '/proposals/'
@@ -269,7 +379,12 @@ export interface FileRouteTypes {
     | '/newProposal/$propType'
   fileRoutesByTo: FileRoutesByTo
   to:
+    | '/about'
     | '/'
+    | '/about/appState'
+    | '/about/communities'
+    | '/about/intent'
+    | '/about/userGuide'
     | '/proposals/$propId'
     | '/newProposal'
     | '/proposals'
@@ -278,10 +393,15 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_app'
+    | '/_app/about'
     | '/_app/newProposal'
     | '/_app/proposals'
     | '/_app/submitBreakout'
     | '/_app/'
+    | '/_app/about/appState'
+    | '/_app/about/communities'
+    | '/_app/about/intent'
+    | '/_app/about/userGuide'
     | '/_app/proposals/$propId'
     | '/_app/newProposal/'
     | '/_app/proposals/'
@@ -314,10 +434,21 @@ export const routeTree = rootRoute
     "/_app": {
       "filePath": "_app.tsx",
       "children": [
+        "/_app/about",
         "/_app/newProposal",
         "/_app/proposals",
         "/_app/submitBreakout",
         "/_app/"
+      ]
+    },
+    "/_app/about": {
+      "filePath": "_app.about.tsx",
+      "parent": "/_app",
+      "children": [
+        "/_app/about/appState",
+        "/_app/about/communities",
+        "/_app/about/intent",
+        "/_app/about/userGuide"
       ]
     },
     "/_app/newProposal": {
@@ -346,6 +477,22 @@ export const routeTree = rootRoute
     "/_app/": {
       "filePath": "_app.index.tsx",
       "parent": "/_app"
+    },
+    "/_app/about/appState": {
+      "filePath": "_app.about/appState.tsx",
+      "parent": "/_app/about"
+    },
+    "/_app/about/communities": {
+      "filePath": "_app.about/communities.tsx",
+      "parent": "/_app/about"
+    },
+    "/_app/about/intent": {
+      "filePath": "_app.about/intent.tsx",
+      "parent": "/_app/about"
+    },
+    "/_app/about/userGuide": {
+      "filePath": "_app.about/userGuide.tsx",
+      "parent": "/_app/about"
     },
     "/_app/proposals/$propId": {
       "filePath": "_app.proposals/$propId.tsx",
