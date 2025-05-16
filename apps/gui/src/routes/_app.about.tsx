@@ -4,12 +4,6 @@ import { useEffect, useState } from 'react';
 
 export const Route = createFileRoute('/_app/about')({
   component: RouteComponent,
-  loader: async () => {
-    const mdDoc = await fetch('https://raw.githubusercontent.com/sim31/frapps/refs/heads/orf/fractals/orf/concept.md');
-    const mdText = await mdDoc.text();
-    console.log("Retrieved: ", mdText);
-    return { mdText };
-  }
 })
 
 const aboutSubpaths = ['intent', 'appState', 'userGuide', 'communities'] as const;
