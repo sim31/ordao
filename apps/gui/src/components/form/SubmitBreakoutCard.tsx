@@ -1,4 +1,5 @@
-import { Card, Center, Fieldset, Flex, Spacer, Text } from "@chakra-ui/react";
+import { Card, Center, Fieldset, Flex, Spacer } from "@chakra-ui/react";
+import { Text } from "../Text";
 import { IconButton } from "../IconButton";
 import { IoMdClose } from "react-icons/io";
 import SubmitBreakoutForm from "./SubmitBreakoutForm";

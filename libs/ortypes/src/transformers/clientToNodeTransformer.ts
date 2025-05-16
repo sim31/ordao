@@ -13,6 +13,7 @@ import {
   zRespectAccountRequest,
   zRespectBreakoutRequest,
   zTickRequest,
+  zSetPeriodsRequest,
   zVoteType as zCVoteType,
   VoteType as CVoteType,
   zGetProposalsSpec as zCGetProposalsSpec,
@@ -23,14 +24,16 @@ import {
   GetProposalsSpec as CGetProposalsSpec,
   isGetPropSpecBefore,
   isGetPropSpecSkip,
+  SetPeriodsRequest,
+  ProposalRequest,
 } from "../orclient.js";
-import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfCustomCallAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec, GetProposalsSpecBefore, zGetProposalsSpecSkip, GetProposalsSpecSkip, GetProposalsSpecBase } from "../ornode.js";
+import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfBaseAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec, GetProposalsSpecBefore, zGetProposalsSpecSkip, GetProposalsSpecSkip, GetProposalsSpecBase, SetPeriodsAttachment, SetPeriods, zSetPeriodsValid, ProposalFull } from "../ornode.js";
 import { ConfigWithOrnode, ORContext as OrigORContext } from "../orContext.js";
-import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, strToVtMap, zStrToVoteType } from "../orec.js";
+import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, strToVtMap, zStrToVoteType, SetPeriodsArgs } from "../orec.js";
 import { BurnRespectArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
 import { propId } from "@ordao/orec/utils";
 import { addCustomIssue } from "../zErrorHandling.js";
-import { zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue } from "../fractal.js";
+import { PropType, zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue } from "../fractal.js";
 import { zBigNumberish, zBigNumberishToBigint } from "../eth.js";
 import { packTokenId } from "@ordao/respect1155/utils/tokenId.js";
 
@@ -322,7 +325,7 @@ function mkzCCustomCallReqToProposal(orctx: ORContext) {
         propDescription: val.metadata?.propDescription
       };
 
-      const memo = idOfCustomCallAttach(attachment);
+      const memo = idOfBaseAttach(attachment);
 
       const content: PropContent = { 
         addr: val.address,
@@ -344,6 +347,46 @@ function mkzCCustomCallReqToProposal(orctx: ORContext) {
       });
     }
   }).pipe(zCustomCallValid);
+}
+
+function mkzCSetPeriodsReqToProposal(orctx: ORContext) {
+  return zSetPeriodsRequest.transform(async (val, ctx) => {
+    try {
+      const args: SetPeriodsArgs = {
+        newVoteLen: val.newVoteLen,
+        newVetoLen: val.newVetoLen
+      }
+      const cdata = orecInterface.encodeFunctionData(
+        'setPeriodLengths',
+        [args.newVoteLen, args.newVetoLen]
+      );
+      const addr = await orctx.getOrecAddr();
+
+      const attachment: SetPeriodsAttachment = {
+        propType: zPropType.Enum.setPeriods,
+        propTitle: val.metadata?.propTitle,
+        propDescription: val.metadata?.propDescription
+      };
+
+      const memo = idOfBaseAttach(attachment);
+
+      const content: PropContent = { addr, cdata, memo };
+
+      const id = propId(content);
+
+      const r: SetPeriods = {
+        id,
+        content,
+        attachment
+      }
+      return r;
+    } catch (err) {
+      addCustomIssue(val, ctx, {
+        message: "exception in zCSetPeriodsReqToProposal",
+        cause: err
+      });
+    }
+  }).pipe(zSetPeriodsValid);
 }
 
 // zCGetProposalSepc is strict, so this checks that no unknown fields are specified
@@ -400,6 +443,7 @@ export class ClientToNodeTransformer {
   private _zCCustomSignalReqToProposal: ReturnType<typeof mkzCCustomSignalReqToProposal>;
   private _zCTickReqToProposal: ReturnType<typeof mkzTickReqToProposal>;
   private _zCCustomCallReqToProposal: ReturnType<typeof mkzCCustomCallReqToProposal>;
+  private _zCSetPeriodsReqToProposal: ReturnType<typeof mkzCSetPeriodsReqToProposal>;
 
   constructor(context: ORContext) {
     this._ctx = context;
@@ -410,6 +454,7 @@ export class ClientToNodeTransformer {
     this._zCCustomSignalReqToProposal = mkzCCustomSignalReqToProposal(this._ctx);
     this._zCTickReqToProposal = mkzTickReqToProposal(this._ctx);
     this._zCCustomCallReqToProposal = mkzCCustomCallReqToProposal(this._ctx);
+    this._zCSetPeriodsReqToProposal = mkzCSetPeriodsReqToProposal(this._ctx);
   }
 
   transformGetProposalsSpec(spec: CGetProposalsSpec): GetProposalsSpec {
@@ -446,6 +491,39 @@ export class ClientToNodeTransformer {
 
   async transformCustomCall(req: CustomCallRequest): Promise<CustomCall> {
     return await this._zCCustomCallReqToProposal.parseAsync(req);
+  }
+
+  async transformSetPeriods(req: SetPeriodsRequest): Promise<SetPeriods> {
+    return await this._zCSetPeriodsReqToProposal.parseAsync(req);
+  }
+
+  /**
+   * Will throw if propType does not match structure of req param
+   */
+  async transformPropRequest(
+    propType: PropType,
+    req: ProposalRequest
+  ): Promise<ProposalFull> {
+    switch (propType) {
+      case 'respectBreakout':
+        return await this.transformRespectBreakout(req as RespectBreakoutRequest);
+      case 'respectAccount':
+        return await this.transformRespectAccount(req as RespectAccountRequest);
+      case 'burnRespect':
+        return await this.transformBurnRespect(req as BurnRespectRequest);
+      case 'customSignal':
+        return await this.transformCustomSignal(req as CustomSignalRequest);
+      case 'customCall':
+        return await this.transformCustomCall(req as CustomCallRequest);
+      case 'tick':
+        return await this.transformTick(req as TickRequest);
+      case 'setPeriods':
+        return await this.transformSetPeriods(req as SetPeriodsRequest);
+      default: {
+        const exhaustiveCheck: never = propType;
+        throw new Error("Exchaustive check failed");
+      }
+    }
   }
 
   transformVoteType(vt: CVoteType): VoteType {

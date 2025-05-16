@@ -1,6 +1,6 @@
 import { ZodType, z } from "zod";
 import { PropType, zGroupNum, zPropType, zRankings } from "./fractal.js";
-import { zCustomSignalType, zOnchainProp as zNOnchainProp, zPropId, zProposedMsgBase } from "./orec.js";
+import { zCustomSignalType, zOnchainProp as zNOnchainProp, zPeriodLength, zPropId, zProposedMsgBase } from "./orec.js";
 import { zMeetingNum, zMintType, zTokenId } from "./respect1155.js";
 import { zBytes, zEthAddress, zTxHash, zUint } from "./eth.js";
 import { zTimestamp } from "./common.js";
@@ -268,13 +268,45 @@ export type CustomCall = z.infer<typeof zCustomCall>;
 export const zCustomCallRequest = zCustomCall.omit({ propType: true }).describe(customCallDescription);
 export type CustomCallRequest = z.infer<typeof zCustomCallRequest>;
 
+const setPeriodsDescription = `
+Set Periods
+
+Set for how long vote and veto stages last when passing proposals.
+`
+
+const newVoteLenDesc = `
+Vote period (s)
+
+Amount of time for vote stage to last in seconds
+`
+const newVetoLenDesc = `
+Veto period (s)
+
+Amount of time for veto stage to last in seconds
+`
+
+
+export const zSetPeriods = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.setPeriods),
+  newVoteLen: zPeriodLength.describe(newVoteLenDesc),
+  newVetoLen: zPeriodLength.describe(newVetoLenDesc)
+}).describe(setPeriodsDescription);
+export type SetPeriods = z.infer<typeof zSetPeriods>;
+
+export const zSetPeriodsRequest = zSetPeriods
+  .omit({ propType: true })
+  .partial({ metadata: true })
+  .describe(setPeriodsDescription);
+export type SetPeriodsRequest = z.infer<typeof zSetPeriodsRequest>;
+
 export const zDecodedProposal = z.union([
   zCustomCall,
   zTick,
   zCustomSignal,
   zBurnRespect,
   zRespectAccount,
-  zRespectBreakout
+  zRespectBreakout,
+  zSetPeriods
 ]);
 export type DecodedProposal = z.infer<typeof zDecodedProposal>;
 
@@ -284,7 +316,8 @@ export const zProposalRequest = z.union([
   zCustomSignalRequest,
   zBurnRespectRequest,
   zRespectAccountRequest,
-  zRespectBreakoutRequest
+  zRespectBreakoutRequest,
+  zSetPeriodsRequest
 ]);
 export type ProposalRequest = z.infer<typeof zProposalRequest>;
 
@@ -294,7 +327,8 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "customSignal": zCustomSignal,
   "burnRespect": zBurnRespect,
   "respectAccount": zRespectAccount,
-  "respectBreakout": zRespectBreakout
+  "respectBreakout": zRespectBreakout,
+  "setPeriods": zSetPeriods
 }
 
 export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
@@ -304,6 +338,7 @@ export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "burnRespect": zBurnRespectRequest,
   "customCall": zCustomCallRequest,
   "customSignal": zCustomSignalRequest,
+  "setPeriods": zSetPeriodsRequest
 }
 
 export const zExecErrorType = z.nativeEnum(ErrorType);
@@ -421,7 +456,9 @@ export type PropOfPropType<T extends PropType> =
       : (T extends typeof zPropType.Enum.customSignal ? CustomSignal
         : (T extends typeof zPropType.Enum.customCall ? CustomCall
           : (T extends typeof zPropType.Enum.tick ? Tick
-            : never
+            : (T extends typeof zPropType.Enum.setPeriods ? SetPeriods
+              : never
+            )
           )
         )
       )

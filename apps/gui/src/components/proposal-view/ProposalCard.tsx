@@ -1,4 +1,5 @@
-import { Card, Text, Clipboard, Flex } from "@chakra-ui/react";
+import { Card, Clipboard, Flex } from "@chakra-ui/react";
+import { Text } from "../Text.js";
 import { Button } from "../Button.js";
 import { Proposal, propSchemaMap, ValidVoteType } from "@ordao/ortypes/orclient.js";
 import { DecodedPropTable } from "./DecodedPropTable.js";

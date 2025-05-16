@@ -1,4 +1,5 @@
-import { Box, Card, Flex, Text } from "@chakra-ui/react";
+import { Box, Card, Flex } from "@chakra-ui/react";
+import { Text } from "../Text";
 import { isORClient, OnchainActionRes } from "@ordao/orclient";
 import { PropId } from "@ordao/ortypes";
 import { Proposal, propSchemaMap, ValidVoteType } from "@ordao/ortypes/orclient.js";

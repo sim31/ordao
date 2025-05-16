@@ -1,4 +1,5 @@
-import { Table, Text } from "@chakra-ui/react"
+import { Table } from "@chakra-ui/react"
+import { Text } from "../Text"
 import { stringify } from "@ordao/ts-utils"
 
 export function PropValue({ value }: { value: unknown }) {

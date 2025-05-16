@@ -3,8 +3,8 @@ import {
   Input,
   Spinner,
   Stack,
-  Text
 } from "@chakra-ui/react";
+import { Text } from "../Text.js";
 import { Button } from "../Button.js";
 import { ProposeRes } from "@ordao/orclient";
 import { RespectBreakoutRequest, zRespectBreakoutRequest } from "@ordao/ortypes/orclient.js";

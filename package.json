@@ -11,7 +11,7 @@
     "scripts/"
   ],
   "scripts": {
-    "gen-ornode-client": "npm run gen-client -w ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",
+    "gen-ornode-client": "npm run gen-client -w @ordao/ornode && cp services/ornode/tmp/ornodeClient.ts libs/orclient/src/ornodeClient/",
     "test-integration": "npm run test -w @ordao/tests",
     "test": "lerna run test",
     "build": "lerna run build",

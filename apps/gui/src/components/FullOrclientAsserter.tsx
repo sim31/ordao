@@ -29,7 +29,7 @@ export default function FullOrclientAsserter({ children, orclient: propsOrclient
   if (!fullOrclient) {
     return (
       <Center>
-        <Button size="xl" onClick={privyLogin}>Login</Button>
+        <Button size="xl" mt="2em" variant="outline" onClick={privyLogin}>Login</Button>
       </Center>
     );
   } else {

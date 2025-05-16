@@ -1,7 +1,7 @@
 import { Orec, Orec__factory } from "@ordao/orec/typechain-types";
 import { ExecutedEvent } from "@ordao/orec/typechain-types/contracts/Orec.js";
 import { z } from "zod";
-import { Bytes, zBytes, zBytes32, zBytesLike, zEthAddress, zUint8 } from "./eth.js";
+import { Bytes, zBigNumberish, zBytes, zBytes32, zBytesLike, zEthAddress, zUint, zUint8 } from "./eth.js";
 import { preprocessResultOrObj } from "./utils.js";
 import { hexlify, toUtf8Bytes, toUtf8String } from "ethers";
 
@@ -145,6 +145,9 @@ export function decodeVoteMemo(memoBytes: Bytes): string {
 }
 
 export type CCustomSignalArgs = Parameters<Orec['signal']>;
+
+export type CSetPeriodsArgs = Parameters<Orec['setPeriodLengths']>;
+
 export type CMessage = Orec.MessageStruct;
 export type CProposalState = Omit<
   Awaited<ReturnType<Orec["proposals"]>>,
@@ -187,6 +190,20 @@ const customSignalVerify = zSignalArgs.refine((val) => {
 });
 export type CustomSignalArgs = z.infer<typeof zSignalArgs>;
 
+export const zSetPeriodsArgsBase = z.object({
+  newVoteLen: zUint,
+  newVetoLen: zUint,
+});
+export const zSetPeriodsArgs = preprocessResultOrObj(zSetPeriodsArgsBase);
+export type SetPeriodsArgs = z.infer<typeof zSetPeriodsArgs>;
+const setPeriodsVerify = zSetPeriodsArgs.refine((val) => {
+  const args: CSetPeriodsArgs = [
+    val.newVoteLen,
+    val.newVetoLen
+  ];
+  return true;
+})
+
 export const zPropStateBase = z.object({
   createTime: z.bigint().gt(0n),
   yesWeight: z.bigint(),
@@ -224,6 +241,8 @@ export const zOnchainProp = zPropStateBase.extend({
   createTime: z.date()
 });
 export type OnchainProp = z.infer<typeof zOnchainProp>;
+
+export const zPeriodLength = zUint;
 
 export {
   MIN_1, HOUR_1, DAY_1, DAY_6, WEEK_1,

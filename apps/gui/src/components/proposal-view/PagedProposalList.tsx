@@ -1,4 +1,5 @@
-import { Flex, Text, VStack } from "@chakra-ui/react";
+import { Flex, VStack } from "@chakra-ui/react";
+import { Text } from "../Text";
 import { IconButton } from "../IconButton";
 import { Proposal } from "@ordao/orclient";
 import { ProposalList } from "./ProposalList";
@@ -62,7 +63,7 @@ export function PagedProposalList(props: PagedProposalListProps) {
   }
 
   const renderFooter = () => {
-    if (!isLoading) {
+    if (!isLoading && proposals.length > 2) {
       return <PageControls {...props} />
     }
   }
@@ -72,7 +73,7 @@ export function PagedProposalList(props: PagedProposalListProps) {
       {renderHeader()}
       {
         proposals.length === 0
-        ? <Text>No proposals found</Text>
+        ? <Text mt="2em">No proposals found</Text>
         : <ProposalList proposals={proposals} />
       }
       {renderFooter()}

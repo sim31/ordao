@@ -1,6 +1,6 @@
 import chai, { expect } from "chai";
 import { time, mine } from "@nomicfoundation/hardhat-toolbox/network-helpers.js";
-import { BreakoutResult, DecodedProposal, RespectBreakout, Proposal, RespectAccountRequest, RespectAccount, Tick, CustomSignal, ProposalMsgFull, PropOfPropType, isPropMsgFull, zProposalMsgFull, toPropMsgFull, CustomSignalRequest, RespectBreakoutRequest, VoteRequest, VoteWithProp } from "@ordao/ortypes/orclient.js";
+import { BreakoutResult, DecodedProposal, RespectBreakout, Proposal, RespectAccountRequest, RespectAccount, Tick, CustomSignal, ProposalMsgFull, PropOfPropType, isPropMsgFull, zProposalMsgFull, toPropMsgFull, CustomSignalRequest, RespectBreakoutRequest, VoteRequest, VoteWithProp, SetPeriodsRequest } from "@ordao/ortypes/orclient.js";
 import { TxFailed, ORClient, RemoteOrnode, defaultConfig } from "@ordao/orclient";
 import { EthAddress, ExecStatus, PropType, Stage, VoteStatus, VoteType, zProposedMsg } from "@ordao/ortypes";
 import hre from "hardhat";
@@ -24,6 +24,7 @@ import {
   MessageStruct
 } from "@ordao/ortypes/orec.js";
 import { DeployState, Deployment, SerializableState as DeploymentState } from "../src/deployment.js";
+import { set } from "lodash";
 
 if (!process.env.DEBUGLOG) {
   console.debug = () => {};
@@ -67,6 +68,7 @@ describe("orclient", function() {
   let mintProps: Proposal[] = [];
   let tickProps: Proposal[] = [];
   let signalProps: Proposal[] = [];
+  let setPeriodsProps: Proposal[] = [];
   let nonRespectedAccs: EthAddress[];
   let groupRes: BreakoutResult[];
   let mintReqs: RespectAccountRequest[];
@@ -125,6 +127,10 @@ describe("orclient", function() {
 
   function expectCustomSignal(prop: Proposal) {
     return expectDecoded("customSignal", prop);
+  }
+
+  function expectSetPeriods(prop: Proposal) {
+    return expectDecoded("setPeriods", prop);
   }
 
   async function expectInitPropValues(prop: ProposalMsgFull | Proposal) {
@@ -400,6 +406,49 @@ describe("orclient", function() {
     it("should have created new proposal onchain", async function() {
       // Take top two proposals
       for (const [index, prop] of signalProps.entries()) {
+        expectInitOnChainProp(prop);
+      }
+    })
+  })
+
+  describe("proposing to set new period lengths", function() {
+    const sreq1: SetPeriodsRequest = {
+      newVoteLen: 2000n,
+      newVetoLen: 2000n
+    };
+    const sreq2: SetPeriodsRequest = {
+      newVoteLen: 3000n,
+      newVetoLen: 3000n
+    };
+    let cl2: ORClient;
+    before("connect through a new signer to avoid hitting maxLiveVotes", async function() {
+      cl2 = cl.connect(signers[8]);
+    })
+
+    before("create proposal by calling propose", async function() {
+      setPeriodsProps.push((await confirm(cl2.propose("setPeriods",sreq1))).proposal);
+    });
+
+    before("create proposal by calling proposeSetPeriods" , async function() {
+      setPeriodsProps.push((await confirm(cl2.proposeSetPeriods(sreq2))).proposal);
+    })
+
+    it("should have returned expected setPeriods proposals", async function() {
+      // Take top two proposals
+      expectInitPropValues(setPeriodsProps[0]);
+      const s1 = expectSetPeriods(setPeriodsProps[0]);
+      expect(s1.newVoteLen).to.be.equal(sreq1.newVoteLen);
+      expect(s1.newVetoLen).to.be.equal(sreq1.newVetoLen);
+
+      expectInitPropValues(setPeriodsProps[1]);
+      const s2 = expectSetPeriods(setPeriodsProps[1]);
+      expect(s2.newVoteLen).to.be.equal(sreq2.newVoteLen);
+      expect(s2.newVetoLen).to.be.equal(sreq2.newVetoLen);
+    });
+
+    it("should have created new proposal onchain", async function() {
+      // Take top two proposals
+      for (const [index, prop] of setPeriodsProps.entries()) {
         expectInitOnChainProp(prop);
       }
     })

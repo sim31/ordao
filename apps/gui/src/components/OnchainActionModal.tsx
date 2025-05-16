@@ -3,11 +3,11 @@ import {
   Portal,
   Center,
   DialogOpenChangeDetails,
-  Text,
   VStack,
   Link,
   Icon,
 } from '@chakra-ui/react'
+import { Text } from './Text.js';
 import { Button } from './Button.js';
 import { IconButton } from './IconButton';
 import { OnchainActionRes } from '@ordao/orclient';

@@ -1,4 +1,5 @@
-import { Card, Center, Flex, Text } from "@chakra-ui/react";
+import { Card, Center, Flex } from "@chakra-ui/react";
+import { Text } from "../Text.js";
 import { ProposalRequest } from "@ordao/ortypes/orclient.js";
 import { extractZodDescription } from "@ordao/zod-utils";
 import { z } from "zod";

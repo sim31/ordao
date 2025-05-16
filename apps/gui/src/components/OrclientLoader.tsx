@@ -1,4 +1,5 @@
-import { VStack, Text } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
+import { Text } from "./Text";
 import { Button } from "./Button.js";
 import { isORClient, ORClientType } from "@ordao/orclient";
 import { useOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";

@@ -4,7 +4,6 @@ import {
   Box,
   Flex,
   Icon,
-  Text,
   Drawer,
   DrawerContent,
   useDisclosure,
@@ -15,6 +14,7 @@ import {
   VStack,
   Container,
 } from '@chakra-ui/react'
+import { Text } from '../Text.js';
 import { Button } from "../Button.js";
 import { IconButton } from "../IconButton.js";
 import { CloseButton } from '../CloseButton.js';

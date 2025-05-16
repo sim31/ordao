@@ -1,4 +1,5 @@
-import { Badge, Flex, Text } from "@chakra-ui/react"
+import { Badge, Flex } from "@chakra-ui/react"
+import { Text } from "../Text"
 import { Proposal } from "@ordao/ortypes/orclient.js"
 import { execStatusColors, stageColors, voteStatusColors } from "../../global/statusColors"
 import { safeVetoTimeLeftStrFromProp, safeVoteTimeLeftStrFromProp } from "../../utils/time"

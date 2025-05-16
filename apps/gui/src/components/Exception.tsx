@@ -1,4 +1,5 @@
-import { Alert, Text, AlertRootProps, AlertTitle, Card, Center, Flex, VStack } from "@chakra-ui/react";
+import { Alert, AlertRootProps, AlertTitle, Card, Center, Flex, VStack } from "@chakra-ui/react";
+import { Text } from "./Text";
 import { CircleAlert } from "lucide-react";
 
 export interface ExceptionProps {

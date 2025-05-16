@@ -26,7 +26,9 @@ import {
   VoteStatus,
   zVoteStatus,
   ExecError,
-  zCustomCall
+  zCustomCall,
+  zSetPeriods,
+  SetPeriods
 } from "../orclient.js";
 import {
   zStoredProposal as zNProposal,
@@ -40,6 +42,7 @@ import {
   zCustomSignalAttachment,
   zPropAttachmentBase,
   zCustomCallAttachment,
+  zSetPeriodsAttachment,
   zTickAttachment,
   zVote as zNVote,
   Vote as NVote,
@@ -71,7 +74,8 @@ import {
   ExecStatus as NExecStatus,
   OnchainProp,
   voteTypeMap,
-  zVoteTypeToStr
+  zVoteTypeToStr,
+  zSetPeriodsArgs
 } from "../orec.js";
 import { NotVetoTimeError, NotVoteTimeError } from "../errors.js";
 
@@ -332,6 +336,39 @@ function mkzNProposalToCustomCall(orctx: ORContext) {
   }).pipe(zCustomCall)
 }
 
+function mkzNProposalToSetPeriods(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zSetPeriodsAttachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getOrecAddr(),
+        "set periods supposed to be addressed to orec"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = orecInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        orecInterface.getFunction('setPeriodLengths').name,
+        "expected setPeriodLengths function to be called"
+      );
+
+      const args = zSetPeriodsArgs.parse(tx?.args);
+
+      const r: SetPeriods = {
+        propType: zPropType.Enum.setPeriods,
+        newVoteLen: args.newVoteLen,
+        newVetoLen: args.newVetoLen,
+        metadata: zNAttachmentToMetadata.parse(attachment)
+      };
+
+      return r;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in zNProposalToTick")
+    }
+  }).pipe(zSetPeriods);
+}
+
 function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToRespectBreakout = mkzNProposalToRespectBreakout(orctx);
   const zNProposalToRespectAccount = mkzNProposalToRespectAccount(orctx);
@@ -339,6 +376,7 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToCustomSignal = mkzNProposalToCustomSignal(orctx);
   const zNProposalToCustomCall = mkzNProposalToCustomCall(orctx);
   const zNProposalToTick = mkzNProposalToTick(orctx);
+  const zNProposalToSetPeriods = mkzNProposalToSetPeriods(orctx);
 
   return zNProposalFull.transform(async (val, ctx) => {
     if (val.attachment !== undefined && val) {
@@ -355,6 +393,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
           return await zNProposalToCustomCall.parseAsync(val);
         case 'tick':
           return await zNProposalToTick.parseAsync(val);
+        case 'setPeriods':
+          return await zNProposalToSetPeriods.parseAsync(val);
         default: {
           const exhaustiveCheck: never = val.attachment;
           addCustomIssue(val, ctx, "Exhaustiveness check failed in zProposalToDecodedProp");

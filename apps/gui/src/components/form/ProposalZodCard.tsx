@@ -1,4 +1,5 @@
-import { Card, Center, Checkbox, Fieldset, Flex, HStack, Spacer, Text } from "@chakra-ui/react";
+import { Card, Center, Checkbox, Fieldset, Flex, HStack, Spacer } from "@chakra-ui/react";
+import { Text } from "../Text";
 import { Button } from "../Button";
 import { IconButton } from "../IconButton";
 import { DefaultValues } from 'react-hook-form';
@@ -11,7 +12,6 @@ import { IoMdClose } from "react-icons/io";
 import OnchainActionModal from "../OnchainActionModal";
 import { ProposeRes, VoteWithPropRequest } from "@ordao/orclient";
 import { PropType } from "@ordao/ortypes";
-import { assertUnreachable } from "@ordao/ts-utils";
 import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 interface ProposalZodCardProps<T extends z.AnyZodObject> {
@@ -44,34 +44,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
     if (propRequest === undefined) {
       return;
     }
-    switch (propType) {
-      case 'tick':
-        setActionPromise(orclient.proposeTick(propRequest, vote));
-        break;
-      case 'respectAccount':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setActionPromise(orclient.proposeRespectTo(propRequest as any, vote));
-        break;
-      case 'respectBreakout':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setActionPromise(orclient.proposeBreakoutResult(propRequest as any, vote));
-        break;
-      case 'burnRespect':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setActionPromise(orclient.proposeBurnRespect(propRequest as any, vote));
-        break;
-      case 'customCall':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setActionPromise(orclient.proposeCustomCall(propRequest as any, vote));
-        break;
-      case 'customSignal':
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        setActionPromise(orclient.proposeCustomSignal(propRequest as any, vote));
-        break;
-      default:
-        assertUnreachable(propType);
-        break;
-    }
+    setActionPromise(orclient.propose(propType, propRequest, vote));
   }
 
   return (

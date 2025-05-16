@@ -1,4 +1,5 @@
-import { Text, Clipboard } from "@chakra-ui/react";
+import { Clipboard } from "@chakra-ui/react";
+import { Text } from "../Text.js";
 import { IconButton } from "../IconButton.js";
 import { shortenId } from "../../utils/shortenId";
 
