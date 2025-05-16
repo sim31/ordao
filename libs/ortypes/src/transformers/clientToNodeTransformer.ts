@@ -36,6 +36,7 @@ import { addCustomIssue } from "../zErrorHandling.js";
 import { PropType, zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue } from "../fractal.js";
 import { zBigNumberish, zBigNumberishToBigint } from "../eth.js";
 import { packTokenId } from "@ordao/respect1155/utils/tokenId.js";
+import { hexlify, randomBytes } from "ethers";
 
 type ORContext = OrigORContext<ConfigWithOrnode>;
 
@@ -365,7 +366,16 @@ function mkzCSetPeriodsReqToProposal(orctx: ORContext) {
       const attachment: SetPeriodsAttachment = {
         propType: zPropType.Enum.setPeriods,
         propTitle: val.metadata?.propTitle,
-        propDescription: val.metadata?.propDescription
+        propDescription: val.metadata?.propDescription,
+        /**
+         *  To ensure uniqueness of resulting propId, add salt
+         * 
+         *  Unlike with respectBreakout prop type we do not need functionality, where users submittin proposal at the same time would end up voting on the same proposal.
+         *  On the other hand, the probability that ordao sets its period lengths to the same values is realistic.
+         *  So we need to ensure proposal uniqueness.
+         *  TODO: ornode should handle how proposals with the same id in a more robust way
+         */
+        salt: hexlify(randomBytes(4))
       };
 
       const memo = idOfBaseAttach(attachment);
