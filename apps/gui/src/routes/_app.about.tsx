@@ -24,7 +24,7 @@ function RouteComponent() {
   const renderTabList = () => {
     return aboutSubpaths.map((subpath) => {
       return (
-        <Tabs.Trigger key={subpath} value={subpath}>{titles[subpath]}</Tabs.Trigger>
+        <Tabs.Trigger backgroundColor="gray.100" key={subpath} value={subpath}>{titles[subpath]}</Tabs.Trigger>
       )
     })
   }
