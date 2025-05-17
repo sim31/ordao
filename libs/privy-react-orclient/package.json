@@ -23,6 +23,26 @@
         "types": "./dist/esm/index.d.ts",
         "default": "./dist/esm/index.js"
       }
+    },
+    "./backup-provider/*": {
+      "require": {
+        "types": "./dist/cjs/backup-provider/*",
+        "default": "./dist/cjs/backup-provider/*"
+      },
+      "import": {
+        "types": "./dist/esm/backup-provider/*",
+        "default": "./dist/esm/backup-provider/*"
+      }
+    },
+    "./*": {
+      "require": {
+        "types": "./dist/cjs/*",
+        "default": "./dist/cjs/*"
+      },
+      "import": {
+        "types": "./dist/esm/*",
+        "default": "./dist/esm/*"
+      }
     }
   },
   "files": [

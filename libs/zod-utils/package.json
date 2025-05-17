@@ -1,0 +1,59 @@
+{
+  "name": "@ordao/zod-utils",
+  "version": "1.0.0",
+  "description": "Helper utilities for working with zod",
+  "type": "commonjs",
+  "module": "dist/esm/index.js",
+  "main": "dist/cjs/index.js",
+  "types": "dist/cjs/index.d.ts",
+  "scripts": {
+    "build:cjs": "tsc -p tsconfig.cjs.json",
+    "build:esm": "tsc -p tsconfig.esm.json",
+    "to-dual-package": "tsconfig-to-dual-package tsconfig.esm.json tsconfig.cjs.json",
+    "export-version": "node -p \"'export const PACKAGE_VERSION = ' + JSON.stringify(require('./package.json').version) + ';'\" > src/version.ts",
+    "prebuild": "npm run export-version",
+    "build": "npm run build:cjs && npm run build:esm && npm run to-dual-package",
+    "clean": "rimraf dist",
+    "build-clean": "npm run clean && npm run build",
+    "prepack": "npm run build-clean"
+  },
+  "files": [
+    "/dist/**/*",
+    "README.md"
+  ],
+  "exports": {
+    ".": {
+      "require": {
+        "types": "./dist/cjs/index.d.ts",
+        "default": "./dist/cjs/index.js"
+      },
+      "import": {
+        "types": "./dist/esm/index.d.ts",
+        "default": "./dist/esm/index.js"
+      }
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sim31/ordao.git"
+  },
+  "keywords": [
+    "ordao",
+    "dao",
+    "zod"
+  ],
+  "author": "sim31",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sim31/ordao/issues"
+  },
+  "homepage": "https://github.com/sim31/ordao#readme",
+  "devDependencies": {
+    "rimraf": "^6.0.1",
+    "tsconfig-to-dual-package": "^1.2.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "zod": "^3.24.3"
+  }
+}

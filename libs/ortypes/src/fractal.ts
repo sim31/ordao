@@ -1,18 +1,27 @@
 import { z } from "zod";
 import { addCustomIssue } from "./zErrorHandling.js";
-import { zMintRespectGroupArgs } from "./respect1155.js";
-import { zEthAddress } from "./eth.js";
+import { zMintRespectGroupArgs, zRankNum } from "./respect1155.js";
+import { zBigNumberish, zEthAddress } from "./eth.js";
 
 export { zGroupNum, GroupNum, zRankNum } from "./respect1155.js";
 
 export const PropTypeValues = [
   "respectBreakout", "respectAccount", "burnRespect", "tick",
-  "customSignal", "customCall"
+  "customSignal", "customCall", "setPeriods"
 ] as const;
 export const zPropType = z.enum(PropTypeValues);
 export type PropType = z.infer<typeof zPropType>;
 
-export const zRankings = z.array(zEthAddress).min(3).max(6);
+const rankingsDesc = `
+Rankings
+
+Contributor rankings in Respect game.
+
+0 - top contributor
+1 - 2nd best contributor
+...
+`
+export const zRankings = z.array(zEthAddress).min(3).max(6).describe(rankingsDesc)
 export type Rankings = z.infer<typeof zRankings>;
 
 export const zValueToRanking = z.bigint().transform((val, ctx) => {
@@ -52,3 +61,16 @@ export const zBreakoutMintRequest = zMintRespectGroupArgs.superRefine((val, ctx)
     addCustomIssue(val, ctx, err, "Error parsing zBreakoutMintRequest");
   }
 });
+
+const _rewards = [
+  55n, 34n, 21n, 13n, 8n, 5n
+];
+
+export const zRankNumToValue = zRankNum.transform((rankNum, ctx) => {
+  try {
+    const rankIndex = rankNum - 1;
+    return _rewards[rankIndex];
+  } catch (err) {
+    addCustomIssue(rankNum, ctx, err, "exception in zRankNumToValue");
+  }
+}).pipe(zBigNumberish.gt(0n));

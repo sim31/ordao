@@ -1,4 +1,4 @@
-import { getAddress, getBigInt, hexlify, isBytesLike, isHexString, SigningKey, toBeHex, ZeroAddress } from 'ethers';
+import { getAddress, getBigInt, hexlify, isBytesLike, isHexString, SigningKey, toBeHex, ZeroAddress, isAddress } from 'ethers';
 import { z } from "zod";
 import { addCustomIssue } from './zErrorHandling.js';
 import { stringify } from '@ordao/ts-utils';
@@ -17,7 +17,7 @@ export type Bytes = z.infer<typeof zBytes>;
 
 export const zBytes32 = z.string().refine((val) => {
   return _isHexString(val, 32);
-}).pipe(z.string());
+}).pipe(z.string().length(66));
 export type Bytes32 = z.infer<typeof zBytes32>;
 
 export const zBytesLike = z.string().or(z.instanceof(Uint8Array))
@@ -33,9 +33,14 @@ export const zBytesLikeToBytes = zBytesLike.transform((val, ctx) => {
   return hexlify(val);
 }).pipe(zBytes);
 
-export const zEthAddress = z.string().transform((val) => {
-  return getAddress(val);
-});
+export const zEthAddress = z.string()
+  .length(42)
+  .refine((val) => {
+    return isAddress(val);
+  })
+  .transform((val) => {
+    return getAddress(val);
+  });
 export type EthAddress = z.infer<typeof zEthAddress>;
 export type Account = EthAddress
 

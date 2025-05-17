@@ -18,20 +18,36 @@ export type Contract = Respect1155;
 export const Factory = Respect1155__factory;
 export type Interface = Respect1155Interface;
 
-export const zGroupNum = z.coerce.number().int().gt(0)
+const groupNumDesc = `
+Group number
+
+
+`;
+export const zGroupNum = z.coerce.number().int().gt(0).describe(groupNumDesc);
 export type GroupNum = z.infer<typeof zGroupNum>;
 
 export const zRankNum = z.number().int().lte(6).gt(0);
 
-export const zMeetingNum = z.coerce.number().int().gt(0);
+const meetingNumDesc = `
+Meeting number
+
+
+`
+export const zMeetingNum = z.coerce.number().int().gt(0).describe(meetingNumDesc);
 export type MeetingNum = z.infer<typeof zMeetingNum>;
 
 export const zPeriodNum = z.coerce.number().int().gte(0);
 export type PeriodNum = z.infer<typeof zPeriodNum>;
 
+
+const tokenIdDescription = `
+Token ID
+
+ID of Respect Award (soulbound token).
+`
 export const zTokenId = zBytes32.refine(val => {
   return isTokenIdValid(val);
-});
+}).describe(tokenIdDescription);
 export type TokenId = z.infer<typeof zTokenId>;
 
 export const zTokenIdNoPrefix = z.preprocess(val => `0x${val}`, zTokenId);
@@ -47,7 +63,14 @@ export const zTokenIdNum = z.bigint().refine(val => {
 })
 export type TokenIdNum = z.infer<typeof zTokenIdNum>;
 
-export const zMintType = z.coerce.number().int().gte(0);
+const mintTypeDesc = `
+Mint type
+
+A number identifying a type of a mint.
+
+0 - Respect Breakout
+`
+export const zMintType = z.coerce.number().int().gte(0).describe(mintTypeDesc);
 export type MintType = z.infer<typeof zMintType>;
 
 export const zBreakoutMintType = z.literal(0);

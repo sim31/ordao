@@ -55,13 +55,19 @@ export const zCustomCallAttachment = zPropAttachmentBase.extend({
 })
 export type CustomCallAttachment = z.infer<typeof zCustomCallAttachment>;
 
+export const zSetPeriodsAttachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.setPeriods),
+})
+export type SetPeriodsAttachment = z.infer<typeof zSetPeriodsAttachment>;
+
 export const zPropAttachment = z.union([
   zRespectBreakoutAttachment,
   zRespectAccountAttachment,
   zBurnRespectAttachment,
   zCustomSignalAttachment,
   zTickAttachment,
-  zCustomCallAttachment
+  zCustomCallAttachment,
+  zSetPeriodsAttachment
 ]);
 export type PropAttachment = z.infer<typeof zPropAttachment>;
 
@@ -196,6 +202,15 @@ export const zTickValid = zTick
   .brand<"TickValid">();
 export type TickValid = z.infer<typeof zTickValid>;
 
+export const zSetPeriods = zProposalBaseFull.extend({
+  attachment: zSetPeriodsAttachment
+});
+export type SetPeriods = z.infer<typeof zSetPeriods>;
+
+export const zSetPeriodsValid = zSetPeriods
+  .refine(propIdMatchesContent, propIdErr)
+  .refine(propMemoMatchesAttachment, memoErr)
+
 export const zProposal = z.union([
   zProposalBase,
   zProposalBaseFull,
@@ -204,7 +219,8 @@ export const zProposal = z.union([
   zBurnRespect,
   zCustomSignal,
   zTick,
-  zCustomCall
+  zCustomCall,
+  zSetPeriods
 ]);
 export type Proposal = z.infer<typeof zProposal>;
 
@@ -215,7 +231,8 @@ export const zStoredProposal = z.union([
   zBurnRespect.required({ status: true, createTs: true }),
   zCustomSignal.required({ status: true, createTs: true }),
   zTick.required({ status: true, createTs: true }),
-  zCustomCall.required({ status: true, createTs: true })
+  zCustomCall.required({ status: true, createTs: true }),
+  zSetPeriods.required({ status: true, createTs: true }),
 ]);
 export type StoredProposal = z.infer<typeof zStoredProposal>;
 
@@ -226,7 +243,8 @@ export const zProposalFull = z.union([
   zBurnRespect,
   zCustomSignal,
   zTick,
-  zCustomCall
+  zCustomCall,
+  zSetPeriods
 ]);
 export type ProposalFull = z.infer<typeof zProposalFull>;
 
@@ -254,11 +272,27 @@ export const zGetVotesSpec = z.object({
 }).strict();
 export type GetVotesSpec = z.infer<typeof zGetVotesSpec>;
 
-export const zGetProposalsSpec = z.object({
+export const zGetProposalsSpecBase = z.object({
+  execStatusFilter: z.array(zExecStatusStr).optional(),
+  limit: z.number().int().gt(0).optional()
+}).strict()
+export type GetProposalsSpecBase = z.infer<typeof zGetProposalsSpecBase>;
+
+export const zGetProposalsSpecBefore = zGetProposalsSpecBase.extend({
   before: zTimestamp.optional(),
-  limit: z.number().int().gt(0).optional(),
-  execStatusFilter: z.array(zExecStatusStr).optional()
+}).strict()
+export type GetProposalsSpecBefore = z.infer<typeof zGetProposalsSpecBefore>;
+
+export const zGetProposalsSpecSkip = zGetProposalsSpecBase.extend({
+  skip: z.number().int().gt(0).optional(),
 }).strict();
+export type GetProposalsSpecSkip = z.infer<typeof zGetProposalsSpecSkip>;
+
+export const zGetProposalsSpec = z.union([
+  zGetProposalsSpecBefore,
+  zGetProposalsSpecSkip,
+  zGetProposalsSpecBase,
+]);
 export type GetProposalsSpec = z.infer<typeof zGetProposalsSpec>;
 
 export const zGetAwardsSpec = z.object({
@@ -341,8 +375,22 @@ export function idOfCustomSignalAttach(attachment: CustomSignalAttachment | Tick
   );
 }
 
-export function idOfCustomCallAttach(attachment: CustomCallAttachment) {
-  const a: Required<CustomCallAttachment> = {
+export function idOfBaseAttach(attachment: CustomCallAttachment | SetPeriodsAttachment) {
+  const a: Required<CustomCallAttachment | SetPeriodsAttachment> = {
+    ...attachment,
+    propTitle: attachment.propTitle ?? "",
+    propDescription: attachment.propDescription ?? "",
+    salt: attachment.salt ?? ""
+  };
+
+  return solidityPackedKeccak256(
+    [ "string", "string", "string", "string" ],
+    [ a.propType, a.propTitle, a.propDescription, a.salt ]
+  );
+}
+
+export function idOfSetPeriodsAttach(attachment: SetPeriodsAttachment) {
+  const a: Required<SetPeriodsAttachment> = {
     ...attachment,
     propTitle: attachment.propTitle ?? "",
     propDescription: attachment.propDescription ?? "",
@@ -371,11 +419,11 @@ export function attachmentId(attachment: PropAttachment) {
     case 'burnRespect':
       return idOfBurnRespectAttach(attachment);
     case 'customSignal':
-      return idOfCustomSignalAttach(attachment);
     case 'tick':
       return idOfCustomSignalAttach(attachment);
     case 'customCall':
-      return idOfCustomCallAttach(attachment);
+    case 'setPeriods':
+      return idOfBaseAttach(attachment);
     default:
       const exhaustiveCheck: never = attachment;
       throw new Error('exhaustive check failed');

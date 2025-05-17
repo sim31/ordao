@@ -1,0 +1,53 @@
+{
+  "providerUrl": "wss://optimism-sepolia.infura.io/ws/v3/d2661f99b84a4409ac77e3f888e981ce",
+  "contracts": {
+    "oldRespect": "0x6b11FC2cec86edeEd1F3705880deB9010F0D584B",
+    "newRespect": "0x3449C30fF5191b9FC1A1eCD8EC90C4EbF54b1204",
+    "orec": "0x4f778568eCf156bee61825e152864D44C37167Fb"
+  },
+  "tokenMetadataCfg": {
+    "award": {
+        "name": "Optimism Fractal Respect Award",
+        "description": "Award for a contribution to Optimsim Fractal",
+        "image": "https://op-sepolia-ornode.frapps.xyz/static/of.png"
+      },
+    "fungible": {
+      "name": "Optimism Fractal Respect",
+      "description": "Awards for a contributions to Optimsim Fractal",
+      "image": "https://op-sepolia-ornode.frapps.xyz/static/of.png",
+      "decimals": 0
+    },
+    "contract": {
+      "name": "Optimism Fractal Respect",
+      "symbol": "OFR",
+      "description": "Awards for a contributions to Optimsim Fractal",
+      "image": "https://op-sepolia-ornode.frapps.xyz/static/of.png",
+      "banner_image": "https://op-sepolia-ornode.frapps.xyz/static/of.png",
+      "featured_image": "https://op-sepolia-ornode.frapps.xyz/static/of.png",
+      "external_link": "https://op-sepolia.frapps.xyz"
+    }
+  },
+  "mongoCfg": {
+    "url": "mongodb+srv://ornode-op-sepolia-2:AQfi5YvmaDDdvy@ordao-db.jjaxq.mongodb.net/?retryWrites=true&w=majority&appName=ordao-db",
+    "dbName": "ornode-op-sepolia-2"
+  },
+  "ornode": {
+    "host": "localhost",
+    "port": 9000,
+    "startPeriodNum": 0,
+    "proposalStore": {
+      "defaultDocLimit": 10,
+      "maxDocLimit": 50
+    },
+    "awardStore": {
+      "defaultDocLimit": 50,
+      "maxDocLimit": 100
+    },
+    "voteStore": {
+      "defaultDocLimit": 50,
+      "maxDocLimit": 100
+    },
+    "listenForEvents": true,
+    "wsResetInterval": 0
+  }
+}

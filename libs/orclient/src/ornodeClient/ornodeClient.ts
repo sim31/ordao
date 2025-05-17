@@ -13,6 +13,11 @@ type PostV1PutProposalInput = {
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;
+              /**
+            Group number
+            
+            
+             */
               groupNum: number;
             }
           | {
@@ -22,6 +27,11 @@ type PostV1PutProposalInput = {
               salt?: string | undefined;
               mintReason: string;
               mintTitle: string;
+              /**
+            Group number
+            
+            
+             */
               groupNum?: number | undefined;
               version?: number | undefined;
             }
@@ -51,6 +61,12 @@ type PostV1PutProposalInput = {
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;
+            }
+          | {
+              propType: "setPeriods";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
             };
         /** Unix timestamp. Should match onchain createTime of proposal */
         createTs?: number | undefined;
@@ -72,6 +88,11 @@ type PostV1PutProposalInput = {
           propTitle?: string | undefined;
           propDescription?: string | undefined;
           salt?: string | undefined;
+          /**
+            Group number
+            
+            
+             */
           groupNum: number;
         };
         /** Unix timestamp. Should match onchain createTime of proposal */
@@ -96,6 +117,11 @@ type PostV1PutProposalInput = {
           salt?: string | undefined;
           mintReason: string;
           mintTitle: string;
+          /**
+            Group number
+            
+            
+             */
           groupNum?: number | undefined;
           version?: number | undefined;
         };
@@ -193,6 +219,27 @@ type PostV1PutProposalInput = {
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
         status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+      }
+    | {
+        id: string;
+        content: {
+          addr: string;
+          cdata: string | any;
+          memo: string | any;
+        };
+        attachment: {
+          propType: "setPeriods";
+          propTitle?: string | undefined;
+          propDescription?: string | undefined;
+          salt?: string | undefined;
+        };
+        /** Unix timestamp. Should match onchain createTime of proposal */
+        createTs?: number | undefined;
+        /** Hash of transaction which created this proposal */
+        createTxHash?: string | undefined;
+        /** Hash of transaction which executed this proposal */
+        executeTxHash?: string | undefined;
+        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
       };
 };
 
@@ -230,6 +277,11 @@ type PostV1GetProposalResponse =
                     propTitle?: string | undefined;
                     propDescription?: string | undefined;
                     salt?: string | undefined;
+                    /**
+        Group number
+        
+        
+         */
                     groupNum: number;
                   }
                 | {
@@ -239,6 +291,11 @@ type PostV1GetProposalResponse =
                     salt?: string | undefined;
                     mintReason: string;
                     mintTitle: string;
+                    /**
+        Group number
+        
+        
+         */
                     groupNum?: number | undefined;
                     version?: number | undefined;
                   }
@@ -269,6 +326,12 @@ type PostV1GetProposalResponse =
                     propDescription?: string | undefined;
                     salt?: string | undefined;
                   }
+                | {
+                    propType: "setPeriods";
+                    propTitle?: string | undefined;
+                    propDescription?: string | undefined;
+                    salt?: string | undefined;
+                  }
               )
             | undefined;
           createTs: number;
@@ -290,6 +353,11 @@ type PostV1GetProposalResponse =
             propTitle?: string | undefined;
             propDescription?: string | undefined;
             salt?: string | undefined;
+            /**
+        Group number
+        
+        
+         */
             groupNum: number;
           };
           createTs: number;
@@ -313,6 +381,11 @@ type PostV1GetProposalResponse =
             salt?: string | undefined;
             mintReason: string;
             mintTitle: string;
+            /**
+        Group number
+        
+        
+         */
             groupNum?: number | undefined;
             version?: number | undefined;
           };
@@ -406,6 +479,26 @@ type PostV1GetProposalResponse =
           executeTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed";
         }
+      | {
+          id: string;
+          content: {
+            addr: any;
+            cdata: string | any;
+            memo: string | any;
+          };
+          attachment: {
+            propType: "setPeriods";
+            propTitle?: string | undefined;
+            propDescription?: string | undefined;
+            salt?: string | undefined;
+          };
+          createTs: number;
+          /** Hash of transaction which created this proposal */
+          createTxHash?: string | undefined;
+          /** Hash of transaction which executed this proposal */
+          executeTxHash?: string | undefined;
+          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+        }
     )
   | {
       status: "error";
@@ -416,13 +509,27 @@ type PostV1GetProposalResponse =
     };
 
 type PostV1GetProposalsInput = {
-  spec: {
-    before?: number | undefined;
-    limit?: number | undefined;
-    execStatusFilter?:
-      | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
-      | undefined;
-  };
+  spec:
+    | {
+        execStatusFilter?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
+          | undefined;
+        limit?: number | undefined;
+        before?: number | undefined;
+      }
+    | {
+        execStatusFilter?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
+          | undefined;
+        limit?: number | undefined;
+        skip?: number | undefined;
+      }
+    | {
+        execStatusFilter?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
+          | undefined;
+        limit?: number | undefined;
+      };
 };
 
 type PostV1GetProposalsResponse =
@@ -444,6 +551,11 @@ type PostV1GetProposalsResponse =
                       propTitle?: string | undefined;
                       propDescription?: string | undefined;
                       salt?: string | undefined;
+                      /**
+            Group number
+            
+            
+             */
                       groupNum: number;
                     }
                   | {
@@ -453,6 +565,11 @@ type PostV1GetProposalsResponse =
                       salt?: string | undefined;
                       mintReason: string;
                       mintTitle: string;
+                      /**
+            Group number
+            
+            
+             */
                       groupNum?: number | undefined;
                       version?: number | undefined;
                     }
@@ -483,6 +600,12 @@ type PostV1GetProposalsResponse =
                       propDescription?: string | undefined;
                       salt?: string | undefined;
                     }
+                  | {
+                      propType: "setPeriods";
+                      propTitle?: string | undefined;
+                      propDescription?: string | undefined;
+                      salt?: string | undefined;
+                    }
                 )
               | undefined;
             createTs: number;
@@ -504,6 +627,11 @@ type PostV1GetProposalsResponse =
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;
+              /**
+            Group number
+            
+            
+             */
               groupNum: number;
             };
             createTs: number;
@@ -527,6 +655,11 @@ type PostV1GetProposalsResponse =
               salt?: string | undefined;
               mintReason: string;
               mintTitle: string;
+              /**
+            Group number
+            
+            
+             */
               groupNum?: number | undefined;
               version?: number | undefined;
             };
@@ -620,6 +753,26 @@ type PostV1GetProposalsResponse =
             executeTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed";
           }
+        | {
+            id: string;
+            content: {
+              addr: any;
+              cdata: string | any;
+              memo: string | any;
+            };
+            attachment: {
+              propType: "setPeriods";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+            };
+            createTs: number;
+            /** Hash of transaction which created this proposal */
+            createTxHash?: string | undefined;
+            /** Hash of transaction which executed this proposal */
+            executeTxHash?: string | undefined;
+            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          }
       )[];
     }
   | {
@@ -664,13 +817,30 @@ type PostV1GetTokenResponse =
           description?: string | undefined;
           image?: string | undefined;
           properties: {
+            /**
+        Token ID
+        
+        ID of Respect Award (soulbound token).
+         */
             tokenId: string;
             recipient: any;
+            /**
+        Mint type
+        
+        A number identifying a type of a mint.
+        
+        0 - Respect Breakout
+         */
             mintType: number;
             mintTs?: number | undefined;
             mintTxHash?: string | undefined;
             denomination: number;
             periodNumber: number;
+            /**
+        Group number
+        
+        
+         */
             groupNum?: number | undefined;
             level?: number | undefined;
             reason?: string | undefined;
@@ -694,6 +864,11 @@ type PostV1GetTokenResponse =
     };
 
 type PostV1GetAwardInput = {
+  /**
+    Token ID
+    
+    ID of Respect Award (soulbound token).
+     */
   tokenId: string;
 };
 
@@ -703,13 +878,30 @@ type PostV1GetAwardResponse =
       description?: string | undefined;
       image?: string | undefined;
       properties: {
+        /**
+        Token ID
+        
+        ID of Respect Award (soulbound token).
+         */
         tokenId: string;
         recipient: any;
+        /**
+        Mint type
+        
+        A number identifying a type of a mint.
+        
+        0 - Respect Breakout
+         */
         mintType: number;
         mintTs?: number | undefined;
         mintTxHash?: string | undefined;
         denomination: number;
         periodNumber: number;
+        /**
+        Group number
+        
+        
+         */
         groupNum?: number | undefined;
         level?: number | undefined;
         reason?: string | undefined;
@@ -817,12 +1009,29 @@ type GetV1TokenTokenIdResponse =
           description?: string | undefined;
           image?: string | undefined;
           properties: {
+            /**
+        Token ID
+        
+        ID of Respect Award (soulbound token).
+         */
             tokenId: string;
             recipient: any;
+            /**
+        Mint type
+        
+        A number identifying a type of a mint.
+        
+        0 - Respect Breakout
+         */
             mintType: number;
             mintTxHash?: string | undefined;
             denomination: number;
             periodNumber: number;
+            /**
+        Group number
+        
+        
+         */
             groupNum?: number | undefined;
             level?: number | undefined;
             reason?: string | undefined;
@@ -842,13 +1051,30 @@ type GetV1TokenTokenIdResponse =
           description?: string | undefined;
           image?: string | undefined;
           properties: {
+            /**
+        Token ID
+        
+        ID of Respect Award (soulbound token).
+         */
             tokenId: string;
             recipient: any;
+            /**
+        Mint type
+        
+        A number identifying a type of a mint.
+        
+        0 - Respect Breakout
+         */
             mintType: number;
             mintTs?: number | undefined;
             mintTxHash?: string | undefined;
             denomination: number;
             periodNumber: number;
+            /**
+        Group number
+        
+        
+         */
             groupNum?: number | undefined;
             level?: number | undefined;
             reason?: string | undefined;
@@ -887,13 +1113,30 @@ type PostV1GetAwardsResponse =
         description?: string | undefined;
         image?: string | undefined;
         properties: {
+          /**
+            Token ID
+            
+            ID of Respect Award (soulbound token).
+             */
           tokenId: string;
           recipient: any;
+          /**
+            Mint type
+            
+            A number identifying a type of a mint.
+            
+            0 - Respect Breakout
+             */
           mintType: number;
           mintTs?: number | undefined;
           mintTxHash?: string | undefined;
           denomination: number;
           periodNumber: number;
+          /**
+            Group number
+            
+            
+             */
           groupNum?: number | undefined;
           level?: number | undefined;
           reason?: string | undefined;

@@ -1,39 +1,47 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import ReactDOM from 'react-dom/client'
-import { ChakraProvider, Container } from '@chakra-ui/react'
+import { Provider as ChakraProvider } from './components/ui/provider'
 import './index.css'
-import BreakoutSubmitApp from './BreakoutSubmitApp'
-import {
-  Route,
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
-} from "react-router-dom";
+// import BreakoutSubmitApp from './BreakoutSubmitApp'
+import { PrivyProvider, usePrivy } from '@privy-io/react-auth'
+import { RouterProvider, createRouter } from '@tanstack/react-router'
+// Import the generated route tree
 import Fallback from './components/Fallback'
-import { PrivyProvider } from '@privy-io/react-auth'
-import { config } from './global/config'
+import { Loading } from './components/Loading.js'
+import NotFoundError from './components/NotFound'
+import { config, deploymentInfo, orclientConfig } from "./global/config.js"
+import { RouterContext } from './global/routerContext.js'
+import { routeTree } from './routeTree.gen'
+import { OrclientProvider } from '@ordao/privy-react-orclient/backup-provider/OrclientProvider.js';
+import { useUserWallet } from '@ordao/privy-react-orclient/useUserWallet.js';
+import { useOrclient } from '@ordao/privy-react-orclient/backup-provider/useOrclient.js';
 
 console.debug = console.log;
 console.debug("debug test")
 console.log("log test")
 
-// window.onerror = function myErrorHandler(errorMsg) {
-//     alert("Error occured: " + errorMsg);
-//     return false;
-// }
+const defaultCtx: RouterContext = {
+  authenticated: false,
+  privyReady: false
+} 
 
-// const logError = (error: Error, info: ErrorInfo) => {
-//   console.error(stringify(error));
-//   console.error("Error info", stringify(info));
-// };
+// Create a new router instance
+const router = createRouter({
+  routeTree,
+  context: defaultCtx,
+  defaultErrorComponent: Fallback,
+  defaultNotFoundComponent: NotFoundError,
+  defaultPendingComponent: Loading
+})
 
-const router = createBrowserRouter(
-  createRoutesFromElements(
-    <Route path="/" element={<BreakoutSubmitApp />} errorElement={<Fallback />}/>
-  )
-);
+// Register the router instance for type safety
+declare module '@tanstack/react-router' {
+  interface Register {
+    router: typeof router
+  }
+}
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+ReactDOM.createRoot(document.getElementById('root')!).render((
   <React.StrictMode>
     <PrivyProvider
       appId={config.privyAppId || ""}
@@ -45,11 +53,63 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         },
       }}
     >
-      <ChakraProvider>
-        <Container minHeight="100vh" minWidth="100vw" padding="0px">
-          <RouterProvider router={router} />
-        </Container>
-      </ChakraProvider>
+      <OrclientProvider
+        backupProviderURL={config.chainInfo.rpcUrls[0]}
+        orclientConfig={orclientConfig}
+        deployment={deploymentInfo}
+        timeout={3000}
+      >
+        <ChakraProvider>
+          <Main />
+        </ChakraProvider>
+      </OrclientProvider>
     </PrivyProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+))
+
+// eslint-disable-next-line react-refresh/only-export-components
+function Main() {
+  const {
+    ready: privyReady,
+    authenticated,
+  } = usePrivy();
+
+  const userWallet = useUserWallet();
+
+  const orclient = useOrclient();
+
+  const [isMounted, setIsMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+  
+  const [context, setContext] = useState<RouterContext | undefined>();
+
+  useEffect(() => {
+    console.log("Setting context");
+    setContext({
+      orclient,
+      userWallet,
+      authenticated,
+      privyReady
+    });
+  }, [orclient, userWallet, authenticated, privyReady, isMounted])
+
+  useEffect(() => {
+    const invalidateFn = async () => {
+      console.log("Invalidating router");
+      await router.invalidate({ sync: true });
+      console.log("Invalidated router");
+    }
+
+    if (isMounted) {
+      invalidateFn();
+    }
+  }, [context, isMounted])
+
+  return <RouterProvider
+    router={router}
+    context={context ?? defaultCtx}
+  />;
+}
