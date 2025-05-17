@@ -9,8 +9,8 @@ export const Prose = chakra("div", {
     fontSize: "sm",
     lineHeight: "1.7em",
     "& p": {
-      marginTop: "1em",
-      marginBottom: "1em",
+      marginTop: "0",
+      marginBottom: "0",
     },
     "& blockquote": {
       marginTop: "1.285em",
