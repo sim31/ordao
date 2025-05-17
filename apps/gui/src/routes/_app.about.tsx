@@ -1,6 +1,6 @@
 import { Box, Container, Tabs } from '@chakra-ui/react'
-import { createFileRoute, Outlet, useNavigate } from '@tanstack/react-router'
-import { useEffect, useState } from 'react';
+import { createFileRoute, Outlet, useChildMatches, useNavigate } from '@tanstack/react-router'
+import { useEffect, useMemo, useState } from 'react';
 
 export const Route = createFileRoute('/_app/about')({
   component: RouteComponent,
@@ -17,9 +17,31 @@ const titles: Record<AboutSubpath, string> = {
 
 
 function RouteComponent() {
+  const matches = useChildMatches();
+  const navigate = useNavigate();
+
+  const match = useMemo(() => {
+    for (const m of matches) {
+      const childPath = m.routeId.split('/').pop();
+      if (aboutSubpaths.includes(childPath as AboutSubpath)) {
+        return childPath as AboutSubpath;
+      }
+    }
+    return undefined;
+  }, [matches]);
+
+  console.log("Match: ", match);
+
   const [tab, setTab] = useState<AboutSubpath>('intent');
 
-  const navigate = useNavigate();
+  useEffect(() => {
+    if (match) {
+      setTab(match);
+    } else {
+      navigate({ from: '/about', to: 'intent' });
+    }
+  }, [match, navigate]);
+
   
   const renderTabList = () => {
     return aboutSubpaths.map((subpath) => {
@@ -34,13 +56,8 @@ function RouteComponent() {
       throw new Error("Tabs component tried to navigate to non-existing path");
     }
     const tabVal = e.value as AboutSubpath;
-    setTab(tabVal);
+    navigate({ from: '/about', to: tabVal });
   }
-
-  useEffect(() => {
-    console.log("Navigating to ", tab);
-    navigate({ from: '/about', to: `${tab}` });
-  }, [tab, navigate])
 
   return (
     <Container fluid padding="0" minHeight="100vh" backgroundColor="white">
