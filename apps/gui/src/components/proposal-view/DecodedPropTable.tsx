@@ -32,10 +32,10 @@ export function DecodedPropTable({ dprop, shortenAddrs }: ProposalContentTablePr
     <Table.Root size="lg" mb="0.5em">
       <Table.Body>
         {dprop.metadata.propTitle && (
-          <PropTableRow fieldName="Proposal Title" value={dprop.metadata.propTitle} />
+          <PropTableRow mdForValue fieldName="Proposal Title" value={dprop.metadata.propTitle} />
         )}
         {dprop.metadata.propDescription && (
-          <PropTableRow fieldName="Proposal Description" value={dprop.metadata.propDescription} />
+          <PropTableRow mdForValue fieldName="Proposal Description" value={dprop.metadata.propDescription} />
         )}
         {rows}
       </Table.Body>
