@@ -1,7 +1,7 @@
 # ORDAO
 
 <!-- TODO: link -->
-ORDAO (Optimistic Respect-based DAO) is a toolset for type of DAOs which use non-transferrable reputation token (Respect). Core of ORDAO is [Optimisti Respect-based executive contract (OREC)](./docs/OREC.md), which enables DAOs to execute actions onchain in a democratic way while avoiding [voter-apathy problem](./docs/OREC.md#motivation). Broadly speaking ORDAO is OREC smart contract plus necessary tooling around it (off-chain services, libraries and frontend apps).
+ORDAO (Optimistic Respect-based DAO) is a toolset for type of DAOs which use non-transferrable reputation token (Respect). Core of ORDAO is [Optimistic Respect-based executive contract (OREC)](./docs/OREC.md), which enables DAOs to execute actions onchain in a democratic way while avoiding [voter-apathy problem](./docs/OREC.md#motivation). Broadly speaking ORDAO is OREC smart contract plus necessary tooling around it (off-chain services, libraries and frontend apps).
 
 More specifically these are currently the main components of ORDAO:
 
