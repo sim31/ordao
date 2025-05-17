@@ -23,7 +23,7 @@ export const zDeploymentInfo = z.object({
 export type DeploymentInfo = z.infer<typeof zDeploymentInfo>;
 
 export type DeploymentKey = 
-  "op-sepolia" | "oh" | "of" | "buildium";
+  "op-sepolia" | "oh" | "orf" | "of" | "buildium";
 
 export const deployments: Record<DeploymentKey, DeploymentInfo> = {
   "op-sepolia": {
@@ -49,7 +49,7 @@ export const deployments: Record<DeploymentKey, DeploymentInfo> = {
       newRespect: "0xF6B17Fa1eD95F21E1eAdff6F96ce80E5a562D548",
       orec: "0xCD1fA63b85a708f039c4954af72E85CDd494B6cA"
     },
-    ornodeUrl: "https://ordao-ornode.frapps.xyz",
+    ornodeUrl: "https://oh-ornode.frapps.xyz",
     chainInfo: {
       chainId: "0xA",
       rpcUrls: [
@@ -91,6 +91,21 @@ export const deployments: Record<DeploymentKey, DeploymentInfo> = {
       ],
       chainName: "Optimism",
       blockExplorerUrl: "https://optimism.blockscout.com",
+      nativeCurrency: ethCurrency
+    }
+  },
+  "orf": {
+    title: "ORDAO Fractal",
+    contracts: {
+      orec: "0x0B129e09EA16f9aD7d3FBC11f00983C0AB2c5ee4",
+      newRespect: "0x5a1d3940397b395cb93441812b4c2D6E6271F305",
+    },
+    ornodeUrl: "https://orf-ornode.frapps.xyz",
+    chainInfo: {
+      chainId: "0x2105",
+      rpcUrls: ["https://0xrpc.io/base", "https://1rpc.io/base"],
+      chainName: "Base Mainnet",
+      blockExplorerUrl: "https://base.blockscout.com/",
       nativeCurrency: ethCurrency
     }
   }
