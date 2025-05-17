@@ -85,9 +85,12 @@ const SidebarContent = ({
       {...rest}
     >
       <Flex h="20" alignItems="center" mx="8" justifyContent="space-between">
-        <Text fontSize="2xl" fontWeight="bold" color="black">
-          {config.appTitle}
-        </Text>
+        <RouterLink to="/">
+          <Text fontSize="2xl" fontWeight="bold" color="black">
+            {config.appTitle}
+          </Text>
+        </RouterLink>
+
         <CloseButton display={{ base: 'flex', lg: 'none' }} onClick={onClose} />
       </Flex>
       {menuItems.map((item) => (
@@ -177,15 +180,16 @@ const Header = ({ onMenuOpen, accountInfo, onLogin, onLogout, ...rest }: HeaderP
           <FiMenu />
         </IconButton>
 
-        <Text
-          display={{ base: 'flex', lg: 'none' }} // displayed only on small screens
-          fontSize="2xl"
-          fontFamily="monospace"
-          fontWeight="bold"
-          color="black"   
-        >
-          {config.appTitle}
-        </Text>
+        <RouterLink to="/">
+          <Text
+            display={{ base: 'flex', lg: 'none' }} // displayed only on small screens
+            fontSize="2xl"
+            fontWeight="bold"
+            color="black"   
+          >
+            {config.appTitle}
+          </Text>
+        </RouterLink>
 
         {accountInfo
           ? (
