@@ -6,8 +6,8 @@ ORDAO (Optimistic Respect-based DAO) is a toolset for type of DAOs which use non
 More specifically these are currently the main components of ORDAO:
 
 * [Contracts](./contracts/)
-  * OREC ([specification](./docs/OREC.md) and [implementation](./contracts/orec/));
-  * [Respect1155](./contracts/respect1155/) - Respect token contract based on ERC-1155 standard;
+  * OREC ([specification](./docs/OREC.md) and [implementation](./contracts/packages/orec/));
+  * [Respect1155](./contracts/packages/respect1155/) - Respect token contract based on ERC-1155 standard;
 * [Services](./services/)
   * [ornode](./services/ornode/) - API service for storing OREC proposals and Respect token metadata;
 * [Libraries for interfacing with OREC](./libs/)
