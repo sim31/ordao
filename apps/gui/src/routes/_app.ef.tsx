@@ -7,13 +7,13 @@ export const Route = createFileRoute('/_app/ef')({
   component: RouteComponent,
 })
 
-const efSubpaths = ['claim', 'original', 'awards', 'balances', 'confirm'] as const;
+const efSubpaths = ['awards', 'accounts', 'original', 'claim', 'confirm'] as const;
 export type EfSubpath = typeof efSubpaths[number];
 const titles: Record<EfSubpath, string> = {
   "claim": "Claim",
-  "original": "Original Token",
   "awards": "Awards",
-  "balances": "Balances",
+  "accounts": "Accounts",
+  "original": "Original Token",
   "confirm": "Confirm claim"
 }
 
@@ -34,13 +34,13 @@ function RouteComponent() {
 
   console.log("Match: ", match);
 
-  const [tab, setTab] = useState<EfSubpath>('claim');
+  const [tab, setTab] = useState<EfSubpath>('awards');
 
   useEffect(() => {
     if (match) {
       setTab(match);
     } else {
-      navigate({ from: '/ef', to: 'claim' });
+      navigate({ from: '/ef', to: 'awards' });
     }
   }, [match, navigate]);
 

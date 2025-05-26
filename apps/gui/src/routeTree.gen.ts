@@ -25,8 +25,8 @@ import { Route as AppProposalsPropIdImport } from './routes/_app.proposals/$prop
 import { Route as AppEfOriginalImport } from './routes/_app.ef/original'
 import { Route as AppEfConfirmImport } from './routes/_app.ef/confirm'
 import { Route as AppEfClaimImport } from './routes/_app.ef/claim'
-import { Route as AppEfBalancesImport } from './routes/_app.ef/balances'
 import { Route as AppEfAwardsImport } from './routes/_app.ef/awards'
+import { Route as AppEfAccountsImport } from './routes/_app.ef/accounts'
 import { Route as AppAboutUserGuideImport } from './routes/_app.about/userGuide'
 import { Route as AppAboutIntentImport } from './routes/_app.about/intent'
 import { Route as AppAboutCommunitiesImport } from './routes/_app.about/communities'
@@ -118,15 +118,15 @@ const AppEfClaimRoute = AppEfClaimImport.update({
   getParentRoute: () => AppEfRoute,
 } as any)
 
-const AppEfBalancesRoute = AppEfBalancesImport.update({
-  id: '/balances',
-  path: '/balances',
-  getParentRoute: () => AppEfRoute,
-} as any)
-
 const AppEfAwardsRoute = AppEfAwardsImport.update({
   id: '/awards',
   path: '/awards',
+  getParentRoute: () => AppEfRoute,
+} as any)
+
+const AppEfAccountsRoute = AppEfAccountsImport.update({
+  id: '/accounts',
+  path: '/accounts',
   getParentRoute: () => AppEfRoute,
 } as any)
 
@@ -242,18 +242,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppAboutUserGuideImport
       parentRoute: typeof AppAboutImport
     }
+    '/_app/ef/accounts': {
+      id: '/_app/ef/accounts'
+      path: '/accounts'
+      fullPath: '/ef/accounts'
+      preLoaderRoute: typeof AppEfAccountsImport
+      parentRoute: typeof AppEfImport
+    }
     '/_app/ef/awards': {
       id: '/_app/ef/awards'
       path: '/awards'
       fullPath: '/ef/awards'
       preLoaderRoute: typeof AppEfAwardsImport
-      parentRoute: typeof AppEfImport
-    }
-    '/_app/ef/balances': {
-      id: '/_app/ef/balances'
-      path: '/balances'
-      fullPath: '/ef/balances'
-      preLoaderRoute: typeof AppEfBalancesImport
       parentRoute: typeof AppEfImport
     }
     '/_app/ef/claim': {
@@ -336,16 +336,16 @@ const AppAboutRouteWithChildren = AppAboutRoute._addFileChildren(
 )
 
 interface AppEfRouteChildren {
+  AppEfAccountsRoute: typeof AppEfAccountsRoute
   AppEfAwardsRoute: typeof AppEfAwardsRoute
-  AppEfBalancesRoute: typeof AppEfBalancesRoute
   AppEfClaimRoute: typeof AppEfClaimRoute
   AppEfConfirmRoute: typeof AppEfConfirmRoute
   AppEfOriginalRoute: typeof AppEfOriginalRoute
 }
 
 const AppEfRouteChildren: AppEfRouteChildren = {
+  AppEfAccountsRoute: AppEfAccountsRoute,
   AppEfAwardsRoute: AppEfAwardsRoute,
-  AppEfBalancesRoute: AppEfBalancesRoute,
   AppEfClaimRoute: AppEfClaimRoute,
   AppEfConfirmRoute: AppEfConfirmRoute,
   AppEfOriginalRoute: AppEfOriginalRoute,
@@ -424,8 +424,8 @@ export interface FileRoutesByFullPath {
   '/about/communities': typeof AppAboutCommunitiesRoute
   '/about/intent': typeof AppAboutIntentRoute
   '/about/userGuide': typeof AppAboutUserGuideRoute
+  '/ef/accounts': typeof AppEfAccountsRoute
   '/ef/awards': typeof AppEfAwardsRoute
-  '/ef/balances': typeof AppEfBalancesRoute
   '/ef/claim': typeof AppEfClaimRoute
   '/ef/confirm': typeof AppEfConfirmRoute
   '/ef/original': typeof AppEfOriginalRoute
@@ -444,8 +444,8 @@ export interface FileRoutesByTo {
   '/about/communities': typeof AppAboutCommunitiesRoute
   '/about/intent': typeof AppAboutIntentRoute
   '/about/userGuide': typeof AppAboutUserGuideRoute
+  '/ef/accounts': typeof AppEfAccountsRoute
   '/ef/awards': typeof AppEfAwardsRoute
-  '/ef/balances': typeof AppEfBalancesRoute
   '/ef/claim': typeof AppEfClaimRoute
   '/ef/confirm': typeof AppEfConfirmRoute
   '/ef/original': typeof AppEfOriginalRoute
@@ -469,8 +469,8 @@ export interface FileRoutesById {
   '/_app/about/communities': typeof AppAboutCommunitiesRoute
   '/_app/about/intent': typeof AppAboutIntentRoute
   '/_app/about/userGuide': typeof AppAboutUserGuideRoute
+  '/_app/ef/accounts': typeof AppEfAccountsRoute
   '/_app/ef/awards': typeof AppEfAwardsRoute
-  '/_app/ef/balances': typeof AppEfBalancesRoute
   '/_app/ef/claim': typeof AppEfClaimRoute
   '/_app/ef/confirm': typeof AppEfConfirmRoute
   '/_app/ef/original': typeof AppEfOriginalRoute
@@ -495,8 +495,8 @@ export interface FileRouteTypes {
     | '/about/communities'
     | '/about/intent'
     | '/about/userGuide'
+    | '/ef/accounts'
     | '/ef/awards'
-    | '/ef/balances'
     | '/ef/claim'
     | '/ef/confirm'
     | '/ef/original'
@@ -514,8 +514,8 @@ export interface FileRouteTypes {
     | '/about/communities'
     | '/about/intent'
     | '/about/userGuide'
+    | '/ef/accounts'
     | '/ef/awards'
-    | '/ef/balances'
     | '/ef/claim'
     | '/ef/confirm'
     | '/ef/original'
@@ -537,8 +537,8 @@ export interface FileRouteTypes {
     | '/_app/about/communities'
     | '/_app/about/intent'
     | '/_app/about/userGuide'
+    | '/_app/ef/accounts'
     | '/_app/ef/awards'
-    | '/_app/ef/balances'
     | '/_app/ef/claim'
     | '/_app/ef/confirm'
     | '/_app/ef/original'
@@ -596,8 +596,8 @@ export const routeTree = rootRoute
       "filePath": "_app.ef.tsx",
       "parent": "/_app",
       "children": [
+        "/_app/ef/accounts",
         "/_app/ef/awards",
-        "/_app/ef/balances",
         "/_app/ef/claim",
         "/_app/ef/confirm",
         "/_app/ef/original"
@@ -646,12 +646,12 @@ export const routeTree = rootRoute
       "filePath": "_app.about/userGuide.tsx",
       "parent": "/_app/about"
     },
-    "/_app/ef/awards": {
-      "filePath": "_app.ef/awards.tsx",
+    "/_app/ef/accounts": {
+      "filePath": "_app.ef/accounts.tsx",
       "parent": "/_app/ef"
     },
-    "/_app/ef/balances": {
-      "filePath": "_app.ef/balances.tsx",
+    "/_app/ef/awards": {
+      "filePath": "_app.ef/awards.tsx",
       "parent": "/_app/ef"
     },
     "/_app/ef/claim": {
