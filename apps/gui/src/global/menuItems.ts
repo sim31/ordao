@@ -33,7 +33,7 @@ export const menuItems: Array<MenuItem> = [
   { id: "playRespectGame", name: 'Play Respect Game', icon: MdGroups, externalLink: config.respectGameLink },
   { id: "/_app/submitBreakout", name: 'Submit Breakout Results', icon: FaRankingStar },
   { id: "parentRespect", name: 'Parent Respect', icon: PiMedalFill, externalLink: config.parentRespectLink },
-  { id: "childRespect", name: 'Child Respect', icon: PiMedalThin, externalLink: config.childRespectLink },
+  { id: "/_app/ef", name: 'Eden Fractal Respect', icon: PiMedalThin },
   { id: "/_app/about", name: 'About', icon: MdOutlineInfo },
 
 

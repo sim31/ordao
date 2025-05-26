@@ -7,6 +7,7 @@
     "dev": "vite --port 5175",
     "dev-op-sepolia": "vite --mode dev-op-sepolia --port 5175",
     "dev-op-sepolia-ngrok": "vite --mode dev-op-sepolia-ngrok --port 5175",
+    "dev-base-sepolia-ngrok": "vite --mode dev-base-sepolia-ngrok --port 5175",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview"
@@ -24,6 +25,7 @@
     "@tanstack/react-router": "^1.119.0",
     "@tanstack/react-router-devtools": "^1.119.1",
     "@tanstack/zod-adapter": "^1.119.0",
+    "@wharfkit/contract": "^1.2.1",
     "copy-to-clipboard": "^3.3.3",
     "eth-address": "^1.0.1",
     "ethers": "^6.13.1",
