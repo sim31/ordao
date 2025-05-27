@@ -27,6 +27,7 @@ export const Route = createFileRoute('/_app/ef/original')({
     for (const scope of allScopes) {
       const table = await contract.table("accounts", scope.scope);
       const balance = await table.get();
+      // TODO: Serializer.objectify might get it done without the need to use replace?
       const name = Serializer.stringify(scope.scope).replace(/"/g, "");
       const balanceStr = Serializer.stringify(balance.balance).replace(/"/g, "");
       const reExec = reStr.exec(balanceStr);
