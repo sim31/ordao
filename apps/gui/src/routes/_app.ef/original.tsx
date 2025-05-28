@@ -3,13 +3,12 @@ import { APIClient } from "@wharfkit/antelope"
 import { ContractKit } from "@wharfkit/contract"
 import { Serializer } from '@wharfkit/antelope'
 import { Table } from '@chakra-ui/react';
+import { edenAmountRe } from '../../utils/edenRegex';
 
 interface Account {
   name: string;
   balance: number;
 }
-
-const reStr = /^(\d+)\.0000 EDEN/;
 
 export const Route = createFileRoute('/_app/ef/original')({
   component: RouteComponent,
@@ -30,7 +29,7 @@ export const Route = createFileRoute('/_app/ef/original')({
       // TODO: Serializer.objectify might get it done without the need to use replace?
       const name = Serializer.stringify(scope.scope).replace(/"/g, "");
       const balanceStr = Serializer.stringify(balance.balance).replace(/"/g, "");
-      const reExec = reStr.exec(balanceStr);
+      const reExec = edenAmountRe.exec(balanceStr);
       const value = reExec ? parseInt(reExec[1]) : 0;
       total += value;
       accounts.push({ name, balance: value });

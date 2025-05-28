@@ -22,7 +22,9 @@ export const zConfig = z.object({
   childRespectHoldersLink: z.string().url(),
   respectGameLink: z.string().url(),
   defaultPropQuerySize: z.coerce.number().int().gt(0).default(6),
-  fractalDocsUrl: z.string().url().optional()
+  fractalDocsUrl: z.string().url().optional(),
+  efContract: z.string().default("eden.fractal"),
+  tsContract: z.string().default("tadastadas25")
 });
 export type Config = z.infer<typeof zConfig>;
 
@@ -38,6 +40,8 @@ const childRespectHoldersLink = import.meta.env.VITE_CHILD_RESPECT_HOLDERS_LINK;
 const respectGameLink = import.meta.env.VITE_RESPECT_GAME_LINK;
 const defaultPropQuerySize = import.meta.env.VITE_DEFAULT_PROP_QUERY_SIZE;
 const fractalDocsUrl = import.meta.env.VITE_FRACTAL_DOCS_URL;
+const efContract = import.meta.env.VITE_EF_CONTRACT;
+const tsContract = import.meta.env.VITE_TS_CONTRACT;
 
 const chainId = import.meta.env.VITE_CHAIN_ID;
 const rpcUrls = import.meta.env.VITE_RPC_URLS.split(",");
@@ -63,7 +67,9 @@ export const config = zConfig.parse({
   childRespectHoldersLink,
   respectGameLink,
   defaultPropQuerySize,
-  fractalDocsUrl
+  fractalDocsUrl,
+  efContract,
+  tsContract
 });
 
 export const orclientConfig: CreateOrclientConfig = {

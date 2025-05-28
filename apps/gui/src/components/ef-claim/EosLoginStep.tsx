@@ -10,16 +10,18 @@ export function EosLoginStep({ input, onComplete }: EosLoginStepProps) {
     if (input.session) {
       console.log("Already Have a session: ", input.session);
       onComplete({
+        ...input,
         session: input.session,
         sessionKit: input.sessionKit
       })
     }
-  }, [input.session, input.sessionKit, onComplete])
+  }, [input, input.session, input.sessionKit, onComplete])
 
   const onLoginClick = async () => {
     const { session} = await input.sessionKit.login();
 
     onComplete({
+      ...input,
       session,
       sessionKit: input.sessionKit
     })
