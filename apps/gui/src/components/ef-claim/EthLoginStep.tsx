@@ -1,4 +1,4 @@
-import { Center, Heading, HStack, VStack, Highlight } from "@chakra-ui/react";
+import { Center, Heading, HStack, VStack } from "@chakra-ui/react";
 import { Text } from "../Text";
 import { Button } from "../Button";
 import { EthLoginStepProps } from "./steps";
@@ -6,12 +6,13 @@ import { usePrivy } from "@privy-io/react-auth";
 import { isORClient } from "@ordao/orclient";
 import { useUserWallet } from "@ordao/privy-react-orclient";
 import StepFrame from "./StepFrame";
+import { useOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 
 export function EthLoginStep({ input, onComplete, onBack }: EthLoginStepProps) {
   const { login: privyLogin, logout: privyLogout } = usePrivy();
   const userWallet = useUserWallet();
+  const orclient = useOrclient();
 
-  const orclient = input.orclient;
   const ethAddress = isORClient(orclient) ? userWallet?.address : undefined;
 
   const onLoginClick = async () => {
@@ -54,11 +55,9 @@ export function EthLoginStep({ input, onComplete, onBack }: EthLoginStepProps) {
             <Heading size="3xl" letterSpacing="tight">
               Claim to account
             </Heading>
-            <Heading size="3xl" letterSpacing="tight">
-              <Highlight query={ethAddress} styles={{ color: "blue.600" }}>
-                  {ethAddress}
-              </Highlight>
-            </Heading>
+            <Text fontSize="3xl" letterSpacing="tight" wordBreak={"break-word"} color="blue.600">
+              {ethAddress}
+            </Text>
             <Heading size="3xl" letterSpacing="tight">
               on Base?
             </Heading>
