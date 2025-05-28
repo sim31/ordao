@@ -5,6 +5,7 @@ import { Serializer } from "@wharfkit/session";
 import { edenAmountRe } from "../../utils/edenRegex";
 import { Button } from "../Button";
 import { Loading } from "../Loading";
+import StepFrame from "./StepFrame";
 
 function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
 
@@ -48,6 +49,11 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
     onComplete({ ...input, eosAccount, balance });
   }
 
+  const onLogoutClick = async () => {
+    await input.sessionKit.logout();
+    onBack({ ...input, session: undefined });
+  }
+
   const renderStatus = () => {
     if (balance === undefined) {
       return <Loading/>
@@ -77,21 +83,11 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
     }
   }
 
-  const onLogoutClick = async () => {
-    await input.sessionKit.logout();
-    onBack({ ...input, session: undefined });
-  }
-
   return (
-    <VStack gap="2em">
-      <HStack alignSelf="flex-end">
-        <Button size="xl" onClick={onBackClick}>Go back</Button>
-        <Button size="xl" onClick={onLogoutClick}>{eosAccount} (logout)</Button>
-      </HStack>
+    <StepFrame account={eosAccount} onLogout={onLogoutClick} onBack={onBackClick}>
       {renderStatus()}
-    </VStack>
+    </StepFrame>
   )
-
 }
 
 

@@ -1,3 +1,5 @@
+import { ORClientType } from "@ordao/orclient";
+import { EthAddress } from "@ordao/ortypes";
 import ContractKit, { Contract } from "@wharfkit/contract";
 import SessionKit, { Session } from "@wharfkit/session"
 import { Required } from "utility-types";
@@ -8,6 +10,8 @@ export interface InitState {
   contractKit: ContractKit
   efContract: Contract
   tsContract: Contract
+  orclient: ORClientType
+  ethAddress?: EthAddress
 }
 
 export interface State extends InitState {
@@ -32,6 +36,12 @@ export interface ClaimStatusStepProps extends StepProps {
   input: ClaimStatusStepIn,
 }
 
+export type EthLoginStepIn = ClaimStatusStepOut;
+export type EthLoginStepOut = Required<EthLoginStepIn, 'ethAddress'>;
+export interface EthLoginStepProps extends StepProps {
+  input: EthLoginStepIn
+}
+
 export type PropsParser<T extends StepProps> = (props: StepProps | T) => T | undefined
 
 export function isEosLoginIn(st: State): st is EosLoginStepIn {
@@ -40,6 +50,10 @@ export function isEosLoginIn(st: State): st is EosLoginStepIn {
 
 export function isClaimStatusIn(st: State): st is ClaimStatusStepIn {
   return isEosLoginIn(st) && st.session !== undefined;
+}
+
+export function isEthLoginIn(st: State): st is EthLoginStepIn {
+  return isClaimStatusIn(st) && st.eosAccount !== undefined && st.balance !== undefined;
 }
 
 export const eosLoginParse: PropsParser<EosLoginStepProps> = (props: StepProps): EosLoginStepProps | undefined => {
@@ -57,6 +71,14 @@ export const claimStatusParse: PropsParser<ClaimStatusStepProps> = (props): Clai
   }
 }
 
+export const ethLoginParse: PropsParser<EthLoginStepProps> = (props): EthLoginStepProps | undefined => {
+  if (isEthLoginIn(props.input)) {
+    return props as EthLoginStepProps;
+  } else {
+    return undefined;
+  }
+}
+
 export interface Step<T extends StepProps> {
   title: string,
   component: React.ComponentType<T>,
@@ -64,12 +86,3 @@ export interface Step<T extends StepProps> {
   inputValid: (state: State) => state is T['input']
 }
 
-
-// export type StepComponent = ExoticComponent<StepProps>;
-
-// interface Step<T extends StepComponent> {
-//   title: string,
-//   component: T,
-//   inputValidator: InputValidator<T>
-//   render: (input: StateOfComponent<T>, onComplete: (st: State) => void) => JSX.Element
-// }

@@ -2,16 +2,19 @@ import { createFileRoute } from '@tanstack/react-router'
 import { sessionKit } from '../../global/wharfSessionKit'
 import { useEffect, useState } from 'react';
 import { Steps } from '@chakra-ui/react';
-import { State, StepProps, EosLoginStepProps, ClaimStatusStepProps, Step, eosLoginParse, isEosLoginIn, claimStatusParse, isClaimStatusIn, InitState } from '../../components/ef-claim/steps';
+import { State, StepProps, EosLoginStepProps, ClaimStatusStepProps, Step, eosLoginParse, isEosLoginIn, claimStatusParse, isClaimStatusIn, InitState, EthLoginStepProps, isEthLoginIn, ethLoginParse } from '../../components/ef-claim/steps';
 import { EosLoginStep } from '../../components/ef-claim/EosLoginStep';
 import { ClaimStatusStep } from '../../components/ef-claim/ClaimStatusStep';
 import ContractKit from '@wharfkit/contract';
 import { APIClient } from '@wharfkit/session';
 import { config } from '../../global/config';
+import { assertOrclientBeforeLoad } from '../../global/routerContext';
+import { EthLoginStep } from '../../components/ef-claim/EthLoginStep';
 
 export const Route = createFileRoute('/_app/ef/claim')({
   component: RouteComponent,
-  loader: async () => {
+  beforeLoad: assertOrclientBeforeLoad,
+  loader: async ({ context }) => {
     const session = await sessionKit.restore();
     console.log("restored session: ", session);
 
@@ -25,7 +28,7 @@ export const Route = createFileRoute('/_app/ef/claim')({
     const tsContract = await contractKit.load(config.tsContract);
     console.log("Loaded: ", tsContract);
 
-    const r: InitState = { sessionKit, session, contractKit, efContract, tsContract };
+    const r: InitState = { sessionKit, session, contractKit, efContract, tsContract, orclient: context.orclient };
     return r;
   }
 })
@@ -37,17 +40,25 @@ const loginStep: Step<EosLoginStepProps> = {
   inputValid: isEosLoginIn
 }
 const claimStatusStep: Step<ClaimStatusStepProps> = {
-  title: "Claim status",
+  title: "Status",
   component: ClaimStatusStep,
   propsParse: claimStatusParse,
   inputValid: isClaimStatusIn
 }
 
-type StepType = Step<EosLoginStepProps> | Step<ClaimStatusStepProps>
+const ethLoginStep: Step<EthLoginStepProps> = {
+  title: "EVM account",
+  component: EthLoginStep,
+  propsParse: ethLoginParse,
+  inputValid: isEthLoginIn
+}
+
+type StepType = Step<EosLoginStepProps> | Step<ClaimStatusStepProps> | Step<EthLoginStepProps>;
 
 const steps: Array<StepType> = [
   loginStep,
-  claimStatusStep
+  claimStatusStep,
+  ethLoginStep
 ] as const;
 
 function RouteComponent() {
@@ -94,7 +105,7 @@ function RouteComponent() {
 
   useEffect(() => {
     console.log("Resetting state because initState changed");
-    setState(initState);
+    setState(s => { return { ...s, initState } });
   }, [initState])
 
   const renderStep = <T extends StepProps>(step: Step<T>, index: number) => {
@@ -130,6 +141,10 @@ function RouteComponent() {
 
       <Steps.Content index={1}>
         {renderStep(claimStatusStep, 1)}
+      </Steps.Content>
+
+      <Steps.Content index={2}>
+        {renderStep(ethLoginStep, 2)}
       </Steps.Content>
 
       <Steps.CompletedContent>All steps are complete!</Steps.CompletedContent>
