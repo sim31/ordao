@@ -1,5 +1,5 @@
-import { ORClientType } from "@ordao/orclient";
-import { EthAddress } from "@ordao/ortypes";
+import { ORClient, ORClientType } from "@ordao/orclient";
+import { EthAddress, PropId } from "@ordao/ortypes";
 import ContractKit, { Contract } from "@wharfkit/contract";
 import SessionKit, { Session } from "@wharfkit/session"
 import { Required } from "utility-types";
@@ -16,7 +16,9 @@ export interface InitState {
 
 export interface State extends InitState, Partial<RequestSubmission> {
   balance?: number;
-  clickedClaim?: true
+  clickedClaim?: true;
+  mintPropId?: PropId;
+  fullOrclient?: ORClient
 }
 
 export type StepProps = {
@@ -38,7 +40,7 @@ export interface ClaimStatusStepProps extends StepProps {
 }
 
 export type EthLoginStepIn = ClaimStatusStepOut;
-export type EthLoginStepOut = Required<EthLoginStepIn, 'ethAddress'>;
+export type EthLoginStepOut = Required<EthLoginStepIn, 'ethAddress' | 'fullOrclient'>;
 export interface EthLoginStepProps extends StepProps {
   input: EthLoginStepIn
 }
@@ -47,6 +49,17 @@ export type RequestSubmitStepIn = EthLoginStepOut;
 export type RequestSubmitStepOut = Required<RequestSubmitStepIn, 'requestTxId'>;
 export interface RequestSubmitStepProps extends StepProps {
   input: RequestSubmitStepIn
+}
+
+export type MintPropStepIn = RequestSubmitStepOut;
+export type MintPropStepOut = Required<MintPropStepIn, 'mintPropId'>;
+export interface MintPropStepProps extends StepProps {
+  input: MintPropStepIn
+}
+
+export type StepsCompleteState = MintPropStepOut;
+export interface StepsCompleteProps {
+  input: StepsCompleteState
 }
 
 export type PropsParser<T extends StepProps> = (props: StepProps | T) => T | undefined
@@ -64,7 +77,15 @@ export function isEthLoginIn(st: State): st is EthLoginStepIn {
 }
 
 export function isRequestSubmitIn(st: State): st is RequestSubmitStepIn {
-  return isEthLoginIn(st) && st.ethAddress !== undefined;
+  return isEthLoginIn(st) && st.ethAddress !== undefined && st.fullOrclient !== undefined;
+}
+
+export function isMintPropIn(st: State): st is MintPropStepIn {
+  return isRequestSubmitIn(st) && st.requestTxId !== undefined;
+}
+
+export function isStepsCompleteState(st: State): st is StepsCompleteState {
+  return isMintPropIn(st) && st.mintPropId !== undefined;
 }
 
 export const eosLoginParse: PropsParser<EosLoginStepProps> = (props: StepProps): EosLoginStepProps | undefined => {
@@ -82,6 +103,14 @@ export const claimStatusParse: PropsParser<ClaimStatusStepProps> = (props): Clai
   }
 }
 
+export const ethLoginParse: PropsParser<EthLoginStepProps> = (props): EthLoginStepProps | undefined => {
+  if (isEthLoginIn(props.input)) {
+    return props as EthLoginStepProps;
+  } else {
+    return undefined;
+  }
+}
+
 export const requestSubmitParse: PropsParser<RequestSubmitStepProps> = (props): RequestSubmitStepProps | undefined => {
   if (isRequestSubmitIn(props.input)) {
     return props as RequestSubmitStepProps;
@@ -90,9 +119,9 @@ export const requestSubmitParse: PropsParser<RequestSubmitStepProps> = (props): 
   }
 }
 
-export const ethLoginParse: PropsParser<EthLoginStepProps> = (props): EthLoginStepProps | undefined => {
-  if (isEthLoginIn(props.input)) {
-    return props as EthLoginStepProps;
+export const mintPropParse: PropsParser<MintPropStepProps> = (props): MintPropStepProps | undefined => {
+  if (isMintPropIn(props.input)) {
+    return props as MintPropStepProps;
   } else {
     return undefined;
   }

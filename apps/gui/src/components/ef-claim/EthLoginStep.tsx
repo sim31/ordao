@@ -37,10 +37,15 @@ export function EthLoginStep({ input, onComplete, onBack }: EthLoginStepProps) {
   }
 
   const onYesClick = () => {
-    onComplete({
-      ...input,
-      ethAddress,
-    });
+    if (!isORClient(orclient)) {
+      throw new Error("Programming error: orclient should only be clickable if it is full orclient");
+    } else {
+      onComplete({
+        ...input,
+        fullOrclient: orclient,
+        ethAddress,
+      });
+    }
   };
 
   const onNoClick = async () => {

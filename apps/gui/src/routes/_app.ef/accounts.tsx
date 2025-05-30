@@ -4,6 +4,9 @@ import { EthAddress } from '@ordao/ortypes';
 import { useMemo } from 'react';
 import { Link, Table, VStack } from '@chakra-ui/react';
 import { config } from '../../global/config';
+import { formatEthAddress } from 'eth-address';
+import copy from 'copy-to-clipboard';
+import { toaster } from '../../components/ui/toaster';
 
 export const Route = createFileRoute('/_app/ef/accounts')({
   component: RouteComponent,
@@ -32,6 +35,14 @@ function RouteComponent() {
     return Object.entries(accounts).sort((a, b) => b[1] - a[1]);
   }, [accounts])
 
+  const handleCopy = (str: string) => {
+    copy(str)
+    toaster.create({
+      description: 'Copied to clipboard',
+      type: 'info'
+    })
+  }
+
   return (
     <VStack gap="1em" alignItems={"flex-end"}>
       <Link href={config.childRespectHoldersLink} target="_blank">Block Explorer</Link>  
@@ -46,7 +57,13 @@ function RouteComponent() {
         <Table.Body>
           {accList.map(account => (
             <Table.Row key={account[0]}>
-              <Table.Cell wordBreak={"break-word"}>{account[0]}</Table.Cell>
+              <Table.Cell wordBreak={"break-word"}>
+                <Link
+                  onClick={() => handleCopy(account[0])}
+                >
+                  {formatEthAddress(account[0], 8)}
+                </Link>
+              </Table.Cell>
               <Table.Cell>{account[1]}</Table.Cell>
               <Table.Cell>{((account[1] / total) * 100).toFixed(2)}%</Table.Cell>
             </Table.Row>

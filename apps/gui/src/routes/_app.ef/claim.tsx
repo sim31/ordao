@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { sessionKit } from '../../global/wharfSessionKit'
 import { useEffect, useState } from 'react';
 import { Steps } from '@chakra-ui/react';
-import { State, StepProps, EosLoginStepProps, ClaimStatusStepProps, Step, eosLoginParse, isEosLoginIn, claimStatusParse, isClaimStatusIn, InitState, EthLoginStepProps, isEthLoginIn, ethLoginParse, requestSubmitParse, isRequestSubmitIn, RequestSubmitStepProps } from '../../components/ef-claim/steps';
+import { State, StepProps, EosLoginStepProps, ClaimStatusStepProps, Step, eosLoginParse, isEosLoginIn, claimStatusParse, isClaimStatusIn, InitState, EthLoginStepProps, isEthLoginIn, ethLoginParse, requestSubmitParse, isRequestSubmitIn, RequestSubmitStepProps, MintPropStepProps, mintPropParse, isMintPropIn, isStepsCompleteState } from '../../components/ef-claim/steps';
 import { EosLoginStep } from '../../components/ef-claim/EosLoginStep';
 import { ClaimStatusStep } from '../../components/ef-claim/ClaimStatusStep';
 import ContractKit from '@wharfkit/contract';
@@ -11,7 +11,9 @@ import { config } from '../../global/config';
 import { assertOrclientBeforeLoad } from '../../global/routerContext';
 import { EthLoginStep } from '../../components/ef-claim/EthLoginStep';
 import RequestSubmitStep from '../../components/ef-claim/RequestSubmitStep';
+import MintPropStep from '../../components/ef-claim/MintPropStep';
 import { ErrorComponent } from '../../components/ef-claim/ErrorComponent';
+import { StepsComplete } from '../../components/ef-claim/StepsComplete';
 
 export const Route = createFileRoute('/_app/ef/claim')({
   component: RouteComponent,
@@ -70,13 +72,21 @@ const requestSubmitStep: Step<RequestSubmitStepProps> = {
   inputValid: isRequestSubmitIn
 }
 
-type StepType = Step<EosLoginStepProps> | Step<ClaimStatusStepProps> | Step<EthLoginStepProps> | Step<RequestSubmitStepProps>;
+const mintPropStep: Step<MintPropStepProps> = {
+  title: "Propose mint",
+  component: MintPropStep,
+  propsParse: mintPropParse,
+  inputValid: isMintPropIn
+}
+
+type StepType = Step<EosLoginStepProps> | Step<ClaimStatusStepProps> | Step<EthLoginStepProps> | Step<RequestSubmitStepProps> | Step<MintPropStepProps>;
 
 const steps: Array<StepType> = [
   loginStep,
   claimStatusStep,
   ethLoginStep,
-  requestSubmitStep
+  requestSubmitStep,
+  mintPropStep
 ] as const;
 
 function RouteComponent() {
@@ -123,7 +133,13 @@ function RouteComponent() {
 
   useEffect(() => {
     console.log("Resetting state because initState changed");
-    setState(s => { return { ...s, initState } });
+    setState(s => {
+      if (s.fullOrclient !== initState.orclient) {
+        return { ...s, ...initState, fullOrclient: undefined };
+      } else {
+        return { ...s, ...initState };
+      }
+    });
   }, [initState])
 
   const renderStep = <T extends StepProps>(step: Step<T>, index: number) => {
@@ -137,8 +153,14 @@ function RouteComponent() {
     }
   }
 
-  const throwErr = () => {
-    throw new Error("Steps completed");
+  const renderFinal = () => {
+    if (!isStepsCompleteState(state)) {
+      console.error("Trying to render steps complete page with incomplete state: ", state); 
+    } else {
+      return (
+        <StepsComplete input={state} />
+      )
+    }
   }
 
   return (
@@ -174,7 +196,13 @@ function RouteComponent() {
         {renderStep(requestSubmitStep, 3)}
       </Steps.Content>
 
-      <Steps.CompletedContent>Some text</Steps.CompletedContent>
+      <Steps.Content index={4}>
+        {renderStep(mintPropStep, 4)}
+      </Steps.Content>
+
+      <Steps.CompletedContent>
+        {renderFinal()}
+      </Steps.CompletedContent>
 
     </Steps.Root>
   )

@@ -69,7 +69,7 @@ const RequestSubmitStep = ({
         Error: billed CPU time (_ us) is greater than the maximum billable CPU time for the transaction (_ us) reached account cpu limit _us
       </Code>
       <Text>
-        Then use <Link href="https://eospowerup.io/" target="_blank">EOS PowerUp service</Link> to claim your free power up and then try again.
+        Then use <Link href="https://eospowerup.io/" target="_blank">EOS PowerUp service</Link> to claim your free power up and try again.
       </Text>
       <Button size="xl" onClick={onSubmitClick}>
         Submit request

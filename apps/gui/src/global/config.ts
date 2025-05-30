@@ -25,7 +25,8 @@ export const zConfig = z.object({
   fractalDocsUrl: z.string().url().optional(),
   efContract: z.string().default("eden.fractal"),
   tsContract: z.string().default("tadastadas25"),
-  claimSupportUrl: z.string().url().default("https://t.me/edenfractal/5191")
+  claimSupportUrl: z.string().url().default("https://t.me/edenfractal/5191"),
+  eosExplorerTxPrefix: z.string().url().default("https://unicove.com/en/vaulta/transaction/")
 
 });
 export type Config = z.infer<typeof zConfig>;
@@ -45,6 +46,7 @@ const fractalDocsUrl = import.meta.env.VITE_FRACTAL_DOCS_URL;
 const efContract = import.meta.env.VITE_EF_CONTRACT;
 const tsContract = import.meta.env.VITE_TS_CONTRACT;
 const claimSupportUrl = import.meta.env.VITE_CLAIM_SUPPORT_URL;
+const eosExplorerTxPrefix = import.meta.env.VITE_EOS_EXPLORER_TX_PREFIX;
 
 const chainId = import.meta.env.VITE_CHAIN_ID;
 const rpcUrls = import.meta.env.VITE_RPC_URLS.split(",");
@@ -73,7 +75,8 @@ export const config = zConfig.parse({
   fractalDocsUrl,
   efContract,
   tsContract,
-  claimSupportUrl
+  claimSupportUrl,
+  eosExplorerTxPrefix
 });
 
 export const orclientConfig: CreateOrclientConfig = {
