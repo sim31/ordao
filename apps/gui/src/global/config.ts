@@ -24,7 +24,9 @@ export const zConfig = z.object({
   defaultPropQuerySize: z.coerce.number().int().gt(0).default(6),
   fractalDocsUrl: z.string().url().optional(),
   efContract: z.string().default("eden.fractal"),
-  tsContract: z.string().default("tadastadas25")
+  tsContract: z.string().default("tadastadas25"),
+  claimSupportUrl: z.string().url().default("https://t.me/edenfractal/5191")
+
 });
 export type Config = z.infer<typeof zConfig>;
 
@@ -42,6 +44,7 @@ const defaultPropQuerySize = import.meta.env.VITE_DEFAULT_PROP_QUERY_SIZE;
 const fractalDocsUrl = import.meta.env.VITE_FRACTAL_DOCS_URL;
 const efContract = import.meta.env.VITE_EF_CONTRACT;
 const tsContract = import.meta.env.VITE_TS_CONTRACT;
+const claimSupportUrl = import.meta.env.VITE_CLAIM_SUPPORT_URL;
 
 const chainId = import.meta.env.VITE_CHAIN_ID;
 const rpcUrls = import.meta.env.VITE_RPC_URLS.split(",");
@@ -69,7 +72,8 @@ export const config = zConfig.parse({
   defaultPropQuerySize,
   fractalDocsUrl,
   efContract,
-  tsContract
+  tsContract,
+  claimSupportUrl
 });
 
 export const orclientConfig: CreateOrclientConfig = {

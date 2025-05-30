@@ -3,6 +3,7 @@ import { Text } from "./Text";
 import { Button } from "../Button";
 import { useEffect } from "react";
 import { EosLoginStepProps } from "./steps";
+import StepFrame from "./StepFrame";
 
 
 export function EosLoginStep({ input, onComplete }: EosLoginStepProps) {
@@ -28,12 +29,14 @@ export function EosLoginStep({ input, onComplete }: EosLoginStepProps) {
   }
 
   return (
-    <Center>
-      <VStack gap="2em">
-        <Text>Log in with your EOS account</Text>
-        { input.session === undefined && <Button onClick={onLoginClick}>Log in</Button>}
-      </VStack>
-    </Center>
+    <StepFrame>
+      <Center>
+        <VStack gap="2em">
+          <Text>Log in with your EOS account</Text>
+          { input.session === undefined && <Button onClick={onLoginClick}>Log in</Button>}
+        </VStack>
+      </Center>
+    </StepFrame>
   )
 
 }

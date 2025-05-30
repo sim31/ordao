@@ -1,4 +1,5 @@
 import { ButtonProps, Button as ChakraButton } from "@chakra-ui/react";
+export type { ButtonProps } from "@chakra-ui/react";
 
 export const defaultButtonProps: ButtonProps = {
   color: "black",
