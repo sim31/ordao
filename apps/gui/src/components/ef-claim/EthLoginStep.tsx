@@ -27,12 +27,13 @@ export function EthLoginStep({ input, onComplete, onBack }: EthLoginStepProps) {
     onBack({
       ...input,
       ethAddress: undefined,
+      clickedClaim: undefined
     });
   }
 
   const onLogoutClick = async () => {
     await input.sessionKit.logout();
-    onBack({ ...input, session: undefined, ethAddress: undefined });
+    onBack({ ...input, session: undefined, ethAddress: undefined, clickedClaim: undefined });
   }
 
   const onYesClick = () => {
@@ -52,18 +53,18 @@ export function EthLoginStep({ input, onComplete, onBack }: EthLoginStepProps) {
       return (
         <Center>
           <VStack gap="2em">
-            <Heading size="3xl" letterSpacing="tight">
+            <Heading size="2xl" letterSpacing="tight">
               Claim to account
             </Heading>
-            <Text fontSize="3xl" letterSpacing="tight" wordBreak={"break-word"} color="blue.600">
+            <Text fontSize="2xl" letterSpacing="tight" wordBreak={"break-word"} color="blue.600">
               {ethAddress}
             </Text>
-            <Heading size="3xl" letterSpacing="tight">
+            <Heading size="2xl" letterSpacing="tight">
               on Base?
             </Heading>
-            <HStack gap="1em">
-              <Button size="xl" onClick={onYesClick}>Yes</Button>
-              <Button size="xl" onClick={onNoClick}>No, use a different one</Button>
+            <HStack gap="1em" wrap="wrap">
+              <Button size={{ base: "sm", md: "xl" }} onClick={onYesClick}>Yes</Button>
+              <Button size={{ base: "sm", md: "xl" }} onClick={onNoClick}>No, use a different one</Button>
             </HStack>
           </VStack>
         </Center>

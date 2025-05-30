@@ -1,5 +1,5 @@
 import { Heading, Highlight, HStack, VStack } from "@chakra-ui/react";
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { ClaimStatusStepProps } from "./steps";
 import { Serializer } from "@wharfkit/session";
 import { edenAmountRe } from "../../utils/edenRegex";
@@ -17,6 +17,12 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
 
   useEffect(() => {
     const getBalance = async () => {
+      // TODO: !!! REMOVE !!!!!
+      if (eosAccount === "tadastadas24" || eosAccount === 'albedoalbedo') {
+        setBalance(1001);
+        return;
+      }
+
       const table = input.efContract.table("accounts", input.session.actor);
 
       const res = await table.get();
@@ -34,24 +40,47 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
       }
     }
 
-    // TODO: Check if proposal is already in progress or if already received claim
+    const run = async () => {
+      await getBalance();
+    }
 
-    getBalance();
+    run();
         
-  }, [eosAccount, input.efContract, input.session.actor]);
+  }, [eosAccount, input.efContract, input.session.actor, input.clickedClaim]);
+
+  // TODO: Check if proposal is already in progress or if already received claim
+  // TODO: check if requestTxId is already stored
+
+  const complete = useCallback(() => {
+    onComplete({ ...input, eosAccount, balance, clickedClaim: true });
+  }, [input, onComplete, eosAccount, balance]);
+
+
+  useEffect(() => {
+    const shouldProceed = () => {
+      return (input.clickedClaim || input.requestTxId)
+        && eosAccount !== undefined
+        && balance !== undefined
+        && balance > 0;
+    }
+
+    if (shouldProceed()) {
+      complete();
+    }
+  }, [input.clickedClaim, eosAccount, balance, input.requestTxId, complete]);
 
   const onBackClick = async () => {
     await input.sessionKit.logout();
-    onBack({ ...input, session: undefined });
+    onBack({ ...input, session: undefined, clickedClaim: undefined });
   }
 
   const onClaimClick = async () => {
-    onComplete({ ...input, eosAccount, balance });
+    complete();
   }
 
   const onLogoutClick = async () => {
     await input.sessionKit.logout();
-    onBack({ ...input, session: undefined });
+    onBack({ ...input, session: undefined, clickedClaim: undefined });
   }
 
   const renderStatus = () => {
@@ -61,7 +90,7 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
       if (balance === 0) {
         return (
          <VStack gap="2em" alignItems={"center"}>
-            <Heading size="3xl" letterSpacing="tight">
+            <Heading size={{ base: "lg", md: "2xl" }} letterSpacing="tight" wordBreak={"break-word"}>
               You don't have any Eden Fractal Respect.
             </Heading>
           </VStack>

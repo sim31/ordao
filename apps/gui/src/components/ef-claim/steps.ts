@@ -11,6 +11,8 @@ export interface InitState {
   efContract: Contract
   tsContract: Contract
   orclient: ORClientType
+  clickedClaim?: true
+  requestTxId?: string
   ethAddress?: EthAddress
 }
 
@@ -31,7 +33,7 @@ export interface EosLoginStepProps extends StepProps {
 }
 
 export type ClaimStatusStepIn = EosLoginStepOut;
-export type ClaimStatusStepOut = Required<ClaimStatusStepIn, 'eosAccount' | 'balance'>;
+export type ClaimStatusStepOut = Required<ClaimStatusStepIn, 'eosAccount' | 'balance' | 'clickedClaim'>;
 export interface ClaimStatusStepProps extends StepProps {
   input: ClaimStatusStepIn,
 }
@@ -40,6 +42,12 @@ export type EthLoginStepIn = ClaimStatusStepOut;
 export type EthLoginStepOut = Required<EthLoginStepIn, 'ethAddress'>;
 export interface EthLoginStepProps extends StepProps {
   input: EthLoginStepIn
+}
+
+export type RequestSubmitStepIn = EthLoginStepOut;
+export type RequestSubmitStepOut = Required<RequestSubmitStepIn, 'requestTxId'>;
+export interface RequestSubmitStepProps extends StepProps {
+  input: RequestSubmitStepIn
 }
 
 export type PropsParser<T extends StepProps> = (props: StepProps | T) => T | undefined
@@ -53,7 +61,11 @@ export function isClaimStatusIn(st: State): st is ClaimStatusStepIn {
 }
 
 export function isEthLoginIn(st: State): st is EthLoginStepIn {
-  return isClaimStatusIn(st) && st.eosAccount !== undefined && st.balance !== undefined;
+  return isClaimStatusIn(st) && st.eosAccount !== undefined && st.balance !== undefined && st.clickedClaim;
+}
+
+export function isRequestSubmitIn(st: State): st is RequestSubmitStepIn {
+  return isEthLoginIn(st) && st.ethAddress !== undefined;
 }
 
 export const eosLoginParse: PropsParser<EosLoginStepProps> = (props: StepProps): EosLoginStepProps | undefined => {
@@ -66,6 +78,14 @@ export const eosLoginParse: PropsParser<EosLoginStepProps> = (props: StepProps):
 export const claimStatusParse: PropsParser<ClaimStatusStepProps> = (props): ClaimStatusStepProps | undefined => {
   if (isClaimStatusIn(props.input)) {
     return props as ClaimStatusStepProps;
+  } else {
+    return undefined;
+  }
+}
+
+export const requestSubmitParse: PropsParser<RequestSubmitStepProps> = (props): RequestSubmitStepProps | undefined => {
+  if (isRequestSubmitIn(props.input)) {
+    return props as RequestSubmitStepProps;
   } else {
     return undefined;
   }

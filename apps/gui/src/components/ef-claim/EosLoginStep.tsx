@@ -1,5 +1,5 @@
 import { Center, VStack } from "@chakra-ui/react";
-import { Text } from "../Text";
+import { Text } from "./Text";
 import { Button } from "../Button";
 import { useEffect } from "react";
 import { EosLoginStepProps } from "./steps";

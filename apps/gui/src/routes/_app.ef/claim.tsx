@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { sessionKit } from '../../global/wharfSessionKit'
 import { useEffect, useState } from 'react';
 import { Steps } from '@chakra-ui/react';
-import { State, StepProps, EosLoginStepProps, ClaimStatusStepProps, Step, eosLoginParse, isEosLoginIn, claimStatusParse, isClaimStatusIn, InitState, EthLoginStepProps, isEthLoginIn, ethLoginParse } from '../../components/ef-claim/steps';
+import { State, StepProps, EosLoginStepProps, ClaimStatusStepProps, Step, eosLoginParse, isEosLoginIn, claimStatusParse, isClaimStatusIn, InitState, EthLoginStepProps, isEthLoginIn, ethLoginParse, requestSubmitParse, isRequestSubmitIn, RequestSubmitStepProps } from '../../components/ef-claim/steps';
 import { EosLoginStep } from '../../components/ef-claim/EosLoginStep';
 import { ClaimStatusStep } from '../../components/ef-claim/ClaimStatusStep';
 import ContractKit from '@wharfkit/contract';
@@ -10,6 +10,7 @@ import { APIClient } from '@wharfkit/session';
 import { config } from '../../global/config';
 import { assertOrclientBeforeLoad } from '../../global/routerContext';
 import { EthLoginStep } from '../../components/ef-claim/EthLoginStep';
+import RequestSubmitStep from '../../components/ef-claim/RequestSubmitStep';
 
 export const Route = createFileRoute('/_app/ef/claim')({
   component: RouteComponent,
@@ -53,12 +54,20 @@ const ethLoginStep: Step<EthLoginStepProps> = {
   inputValid: isEthLoginIn
 }
 
-type StepType = Step<EosLoginStepProps> | Step<ClaimStatusStepProps> | Step<EthLoginStepProps>;
+const requestSubmitStep: Step<RequestSubmitStepProps> = {
+  title: "Request submit",
+  component: RequestSubmitStep,
+  propsParse: requestSubmitParse,
+  inputValid: isRequestSubmitIn
+}
+
+type StepType = Step<EosLoginStepProps> | Step<ClaimStatusStepProps> | Step<EthLoginStepProps> | Step<RequestSubmitStepProps>;
 
 const steps: Array<StepType> = [
   loginStep,
   claimStatusStep,
-  ethLoginStep
+  ethLoginStep,
+  requestSubmitStep
 ] as const;
 
 function RouteComponent() {
@@ -124,6 +133,7 @@ function RouteComponent() {
       step={step}
       onStepChange={(e) => setStep(e.step)}
       count={steps.length}
+      orientation={{ base: "vertical", md: "horizontal" }}
     >
       <Steps.List>
         {steps.map((step, index) => (
@@ -145,6 +155,10 @@ function RouteComponent() {
 
       <Steps.Content index={2}>
         {renderStep(ethLoginStep, 2)}
+      </Steps.Content>
+
+      <Steps.Content index={3}>
+        {renderStep(requestSubmitStep, 3)}
       </Steps.Content>
 
       <Steps.CompletedContent>All steps are complete!</Steps.CompletedContent>
