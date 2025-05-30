@@ -18,7 +18,6 @@ function StepFrame({ onBack, onLogout, account, children }: StepFrameProps) {
     window.open(config.claimSupportUrl, "_blank");
   }
 
-
   return (
     <VStack gap="2em">
       <HStack alignSelf="flex-end" wrap={"wrap"}>

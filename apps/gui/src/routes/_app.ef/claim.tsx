@@ -11,9 +11,11 @@ import { config } from '../../global/config';
 import { assertOrclientBeforeLoad } from '../../global/routerContext';
 import { EthLoginStep } from '../../components/ef-claim/EthLoginStep';
 import RequestSubmitStep from '../../components/ef-claim/RequestSubmitStep';
+import { ErrorComponent } from '../../components/ef-claim/ErrorComponent';
 
 export const Route = createFileRoute('/_app/ef/claim')({
   component: RouteComponent,
+  errorComponent: ErrorComponent,
   beforeLoad: assertOrclientBeforeLoad,
   loader: async ({ context }) => {
     const session = await sessionKit.restore();
@@ -135,6 +137,10 @@ function RouteComponent() {
     }
   }
 
+  const throwErr = () => {
+    throw new Error("Steps completed");
+  }
+
   return (
     <Steps.Root
       step={step}
@@ -168,7 +174,7 @@ function RouteComponent() {
         {renderStep(requestSubmitStep, 3)}
       </Steps.Content>
 
-      <Steps.CompletedContent>All steps are complete!</Steps.CompletedContent>
+      <Steps.CompletedContent>Some text</Steps.CompletedContent>
 
     </Steps.Root>
   )
