@@ -58,7 +58,7 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
 
   useEffect(() => {
     const shouldProceed = () => {
-      return (input.clickedClaim || input.requestTxId)
+      return input.clickedClaim
         && eosAccount !== undefined
         && balance !== undefined
         && balance > 0;

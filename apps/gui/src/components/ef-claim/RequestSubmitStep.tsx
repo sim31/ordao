@@ -1,25 +1,44 @@
 import { Text } from './Text';
 import StepFrame from './StepFrame';
 import { Code } from '@chakra-ui/react';
-import { RequestSubmitStepProps } from './steps';
+import { getExistingSubmissionId, RequestSubmitStepProps, saveRequestSubmission } from './steps';
 import { Button } from '../Button';
 import { Serializer } from '@wharfkit/session';
 import { stringify } from '@ordao/ts-utils';
 import { Link } from "@chakra-ui/react"
+import { useEffect } from 'react';
 
 const RequestSubmitStep = ({
   input,
   onComplete,
   onBack,
 }: RequestSubmitStepProps) => {
+
+  useEffect(() => {
+    const txId = getExistingSubmissionId(input);
+    if (txId) {
+      onComplete({
+        ...input,
+        requestTxId: txId
+      });
+    }
+  }, [input, onComplete])
+
   const onSubmitClick = async () => {
     const str = `I, ${input.eosAccount}, request my EDEN Respect at ${input.ethAddress}`;
     const action = await input.tsContract.action('timestamp', { str: str });
     const res = await input.session.transact({ action });
     if (res.resolved) {
+      const txId = Serializer.objectify(res.resolved.transaction.id);
+      saveRequestSubmission({
+        requestTxId: txId,
+        eosAccount: input.eosAccount,
+        ethAddress: input.ethAddress
+      })
+
       onComplete({
         ...input,
-        requestTxId: Serializer.objectify(res.resolved.transaction.id)
+        requestTxId: txId
       });
     } else {
       throw new Error("Unable to resolve transaction. TransactResult: " + stringify(res));

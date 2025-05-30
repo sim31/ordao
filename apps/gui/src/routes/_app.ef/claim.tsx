@@ -29,7 +29,14 @@ export const Route = createFileRoute('/_app/ef/claim')({
     const tsContract = await contractKit.load(config.tsContract);
     console.log("Loaded: ", tsContract);
 
-    const r: InitState = { sessionKit, session, contractKit, efContract, tsContract, orclient: context.orclient };
+    const r: InitState = {
+      sessionKit,
+      session,
+      contractKit,
+      efContract,
+      tsContract,
+      orclient: context.orclient
+    };
     return r;
   }
 })

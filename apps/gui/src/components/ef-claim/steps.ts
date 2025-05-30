@@ -4,6 +4,7 @@ import ContractKit, { Contract } from "@wharfkit/contract";
 import SessionKit, { Session } from "@wharfkit/session"
 import { Required } from "utility-types";
 
+
 export interface InitState {
   sessionKit: SessionKit
   session?: Session
@@ -11,22 +12,20 @@ export interface InitState {
   efContract: Contract
   tsContract: Contract
   orclient: ORClientType
-  clickedClaim?: true
-  requestTxId?: string
-  ethAddress?: EthAddress
 }
 
-export interface State extends InitState {
-  eosAccount?: string;
+export interface State extends InitState, Partial<RequestSubmission> {
   balance?: number;
+  clickedClaim?: true
 }
+
 export type StepProps = {
   input: State,
   onComplete: (output: State) => void
   onBack: (newState: State) => void
 }
 
-export type EosLoginStepIn = Required<State>;
+export type EosLoginStepIn = State;
 export type EosLoginStepOut = Required<EosLoginStepIn, 'session'>;
 export interface EosLoginStepProps extends StepProps {
   input: EosLoginStepIn,
@@ -61,7 +60,7 @@ export function isClaimStatusIn(st: State): st is ClaimStatusStepIn {
 }
 
 export function isEthLoginIn(st: State): st is EthLoginStepIn {
-  return isClaimStatusIn(st) && st.eosAccount !== undefined && st.balance !== undefined && st.clickedClaim;
+  return isClaimStatusIn(st) && st.eosAccount !== undefined && st.balance !== undefined && st.clickedClaim !== undefined;
 }
 
 export function isRequestSubmitIn(st: State): st is RequestSubmitStepIn {
@@ -106,3 +105,38 @@ export interface Step<T extends StepProps> {
   inputValid: (state: State) => state is T['input']
 }
 
+export interface RequestSubmission {
+  requestTxId: string
+  eosAccount: string,
+  ethAddress: EthAddress
+}
+
+export function saveRequestSubmission(submission: RequestSubmission) {
+  localStorage.setItem('requestSubmission', JSON.stringify(submission));
+}
+
+export function loadRequestSubmission(): RequestSubmission | undefined {
+  const json = localStorage.getItem('requestSubmission');
+  if (json) {
+    return JSON.parse(json);
+  } else {
+    return undefined;
+  }
+}
+
+export function submissionMatchesState(
+  state: State,
+  submission: RequestSubmission
+): boolean {
+  return submission.eosAccount === state.eosAccount && submission.ethAddress === state.ethAddress && submission.requestTxId !== undefined;
+}
+
+/**
+ * @returns tx id of submission
+ */
+export function getExistingSubmissionId(state: State): string | undefined {
+  const submission = loadRequestSubmission();
+  if (submission && submissionMatchesState(state, submission)) {
+    return submission.requestTxId;
+  }
+}
