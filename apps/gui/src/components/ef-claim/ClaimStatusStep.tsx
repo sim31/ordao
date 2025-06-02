@@ -17,12 +17,6 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
 
   useEffect(() => {
     const getBalance = async () => {
-      // TODO: !!! REMOVE !!!!!
-      if (eosAccount === "tadastadas24" || eosAccount === 'albedoalbedo') {
-        setBalance(1002);
-        return;
-      }
-
       const table = input.efContract.table("accounts", input.session.actor);
 
       const res = await table.get();
