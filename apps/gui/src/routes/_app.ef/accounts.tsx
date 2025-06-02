@@ -45,7 +45,7 @@ function RouteComponent() {
 
   return (
     <VStack gap="1em" alignItems={"flex-end"}>
-      <Link href={config.childRespectHoldersLink} target="_blank">Block Explorer</Link>  
+      <Link href={config.childRespectLink} target="_blank">Block Explorer</Link>  
       <Table.Root variant="outline">
         <Table.Header>
           <Table.Row>

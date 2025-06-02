@@ -19,7 +19,6 @@ export const zConfig = z.object({
   docsOrigin: z.string().url(),
   parentRespectLink: z.string().url(),
   childRespectLink: z.string().url(),
-  childRespectHoldersLink: z.string().url(),
   respectGameLink: z.string().url(),
   defaultPropQuerySize: z.coerce.number().int().gt(0).default(6),
   fractalDocsUrl: z.string().url().optional(),
@@ -39,7 +38,6 @@ const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;
 const docsOrigin = import.meta.env.VITE_DOCS_ORIGIN;
 const parentRespectLink = import.meta.env.VITE_PARENT_RESPECT_LINK;
 const childRespectLink = import.meta.env.VITE_CHILD_RESPECT_LINK;
-const childRespectHoldersLink = import.meta.env.VITE_CHILD_RESPECT_HOLDERS_LINK;
 const respectGameLink = import.meta.env.VITE_RESPECT_GAME_LINK;
 const defaultPropQuerySize = import.meta.env.VITE_DEFAULT_PROP_QUERY_SIZE;
 const fractalDocsUrl = import.meta.env.VITE_FRACTAL_DOCS_URL;
@@ -69,7 +67,6 @@ export const config = zConfig.parse({
   docsOrigin,
   parentRespectLink,
   childRespectLink,
-  childRespectHoldersLink,
   respectGameLink,
   defaultPropQuerySize,
   fractalDocsUrl,
