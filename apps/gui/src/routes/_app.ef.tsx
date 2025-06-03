@@ -7,14 +7,13 @@ export const Route = createFileRoute('/_app/ef')({
   component: RouteComponent,
 })
 
-const efSubpaths = ['awards', 'accounts', 'original', 'claim', 'confirm'] as const;
+const efSubpaths = ['awards', 'accounts', 'original', 'claim'] as const;
 export type EfSubpath = typeof efSubpaths[number];
 const titles: Record<EfSubpath, string> = {
   "claim": "Claim",
   "awards": "Awards",
   "accounts": "Accounts",
   "original": "Original Token",
-  "confirm": "Confirm claim"
 }
 
 

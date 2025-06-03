@@ -19,6 +19,12 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
     const getBalance = async () => {
       const table = input.efContract.table("accounts", input.session.actor);
 
+      // FOR TESTING
+      // if (eosAccount === "tadastadas24") {
+      //   setBalance(100);
+      //   return;
+      // }
+
       const res = await table.get();
       if (res) {
         const balanceStr = Serializer.objectify(res.balance);
