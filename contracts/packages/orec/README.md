@@ -1,6 +1,6 @@
 # Optimistic Respect-based Executive Contract (OREC)
 
-[Concept](../../docs/OREC.md).
+[Concept](../../../docs/OREC.md).
 
 
 ```shell
