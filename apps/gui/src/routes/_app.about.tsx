@@ -6,11 +6,10 @@ export const Route = createFileRoute('/_app/about')({
   component: RouteComponent,
 })
 
-const aboutSubpaths = ['intent', 'appState', 'userGuide', 'communities'] as const;
+const aboutSubpaths = ['intent', 'appState', 'userGuide'] as const;
 export type AboutSubpath = typeof aboutSubpaths[number];
 const titles: Record<AboutSubpath, string> = {
   "appState": "App State",
-  "communities": "Communities",
   "intent": "Intent",
   "userGuide": "User Guide",
 }
