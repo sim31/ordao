@@ -4,6 +4,7 @@ import { ContractKit } from "@wharfkit/contract"
 import { Serializer } from '@wharfkit/antelope'
 import { Table } from '@chakra-ui/react';
 import { edenAmountRe } from '../../utils/edenRegex';
+import { TableCell } from '../../components/TableCell';
 
 interface Account {
   name: string;
@@ -57,9 +58,9 @@ function RouteComponent() {
       <Table.Body>
         {accounts.map(account => (
           <Table.Row key={account.name}>
-            <Table.Cell>{account.name}</Table.Cell>
-            <Table.Cell>{account.balance}</Table.Cell>
-            <Table.Cell>{((account.balance / total) * 100).toFixed(2)}%</Table.Cell>
+            <TableCell>{account.name}</TableCell>
+            <TableCell>{account.balance}</TableCell>
+            <TableCell>{((account.balance / total) * 100).toFixed(2)}%</TableCell>
           </Table.Row>
         ))}
       </Table.Body>

@@ -1,4 +1,5 @@
-import { Center, Heading, HStack, VStack } from "@chakra-ui/react";
+import { Center, HStack, VStack } from "@chakra-ui/react";
+import { Heading } from "../Heading";
 import { Text } from "../Text";
 import { Button } from "../Button";
 import { EthLoginStepProps } from "./steps";

@@ -6,6 +6,7 @@ import { config } from '../../global/config';
 import copy from 'copy-to-clipboard';
 import { toaster } from '../../components/ui/toaster';
 import { formatEthAddress } from 'eth-address';
+import { TableCell } from '../../components/TableCell';
 import shortenUrl from "shorten-url";
 
 export const Route = createFileRoute('/_app/ef/awards')({
@@ -45,8 +46,8 @@ function RouteComponent() {
         <Table.Body>
           {awards.map(award => (
             <Table.Row key={award.properties.tokenId}>
-              <Table.Cell>{award.properties.title}</Table.Cell>
-              <Table.Cell wordBreak="break-word">{
+              <TableCell>{award.properties.title}</TableCell>
+              <TableCell wordBreak="break-word">{
                 award.properties.reason && isValidHttpUrl(award.properties.reason ?? "")
                 ? <Link
                     target="_blank"
@@ -56,15 +57,15 @@ function RouteComponent() {
                   </Link>
                 : award.properties.reason ?? ""
               }
-              </Table.Cell>
-              <Table.Cell>
+              </TableCell>
+              <TableCell>
                 <Link
                   onClick={() => handleCopy(award.properties.recipient)}
                 >
                   {formatEthAddress(award.properties.recipient, 6)}
                 </Link>
-              </Table.Cell>
-              <Table.Cell>{award.properties.denomination}</Table.Cell>
+              </TableCell>
+              <TableCell>{award.properties.denomination}</TableCell>
             </Table.Row>
           ))}
         </Table.Body>

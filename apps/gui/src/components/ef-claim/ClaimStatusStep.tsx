@@ -1,4 +1,5 @@
-import { Heading, Highlight, HStack, VStack } from "@chakra-ui/react";
+import { Highlight, HStack, VStack } from "@chakra-ui/react";
+import { Heading } from "../Heading";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { ClaimStatusStepProps } from "./steps";
 import { Serializer } from "@wharfkit/session";
@@ -20,10 +21,10 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
       const table = input.efContract.table("accounts", input.session.actor);
 
       // FOR TESTING
-      // if (eosAccount === "tadastadas24") {
-      //   setBalance(100);
-      //   return;
-      // }
+      if (eosAccount === "tadastadas24") {
+        setBalance(100);
+        return;
+      }
 
       const res = await table.get();
       if (res) {

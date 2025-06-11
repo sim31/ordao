@@ -7,6 +7,7 @@ import { config } from '../../global/config';
 import { formatEthAddress } from 'eth-address';
 import copy from 'copy-to-clipboard';
 import { toaster } from '../../components/ui/toaster';
+import { TableCell } from '../../components/TableCell';
 
 export const Route = createFileRoute('/_app/ef/accounts')({
   component: RouteComponent,
@@ -57,15 +58,15 @@ function RouteComponent() {
         <Table.Body>
           {accList.map(account => (
             <Table.Row key={account[0]}>
-              <Table.Cell wordBreak={"break-word"}>
+              <TableCell wordBreak={"break-word"}>
                 <Link
                   onClick={() => handleCopy(account[0])}
                 >
                   {formatEthAddress(account[0], 8)}
                 </Link>
-              </Table.Cell>
-              <Table.Cell>{account[1]}</Table.Cell>
-              <Table.Cell>{((account[1] / total) * 100).toFixed(2)}%</Table.Cell>
+              </TableCell>
+              <TableCell>{account[1]}</TableCell>
+              <TableCell>{((account[1] / total) * 100).toFixed(2)}%</TableCell>
             </Table.Row>
           ))}
         </Table.Body>
