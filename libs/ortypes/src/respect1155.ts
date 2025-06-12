@@ -82,7 +82,8 @@ export type UnspecifiedMintType = z.infer<typeof zUnspecifiedMintType>;
 export const zInitialMintType = z.literal(2);
 export type InitialMintType = z.infer<typeof zInitialMintType>;
 
-export const zMigrationMintType = z.literal(3);
+// Need a range types for migration, because sometimes you need to join earnings from multiple accounts into one new account on the new platform.
+export const zMigrationMintType = z.number().int().gte(3).lt(10);
 export type MigrationMintType = z.infer<typeof zMigrationMintType>;
 
 export const zTokenIdData = z.object({
