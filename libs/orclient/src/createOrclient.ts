@@ -23,7 +23,7 @@ export const zDeploymentInfo = z.object({
 export type DeploymentInfo = z.infer<typeof zDeploymentInfo>;
 
 export type DeploymentKey = 
-  "op-sepolia" | "oh" | "orf" | "of" | "buildium";
+  "op-sepolia" | "oh" | "orf" | "of" | "buildium" | "ef"
 
 export const deployments: Record<DeploymentKey, DeploymentInfo> = {
   "op-sepolia": {
@@ -101,6 +101,21 @@ export const deployments: Record<DeploymentKey, DeploymentInfo> = {
       newRespect: "0x5a1d3940397b395cb93441812b4c2D6E6271F305",
     },
     ornodeUrl: "https://orf-ornode.frapps.xyz",
+    chainInfo: {
+      chainId: "0x2105",
+      rpcUrls: ["https://0xrpc.io/base", "https://1rpc.io/base"],
+      chainName: "Base Mainnet",
+      blockExplorerUrl: "https://base.blockscout.com/",
+      nativeCurrency: ethCurrency
+    }
+  },
+  "ef": {
+    title: "Eden Fractal",
+    contracts: {
+      orec: "0xa390d5cc46C903048B4465f8404e43D5C4DcB4Be",
+      newRespect: "0xa3E495f17590946e53fa5F3C1497EF1367F230fA",
+    },
+    ornodeUrl: "https://ef2-ornode.frapps.xyz",
     chainInfo: {
       chainId: "0x2105",
       rpcUrls: ["https://0xrpc.io/base", "https://1rpc.io/base"],
