@@ -13,6 +13,8 @@ import OnchainActionModal from "../OnchainActionModal";
 import { ProposeRes, VoteWithPropRequest } from "@ordao/orclient";
 import { PropType } from "@ordao/ortypes";
 import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
+import { toBeHex } from "ethers";
+import { Loading } from "../Loading";
 
 interface ProposalZodCardProps<T extends z.AnyZodObject> {
   schema: T
@@ -28,14 +30,24 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
   const propTitle = desc?.title;
   const description = desc?.description;
   const [propRequest, setPropRequest] = useState<z.infer<T> | undefined>(undefined);
-  const [step, setStep] = useState<'edit' | 'confirm'>('edit');
+  const [step, setStep] = useState<'edit' | 'loading' | 'confirm'>('edit');
   const [withVote, setWithVote] = useState<boolean>(true);
 
   const [actionPromise, setActionPromise] = useState<Promise<ProposeRes> | undefined>(undefined);
 
   const handleZodFormSubmit = (data: z.infer<T>) => {
-    setPropRequest(data);
-    setStep('confirm');
+    if (propType === "tick" && data.data === undefined) {
+      setStep('loading');
+      const loadData = async () => {
+        const nextMeetingNum = await orclient.getNextMeetingNum();
+        setPropRequest({ ...data, data: toBeHex(nextMeetingNum) });
+        setStep('confirm');
+      }
+      loadData();
+    } else {
+      setPropRequest(data);
+      setStep('confirm');
+    }
   }
 
   const vote: VoteWithPropRequest = withVote ? { vote: 'Yes' } : { vote: 'None' }
@@ -45,6 +57,37 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
       return;
     }
     setActionPromise(orclient.propose(propType, propRequest, vote));
+  }
+
+  const renderStep = () => {
+    if (step === 'confirm' && propRequest) {
+      return <>
+        <Fieldset.Root>
+          <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
+          <Fieldset.Content borderTop="solid" borderColor="gray.200" pt="1em">
+            <ObjectTable obj={propRequest} />
+            <Checkbox.Root mt="1em" checked={withVote} onCheckedChange={(e) => setWithVote(!!e.checked)}>
+              <Checkbox.HiddenInput />
+              <Checkbox.Control />
+              <Checkbox.Label>Submit with a YES vote on this proposal</Checkbox.Label>
+            </Checkbox.Root>
+          </Fieldset.Content>
+        </Fieldset.Root>
+        <HStack>
+          <Button mt="2em" as="button" onClick={handleConfirmSubmit}>Submit</Button>
+          <Button mt="2em" as="button" onClick={() => setStep('edit')}>Edit</Button>
+        </HStack>
+      </>
+    } else if (step === 'loading') {
+      return <Loading />
+    } else {
+      return <ZodForm<T>
+        schema={schema}
+        onSubmit={handleZodFormSubmit}
+        submitButtonText="Next"
+        defaultValues={propRequest as DefaultValues<TypeOf<T>>}
+      />
+    }
   }
 
   return (
@@ -76,35 +119,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
             <IoMdClose />
           </IconButton>
         </Flex>
-        {step === 'confirm' && propRequest
-          ? (
-            <>
-              <Fieldset.Root>
-                <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
-                <Fieldset.Content borderTop="solid" borderColor="gray.200" pt="1em">
-                  <ObjectTable obj={propRequest} />
-                  <Checkbox.Root mt="1em" checked={withVote} onCheckedChange={(e) => setWithVote(!!e.checked)}>
-                    <Checkbox.HiddenInput />
-                    <Checkbox.Control />
-                    <Checkbox.Label>Submit with a YES vote on this proposal</Checkbox.Label>
-                  </Checkbox.Root>
-                </Fieldset.Content>
-              </Fieldset.Root>
-              <HStack>
-                <Button mt="2em" as="button" onClick={handleConfirmSubmit}>Submit</Button>
-                <Button mt="2em" as="button" onClick={() => setStep('edit')}>Edit</Button>
-              </HStack>
-            </>
-          )
-          : (
-            <ZodForm<T>
-              schema={schema}
-              onSubmit={handleZodFormSubmit}
-              submitButtonText="Next"
-              defaultValues={propRequest as DefaultValues<TypeOf<T>>}
-            />
-          )
-        }
+        {renderStep()}
       </Card.Root>
     </Center>
   )
