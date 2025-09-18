@@ -19,6 +19,8 @@
     "dev-mongod-clean": "rm -rf tmp/mongodb/dev/*",
     "dev-mongod": "mkdir -p tmp/mongodb/dev && mongod --dbpath=tmp/mongodb/dev > tmp/mongodb-dev.log",
     "dev": "concurrently \"npm run dev-mongod\" \"nodemon --delay 2 dist/index.js\"",
+    "dev-erc20": "concurrently \"npm run dev-mongod\" \"ORNODE_CFG_PATH=./dev-erc20-config.json nodemon --delay 2 dist/index.js\"",
+    "dev-erc20-clean": "npm run dev-mongod-clean && npm run dev-erc20",
     "dev:op-sepolia": "ORNODE_CFG_PATH=./op-sepolia-config.json nodemon --delay 2 dist/index.js",
     "start:op-sepolia": "ORNODE_CFG_PATH=./op-sepolia-config.json node dist/index.js",
     "dev-clean": "npm run dev-mongod-clean && npm run dev",

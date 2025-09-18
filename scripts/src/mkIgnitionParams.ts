@@ -33,9 +33,13 @@ export type ParentOrecR1155Cfg = z.infer<typeof zParentOrecR1155Cfg>;
 export const zParentFrOrecR1155Cfg = zDeployCfgBase;
 export type ParentFrOrecR1155Cfg = z.infer<typeof zParentFrOrecR1155Cfg>;
 
+export const zParentERC20OrecR1155Cfg = zDeployCfgBase;
+export type ParentERC20OrecR1155Cfg = z.infer<typeof zParentFrOrecR1155Cfg>;
+
 export const zDeployCfg = z.union([
   zParentOrecR1155Cfg,
-  zParentFrOrecR1155Cfg
+  zParentFrOrecR1155Cfg,
+  zParentERC20OrecR1155Cfg
 ]);
 export type DeployCfg = z.infer<typeof zDeployCfg>;
 
@@ -47,6 +51,10 @@ export const zDeploymentRequest = z.union([
   z.object({
     module: z.literal("ParentFrOrecR1155"),
     cfg: zParentFrOrecR1155Cfg
+  }),
+  z.object({
+    module: z.literal("ParentERC20OrecR1155"),
+    cfg: zParentERC20OrecR1155Cfg
   })
 ])
 export type DeploymentRequest = z.infer<typeof zDeploymentRequest>;
@@ -54,7 +62,8 @@ export type DeploymentRequest = z.infer<typeof zDeploymentRequest>;
 // TODO: Add support for other modules. You will need different config objects
 export const zModuleId = z.union([
   z.literal("ParentOrecR1155"),
-  z.literal("ParentFrOrecR1155")
+  z.literal("ParentFrOrecR1155"),
+  z.literal("ParentERC20OrecR1155")
 ]);
 export type ModuleId = z.infer<typeof zModuleId>;
 
@@ -72,6 +81,10 @@ function _readCfg(path: string, module: ModuleId): DeploymentRequest {
     }
     case "ParentFrOrecR1155": {
       const cfg = zParentFrOrecR1155Cfg.parse(cfgObj);
+      return { module, cfg };
+    }
+    case "ParentERC20OrecR1155": {
+      const cfg = zParentERC20OrecR1155Cfg.parse(cfgObj);
       return { module, cfg };
     }
   }
