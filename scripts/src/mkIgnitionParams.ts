@@ -19,7 +19,7 @@ export type OldRespectSetup = z.infer<typeof zParentRespectCfg>;
 export const zDeployCfgBase = z.object({
   voteLength: z.number(),
   vetoLength: z.number(),
-  voteThreshold: z.number(),
+  voteThreshold: z.union([z.string(), z.number()]),
   maxLiveYesVotes: z.number(),
   ornodeOrigin: z.string().url(),
 })

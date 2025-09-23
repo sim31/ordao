@@ -4,6 +4,7 @@ import { z } from "zod";
 import { Bytes, zBigNumberish, zBytes, zBytes32, zBytesLike, zEthAddress, zUint, zUint8 } from "./eth.js";
 import { preprocessResultOrObj } from "./utils.js";
 import { hexlify, toUtf8Bytes, toUtf8String } from "ethers";
+import Big from "big.js";
 
 export type OrecContract = Orec;
 export { Orec__factory };
@@ -156,6 +157,27 @@ export type CProposalState = Omit<
 
 export const zVoteWeight = z.coerce.bigint().gte(0n);
 export type VoteWeight = z.infer<typeof zVoteWeight>;
+
+export function voteWeightToStr(weight: VoteWeight, decimals?: number): string {
+  if (decimals !== undefined && decimals !== 0) {
+    Big.DP = decimals ?? 0;
+    Big.RM = Big.roundDown;
+    const wb = Big(weight.toString()).div(10 ** decimals)
+    return wb.toString();
+  } else {
+    return weight.toString();
+  }
+}
+
+export function strToVoteWeight(str: string, decimals?: number): VoteWeight {
+  if (decimals !== undefined && decimals !== 0) {
+    Big.DP = decimals;
+    Big.RM = Big.roundDown;
+    return BigInt(Big(str).times(10 ** decimals).toString())
+  } else {
+    return BigInt(str);
+  }
+}
 
 export type CVote = Omit<
   Awaited<ReturnType<Orec["getLiveVote"]>>,

@@ -10,7 +10,8 @@ import { ORConsoleReader } from "./orconsoleReader.js";
 
 export const zContractsAddrs = z.object({
   newRespect: zEthAddress,
-  orec: zEthAddress
+  orec: zEthAddress,
+  oldRespectDecimals: z.number().optional()
 });
 export type ContractsAddrs = z.infer<typeof zContractsAddrs>;
 
@@ -185,6 +186,7 @@ export async function createOrclient(
   const ctxCfg: ORContext.ConfigWithOrnode = {
     orec: depl.contracts.orec,
     newRespect: depl.contracts.newRespect,
+    oldRespectDecimals: depl.contracts.oldRespectDecimals,
     ornode,
     contractRunner: signer
   }
@@ -217,6 +219,7 @@ export async function createOrclientReader(
   const ctxCfg: ORContext.ConfigWithOrnode = {
     orec: depl.contracts.orec,
     newRespect: depl.contracts.newRespect,
+    oldRespectDecimals: depl.contracts.oldRespectDecimals,
     ornode,
     contractRunner: providerURL
   }

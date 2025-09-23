@@ -1165,7 +1165,7 @@ type PostV1GetVotesInput = {
     limit?: number | undefined;
     propFilter?: string[] | undefined;
     voterFilter?: string[] | undefined;
-    minWeight?: number | undefined;
+    minWeight?: string | undefined;
     voteType?: ("Yes" | "No") | undefined;
   };
 };
@@ -1177,7 +1177,7 @@ type PostV1GetVotesResponse =
         txHash?: string | undefined;
         proposalId: string;
         voter: any;
-        weight: number;
+        weight: string;
         vote: "None" | "Yes" | "No";
         memo?: string | undefined;
       }[];

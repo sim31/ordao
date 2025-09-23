@@ -37,6 +37,7 @@ import { PropType, zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue }
 import { zBigNumberish, zBigNumberishToBigint } from "../eth.js";
 import { packTokenId } from "@ordao/respect1155/utils/tokenId.js";
 import { hexlify, randomBytes } from "ethers";
+import Big from "big.js";
 
 type ORContext = OrigORContext<ConfigWithOrnode>;
 
@@ -431,13 +432,26 @@ export const zCGetAwardsSpecToNodeSpec = zCGetAwardsSpec.transform(spec => {
   return r;
 }).pipe(zGetAwardsSpec);
 
-export const zCGetVotesSpecToNodeSpec = zCGetVotesSpec.transform(spec => {
-  const r: GetVotesSpec = {
-    ...spec,
-    before: spec.before !== undefined ? spec.before.valueOf() / 1000 : undefined,
+export function toNodeVoteWeight(val: string, decimals?: number): string {
+  if (decimals !== undefined && decimals !== 0) {
+    Big.DP = decimals;
+    Big.RM = Big.roundDown;
+    return Big(val).times(10 ** decimals).toString();
+  } else {
+    return val;
   }
-  return r;
-}).pipe(zGetVotesSpec); 
+}
+
+function mkzCGetVotesSpecToNodeSpec(orctx: ORContext) {
+  return zCGetVotesSpec.transform(spec => {
+    const r: GetVotesSpec = {
+      ...spec,
+      minWeight: spec.minWeight !== undefined ? toNodeVoteWeight(spec.minWeight, orctx.oldRespectDecimals) : undefined,
+      before: spec.before !== undefined ? spec.before.valueOf() / 1000 : undefined,
+    }
+    return r;
+  }).pipe(zGetVotesSpec);
+}
 
 // const zCGetProposalsSpecToNode = zCGetProposalsSpec.transform(spec => {
 //   const nspec: GetProposalsSpec = {
@@ -454,6 +468,7 @@ export class ClientToNodeTransformer {
   private _zCTickReqToProposal: ReturnType<typeof mkzTickReqToProposal>;
   private _zCCustomCallReqToProposal: ReturnType<typeof mkzCCustomCallReqToProposal>;
   private _zCSetPeriodsReqToProposal: ReturnType<typeof mkzCSetPeriodsReqToProposal>;
+  private _zCGetVotesSpecToNodeSpec: ReturnType<typeof mkzCGetVotesSpecToNodeSpec>
 
   constructor(context: ORContext) {
     this._ctx = context;
@@ -465,6 +480,7 @@ export class ClientToNodeTransformer {
     this._zCTickReqToProposal = mkzTickReqToProposal(this._ctx);
     this._zCCustomCallReqToProposal = mkzCCustomCallReqToProposal(this._ctx);
     this._zCSetPeriodsReqToProposal = mkzCSetPeriodsReqToProposal(this._ctx);
+    this._zCGetVotesSpecToNodeSpec = mkzCGetVotesSpecToNodeSpec(this._ctx);
   }
 
   transformGetProposalsSpec(spec: CGetProposalsSpec): GetProposalsSpec {
@@ -476,7 +492,7 @@ export class ClientToNodeTransformer {
   }
 
   transformGetVotesSpec(spec: CGetVotesSpec): GetVotesSpec {
-    return zCGetVotesSpecToNodeSpec.parse(spec);
+    return this._zCGetVotesSpecToNodeSpec.parse(spec);
   }
 
   async transformRespectBreakout(req: RespectBreakoutRequest): Promise<RespectBreakout> {

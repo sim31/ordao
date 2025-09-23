@@ -28,7 +28,9 @@ import {
   ExecError,
   zCustomCall,
   zSetPeriods,
-  SetPeriods
+  SetPeriods,
+  zVoteWeight,
+  VoteWeight
 } from "../orclient.js";
 import {
   zStoredProposal as zNProposal,
@@ -46,6 +48,8 @@ import {
   zTickAttachment,
   zVote as zNVote,
   Vote as NVote,
+  zVoteWeight as zNVoteWeight,
+  VoteWeight as NVoteWeight
 } from "../ornode.js";
 import {
   zEthAddress,
@@ -75,9 +79,13 @@ import {
   OnchainProp,
   voteTypeMap,
   zVoteTypeToStr,
-  zSetPeriodsArgs
+  zSetPeriodsArgs,
+  zVoteWeight as zOVoteWeight,
+  VoteWeight as OVoteWeight,
+  voteWeightToStr
 } from "../orec.js";
 import { NotVetoTimeError, NotVoteTimeError } from "../errors.js";
+import Big from "big.js";
 
 type ORContext = OrigORContext<ConfigWithOrnode>;
 
@@ -405,35 +413,58 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   }).pipe(zDecodedProposal);
 }
 
+function toClientVoteWeight(weight: NVoteWeight, decimals?: number): string {
+  if (decimals !== undefined && decimals !== 0) {
+    Big.DP = decimals ?? 0;
+    Big.RM = Big.roundDown;
+    const wb = Big(weight).div(10 ** decimals)
+    return wb.toString();
+  } else {
+    return weight.toString();
+  }
+}
+
+function mkZNVoteWeightToClient(orctx: ORContext) {
+  return zNVoteWeight.transform(val => {
+    return toClientVoteWeight(val, orctx.oldRespectDecimals);
+  }).pipe(zVoteWeight);
+}
+
+function mkZOVoteWeightToClient(orctx: ORContext) {
+  return zOVoteWeight.transform(val => {
+    return voteWeightToStr(val, orctx.oldRespectDecimals);
+  }).pipe(zVoteWeight);
+}
+
 export const orecToClientVTMap: Record<NVoteType, VoteType> = voteTypeMap;
 
 export const zNVoteTypeToClient = zVoteTypeToStr;
 
-export const zNVoteToClient = zNVote.transform(val => {
-  const vote: Vote = {
-    ...val,
-    date: val.ts ? new Date(val.ts * 1000) : undefined,
-    weight: Number(val.weight),
-  }
-  return vote;
-}).pipe(zVote);
-
-// export const zNVoteToClient = zNVote.transform(val => {
-//   const v: Vote = {
-//     voteType: zNVoteTypeToClient.parse(val.vtype),
-//     weight: Number(val.weight)
-//   }
-//   return v;
-// }).pipe(zVote)
+function mkZNVoteToClient(vwTransformer: ReturnType<typeof mkZNVoteWeightToClient>) {
+  return zNVote.transform(val => {
+    const vote: Vote = {
+      ...val,
+      weight: vwTransformer.parse(val.weight),
+      date: val.ts ? new Date(val.ts * 1000) : undefined,
+    }
+    return vote;
+  }).pipe(zVote);
+}
 
 export class NodeToClientTransformer {
   private _ctx: ORContext;
   private _zNProposalToDecodedProp: ReturnType<typeof mkzNProposalToDecodedProp>;
+  private _zNVoteWeightToClient: ReturnType<typeof mkZNVoteWeightToClient>;
+  private _zOVoteWeightToClient: ReturnType<typeof mkZOVoteWeightToClient>;
+  private _zNVoteToClient: ReturnType<typeof mkZNVoteToClient>;
 
   constructor(context: ORContext) {
     this._ctx = context;
 
     this._zNProposalToDecodedProp = mkzNProposalToDecodedProp(context);
+    this._zNVoteWeightToClient = mkZNVoteWeightToClient(context);
+    this._zNVoteToClient = mkZNVoteToClient(this._zNVoteWeightToClient);
+    this._zOVoteWeightToClient = mkZOVoteWeightToClient(context);
   }
 
   async getExecStatus(
@@ -486,6 +517,18 @@ export class NodeToClientTransformer {
     return this._ctx.getVetoTimeLeftSync.bind(this._ctx, onchainProp, voteLen, vetoLen);
   }
 
+  transformVote(nodeVote: NVote): Vote {
+    return this._zNVoteToClient.parse(nodeVote);
+  }
+
+  transformVoteWeight(nodeVoteWeight: NVoteWeight): VoteWeight {
+    return this._zNVoteWeightToClient.parse(nodeVoteWeight);
+  }
+
+  transformOrecVoteWeight(voteWeight: OVoteWeight): VoteWeight {
+    return this._zOVoteWeightToClient.parse(voteWeight);
+  }
+
   async transformProp(nodeProp: NProposal): Promise<Proposal> {
     const propId = nodeProp.id;
     const onchainProp = await this._ctx.tryGetPropFromChain(propId);
@@ -509,6 +552,8 @@ export class NodeToClientTransformer {
     } else {
       rProp = {
         ...onchainProp,
+        yesWeight: this._zOVoteWeightToClient.parse(onchainProp.yesWeight),
+        noWeight: this._zOVoteWeightToClient.parse(onchainProp.noWeight),
         status: status,
         execError,
         stage: stageMap[onchainProp.stage],

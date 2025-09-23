@@ -1,4 +1,4 @@
-import { Db, MongoClient } from "mongodb";
+import { Db, Decimal128, MongoClient } from "mongodb";
 import { IVoteStore, Vote, GetVotesSpec, zVote } from "../ordb/ivoteStore.js";
 import { PropId } from "@ordao/ortypes";
 import { stringify, withoutUndefined } from "@ordao/ts-utils";
@@ -8,6 +8,19 @@ import { z } from "zod";
 
 export const zVoteStoreConfig = zStoreConfig;
 export type VoteStoreConfig = z.infer<typeof zVoteStoreConfig>;
+
+const zStoredVote = zVote.extend({
+  weight: z.instanceof(Decimal128)
+});
+type StoredVote = z.infer<typeof zStoredVote>;
+
+const zStoredToVote = zStoredVote.transform(val => {
+  const vote: Vote = {
+    ...val,
+    weight: val.weight.toString()
+  }
+  return vote;
+}).pipe(zVote);
 
 export class VoteStore implements IVoteStore {
   private readonly db: Db;
@@ -23,7 +36,7 @@ export class VoteStore implements IVoteStore {
   }
 
   private get votes() {
-    return this.db.collection<Vote>("votes");
+    return this.db.collection<StoredVote>("votes");
   }
 
   async getVotes(spec: GetVotesSpec): Promise<Vote[]> {
@@ -42,7 +55,8 @@ export class VoteStore implements IVoteStore {
     }
 
     if (spec.minWeight !== undefined) {
-      filter['weight'] = { $gte: spec.minWeight };
+      const d = new Decimal128(spec.minWeight);
+      filter['weight'] = { $gte: d };
     }
 
     if (spec.voteType !== undefined) {
@@ -55,7 +69,7 @@ export class VoteStore implements IVoteStore {
       .sort({ ts: -1 })
       .limit(limit);
     const cursor = docs.map(ent => {
-      return zVote.parse(withoutId(ent));
+      return zStoredToVote.parse(withoutId(ent));
     });
 
     const rval = await cursor.toArray();
@@ -64,7 +78,11 @@ export class VoteStore implements IVoteStore {
   }
 
   async createVote(vote: Vote): Promise<void> {
-    const res = await this.votes.insertOne(withoutUndefined(vote));
+    const storedVote: StoredVote = {
+      ...withoutUndefined(vote),
+      weight: Decimal128.fromString(vote.weight)
+    } 
+    const res = await this.votes.insertOne(storedVote);
     console.debug("Inserted vote _id: ", res.insertedId);
   }
 

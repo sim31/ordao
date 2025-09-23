@@ -6,7 +6,8 @@ import { defaultConfig } from "@ordao/orclient";
 
 export const zContractsAddrs = z.object({
   newRespect: zEthAddress,
-  orec: zEthAddress
+  orec: zEthAddress,
+  oldRespectDecimals: z.number().optional()
 });
 export type ContractsAddrs = z.infer<typeof zContractsAddrs>;
 
@@ -27,6 +28,7 @@ export type Config = z.infer<typeof zConfig>;
 
 const newRespect = import.meta.env.VITE_NEW_RESPECT_ADDR;
 const orec = import.meta.env.VITE_OREC_ADDR;
+const oldRespectDecimals = Number(import.meta.env.VITE_OLD_RESPECT_DECIMALS);
 const ornodeUrl = import.meta.env.VITE_ORNODE_URL;
 const appTitle = import.meta.env.VITE_APP_TITLE;
 const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;
@@ -44,7 +46,7 @@ const blockExplorerUrl = import.meta.env.VITE_BLOCKEXP_URL;
 
 export const config = zConfig.parse({
   contracts: {
-    newRespect, orec
+    newRespect, orec, oldRespectDecimals
   },
   ornodeUrl,
   appTitle,

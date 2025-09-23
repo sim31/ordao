@@ -26,6 +26,7 @@ export interface State {
   orec: Orec,
   newRespect: Respect1155,
   ornode?: IORNode
+  oldRespectDecimals?: number
 }
 
 // export type StateWithOrnode = Required<State, 'ornode'>
@@ -37,7 +38,8 @@ export interface Config {
   orec: EthAddress | Orec,
   newRespect: EthAddress | Respect1155,
   ornode?: IORNode,
-  contractRunner?: ContractRunner | Url
+  contractRunner?: ContractRunner | Url,
+  oldRespectDecimals?: number
 }
 
 export interface ConfigWithOrnode extends Config {
@@ -151,6 +153,7 @@ export class ORContext<CT extends Config> {
     const st = {
       orec, newRespect,
       ornode: config.ornode as CT_['ornode'],
+      oldRespectDecimals: config.oldRespectDecimals
     };
 
     const ctx = new ORContext<CT_>(st as any, runner, false);
@@ -196,6 +199,10 @@ export class ORContext<CT extends Config> {
 
   get errorDecoder(): ErrorDecoder {
     return this._errDecoder;
+  }
+
+  get oldRespectDecimals(): number {
+    return this._st.oldRespectDecimals ?? 0;
   }
 
   async getOrecAddr(): Promise<EthAddress> {

@@ -1,12 +1,12 @@
 import { ContractTransactionReceipt } from "ethers";
-import { Proposal, GetProposalsSpec, GetAwardsSpec, ExecError, GetVotesSpec, Vote } from "@ordao/ortypes/orclient.js";
+import { Proposal, GetProposalsSpec, GetAwardsSpec, ExecError, GetVotesSpec, Vote, VoteWeight } from "@ordao/ortypes/orclient.js";
 import { ORContext as ORContextOrig,
   ConfigWithOrnode,
 } from "@ordao/ortypes/orContext.js";
 import { RespectAwardMt, RespectFungibleMt, TokenId } from "@ordao/ortypes/respect1155.js";
 import { Erc1155Mt } from "@ordao/ortypes/erc1155.js";
 import { ORNodePropStatus } from "@ordao/ortypes/ornode.js";
-import { NodeToClientTransformer, zNVoteToClient } from "@ordao/ortypes/transformers/nodeToClientTransformer.js";
+import { NodeToClientTransformer } from "@ordao/ortypes/transformers/nodeToClientTransformer.js";
 import { ClientToNodeTransformer } from "@ordao/ortypes/transformers/clientToNodeTransformer.js";
 import { EthAddress, PropId } from "@ordao/ortypes";
 
@@ -106,8 +106,9 @@ export class ORClientReader {
   /**
    * Get amount of old (parent) Respect an account has.
    */
-  async getOldRespectOf(account: EthAddress): Promise<bigint> {
-    return await this._ctx.orec.respectOf(account);
+  async getOldRespectOf(account: EthAddress): Promise<VoteWeight> {
+    const oldRespect = await this._ctx.orec.respectOf(account);
+    return this._nodeToClient.transformOrecVoteWeight(oldRespect);
   }
 
   /**
@@ -190,7 +191,7 @@ export class ORClientReader {
   async getVotes(spec?: GetVotesSpec): Promise<Vote[]> {
     const s = spec && this._clientToNode.transformGetVotesSpec(spec);
     const votes = await this._ctx.ornode.getVotes(s);
-    return votes.map(v => zNVoteToClient.parse(v));
+    return votes.map(v => this._nodeToClient.transformVote(v));
   }
 
   /**
@@ -230,8 +231,9 @@ export class ORClientReader {
   }
 
   // TODO: implementations of these should probably go to orcontext like for vote/veto length
-  async getMinWeight(): Promise<number> {
-    return Number(await this._ctx.orec.minWeight());
+  async getMinWeight(): Promise<VoteWeight> {
+    const minWeight = await this._ctx.orec.minWeight();
+    return this._nodeToClient.transformOrecVoteWeight(minWeight);
   }
 
   async getMaxLiveYesVotes(): Promise<number> {

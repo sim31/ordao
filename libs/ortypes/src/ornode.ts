@@ -71,7 +71,7 @@ export const zPropAttachment = z.union([
 ]);
 export type PropAttachment = z.infer<typeof zPropAttachment>;
 
-export const zVoteWeight = z.coerce.number().int().gte(0);
+export const zVoteWeight = z.coerce.string();
 export type VoteWeight = z.infer<typeof zVoteWeight>;
 
 export const zVote = z.object({

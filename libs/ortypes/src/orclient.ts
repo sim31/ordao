@@ -49,7 +49,7 @@ export type VoteStatus = z.infer<typeof zVoteStatus>;
 export const zExecStatus = z.enum(["NotExecuted", "Executed", "ExecutionFailed"]);
 export type ExecStatus = z.infer<typeof zExecStatus>;
 
-export const zVoteWeight = z.number().int().gte(0);
+export const zVoteWeight = z.string()
 export type VoteWeight = z.infer<typeof zVoteWeight>;
 
 export const zVoteRequest = z.object({
@@ -363,6 +363,8 @@ export const zOnchainProp = zNOnchainProp.extend({
   voteStatus: zVoteStatus,
   stage: zStage, 
   execError: zExecError.optional(),
+  yesWeight: zVoteWeight,
+  noWeight: zVoteWeight,
   voteTimeLeftMs: z.function().args().returns(z.number())
     .describe("Time left in ms to vote on this proposal. Negative number means voting is over that that number of ms."),
   vetoTimeLeftMs: z.function().args().returns(z.number())
