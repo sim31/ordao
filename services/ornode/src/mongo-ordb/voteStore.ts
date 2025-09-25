@@ -9,9 +9,16 @@ import { z } from "zod";
 export const zVoteStoreConfig = zStoreConfig;
 export type VoteStoreConfig = z.infer<typeof zVoteStoreConfig>;
 
-const zStoredVote = zVote.extend({
+const zStoredVoteV1 = zVote.extend({
+  weight: z.coerce.number().int().gte(0)
+});
+
+const zStoredVoteV2 = zVote.extend({
   weight: z.instanceof(Decimal128)
 });
+type StoredVoteV2 = z.infer<typeof zStoredVote>;
+
+const zStoredVote = z.union([zStoredVoteV1, zStoredVoteV2]);
 type StoredVote = z.infer<typeof zStoredVote>;
 
 const zStoredToVote = zStoredVote.transform(val => {
@@ -78,7 +85,7 @@ export class VoteStore implements IVoteStore {
   }
 
   async createVote(vote: Vote): Promise<void> {
-    const storedVote: StoredVote = {
+    const storedVote: StoredVoteV2 = {
       ...withoutUndefined(vote),
       weight: Decimal128.fromString(vote.weight)
     } 
