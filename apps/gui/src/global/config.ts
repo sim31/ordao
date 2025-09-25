@@ -26,9 +26,11 @@ export const zConfig = z.object({
 });
 export type Config = z.infer<typeof zConfig>;
 
+const decimals = import.meta.env.VITE_OLD_RESPECT_DECIMALS;
+
 const newRespect = import.meta.env.VITE_NEW_RESPECT_ADDR;
 const orec = import.meta.env.VITE_OREC_ADDR;
-const oldRespectDecimals = Number(import.meta.env.VITE_OLD_RESPECT_DECIMALS);
+const oldRespectDecimals = decimals ? Number(decimals) : undefined;
 const ornodeUrl = import.meta.env.VITE_ORNODE_URL;
 const appTitle = import.meta.env.VITE_APP_TITLE;
 const privyAppId = import.meta.env.VITE_PRIVY_APP_ID;

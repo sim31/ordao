@@ -71,6 +71,7 @@ export const zPropAttachment = z.union([
 ]);
 export type PropAttachment = z.infer<typeof zPropAttachment>;
 
+// VoteWeight as a string **without decimals**
 export const zVoteWeight = z.coerce.string();
 export type VoteWeight = z.infer<typeof zVoteWeight>;
 
