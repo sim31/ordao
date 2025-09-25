@@ -507,16 +507,16 @@ describe("orclient", function() {
       const rWeight = rWeight1 + rWeight2 + rWeight3 + rWeight4;
 
       const updatedResProp = await cl.getProposal(resultProps[0].id);
-      expect(updatedResProp.yesWeight).to.be.equal(rWeight);
-      expect(updatedResProp.noWeight).to.be.equal(0);
+      expect(Number(updatedResProp.yesWeight)).to.be.equal(rWeight);
+      expect(Number(updatedResProp.noWeight)).to.be.equal(0);
 
       const updatedMintProp = await cl.getProposal(mintProps[0].id);
-      expect(updatedMintProp.yesWeight).to.be.equal(rWeight2);
-      expect(updatedMintProp.noWeight).to.be.equal(0);
+      expect(Number(updatedMintProp.yesWeight)).to.be.equal(rWeight2);
+      expect(Number(updatedMintProp.noWeight)).to.be.equal(0);
 
       const updatedTickProp = await cl.getProposal(tickProps[0].id);
-      expect(updatedTickProp.yesWeight).to.be.equal(rWeight1);
-      expect(updatedTickProp.noWeight).to.be.equal(0);
+      expect(Number(updatedTickProp.yesWeight)).to.be.equal(rWeight1);
+      expect(Number(updatedTickProp.noWeight)).to.be.equal(0);
     });
     it("should update onchain yesWeight", async function() {
       const rWeight1 = await oldRespect.balanceOf(addrs[10]);
@@ -526,16 +526,16 @@ describe("orclient", function() {
       const rWeight = rWeight1 + rWeight2 + rWeight3 + rWeight4;
 
       const resPropState = await orec.proposals(resultProps[0].id);
-      expect(resPropState.yesWeight).to.be.equal(rWeight);
-      expect(resPropState.noWeight).to.be.equal(0);
+      expect(Number(resPropState.yesWeight)).to.be.equal(rWeight);
+      expect(Number(resPropState.noWeight)).to.be.equal(0);
 
       const mintPropState = await orec.proposals(mintProps[0].id);
-      expect(mintPropState.yesWeight).to.be.equal(rWeight2);
-      expect(mintPropState.noWeight).to.be.equal(0);
+      expect(Number(mintPropState.yesWeight)).to.be.equal(rWeight2);
+      expect(Number(mintPropState.noWeight)).to.be.equal(0);
 
       const tickPropState = await orec.proposals(tickProps[0].id);
-      expect(tickPropState.yesWeight).to.be.equal(rWeight1);
-      expect(tickPropState.noWeight).to.be.equal(0);
+      expect(Number(tickPropState.yesWeight)).to.be.equal(rWeight1);
+      expect(Number(tickPropState.noWeight)).to.be.equal(0);
     })
 
     it("should vote NO successfully with respect holder account", async function() {
@@ -680,13 +680,13 @@ describe("orclient", function() {
 
       await expect(voter.vote(resultProps[0].id, "No")).to.not.be.rejected;
 
-      const newNoWeight = (resProp.noWeight ?? 0n) + await oldRespect.balanceOf(signers[14].address);
+      const newNoWeight = (Number(resProp.noWeight) ?? 0) + Number(await oldRespect.balanceOf(signers[14].address));
 
       const updatedResProp = await cl.getProposal(resultProps[0].id);
-      expect(updatedResProp.noWeight).to.be.equal(newNoWeight);
+      expect(Number(updatedResProp.noWeight)).to.be.equal(newNoWeight);
 
       const propState = await orec.proposals(resultProps[0].id);
-      expect(propState.noWeight).to.be.equal(newNoWeight);
+      expect(Number(propState.noWeight)).to.be.equal(newNoWeight);
     });
 
     it("should throw if voting NO or YES after veto time", async function() {
