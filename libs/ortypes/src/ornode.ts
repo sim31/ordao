@@ -60,6 +60,11 @@ export const zSetPeriodsAttachment = zPropAttachmentBase.extend({
 })
 export type SetPeriodsAttachment = z.infer<typeof zSetPeriodsAttachment>;
 
+export const zSetMinWeightAttachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.setMinWeight),
+})
+export type SetMinWeightAttachment = z.infer<typeof zSetMinWeightAttachment>;
+
 export const zPropAttachment = z.union([
   zRespectBreakoutAttachment,
   zRespectAccountAttachment,
@@ -67,7 +72,8 @@ export const zPropAttachment = z.union([
   zCustomSignalAttachment,
   zTickAttachment,
   zCustomCallAttachment,
-  zSetPeriodsAttachment
+  zSetPeriodsAttachment,
+  zSetMinWeightAttachment
 ]);
 export type PropAttachment = z.infer<typeof zPropAttachment>;
 
@@ -212,6 +218,15 @@ export const zSetPeriodsValid = zSetPeriods
   .refine(propIdMatchesContent, propIdErr)
   .refine(propMemoMatchesAttachment, memoErr)
 
+export const zSetMinWeight = zProposalBaseFull.extend({
+  attachment: zSetMinWeightAttachment
+});
+export type SetMinWeight = z.infer<typeof zSetMinWeight>;
+
+export const zSetMinWeightValid = zSetMinWeight
+  .refine(propIdMatchesContent, propIdErr)
+  .refine(propMemoMatchesAttachment, memoErr)
+
 export const zProposal = z.union([
   zProposalBase,
   zProposalBaseFull,
@@ -221,7 +236,8 @@ export const zProposal = z.union([
   zCustomSignal,
   zTick,
   zCustomCall,
-  zSetPeriods
+  zSetPeriods,
+  zSetMinWeight
 ]);
 export type Proposal = z.infer<typeof zProposal>;
 
@@ -234,6 +250,7 @@ export const zStoredProposal = z.union([
   zTick.required({ status: true, createTs: true }),
   zCustomCall.required({ status: true, createTs: true }),
   zSetPeriods.required({ status: true, createTs: true }),
+  zSetMinWeight.required({ status: true, createTs: true }),
 ]);
 export type StoredProposal = z.infer<typeof zStoredProposal>;
 
@@ -245,7 +262,8 @@ export const zProposalFull = z.union([
   zCustomSignal,
   zTick,
   zCustomCall,
-  zSetPeriods
+  zSetPeriods,
+  zSetMinWeight
 ]);
 export type ProposalFull = z.infer<typeof zProposalFull>;
 
@@ -376,8 +394,8 @@ export function idOfCustomSignalAttach(attachment: CustomSignalAttachment | Tick
   );
 }
 
-export function idOfBaseAttach(attachment: CustomCallAttachment | SetPeriodsAttachment) {
-  const a: Required<CustomCallAttachment | SetPeriodsAttachment> = {
+export function idOfBaseAttach(attachment: CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment) {
+  const a: Required<CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment> = {
     ...attachment,
     propTitle: attachment.propTitle ?? "",
     propDescription: attachment.propDescription ?? "",
@@ -424,6 +442,7 @@ export function attachmentId(attachment: PropAttachment) {
       return idOfCustomSignalAttach(attachment);
     case 'customCall':
     case 'setPeriods':
+    case 'setMinWeight':
       return idOfBaseAttach(attachment);
     default:
       const exhaustiveCheck: never = attachment;

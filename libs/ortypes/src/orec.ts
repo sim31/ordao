@@ -149,6 +149,8 @@ export type CCustomSignalArgs = Parameters<Orec['signal']>;
 
 export type CSetPeriodsArgs = Parameters<Orec['setPeriodLengths']>;
 
+export type CSetMinWeightArgs = Parameters<Orec['setMinWeight']>;
+
 export type CMessage = Orec.MessageStruct;
 export type CProposalState = Omit<
   Awaited<ReturnType<Orec["proposals"]>>,
@@ -222,6 +224,18 @@ const setPeriodsVerify = zSetPeriodsArgs.refine((val) => {
   const args: CSetPeriodsArgs = [
     val.newVoteLen,
     val.newVetoLen
+  ];
+  return true;
+})
+
+export const zSetMinWeightArgsBase = z.object({
+  newMinWeight: zUint,
+});
+export const zSetMinWeightArgs = preprocessResultOrObj(zSetMinWeightArgsBase);
+export type SetMinWeightArgs = z.infer<typeof zSetMinWeightArgs>;
+const setMinWeightVerify = zSetMinWeightArgs.refine((val) => {
+  const args: CSetMinWeightArgs = [
+    val.newMinWeight
   ];
   return true;
 })

@@ -1,6 +1,6 @@
 import chai, { expect } from "chai";
 import { time, mine } from "@nomicfoundation/hardhat-toolbox/network-helpers.js";
-import { BreakoutResult, DecodedProposal, RespectBreakout, Proposal, RespectAccountRequest, RespectAccount, Tick, CustomSignal, ProposalMsgFull, PropOfPropType, isPropMsgFull, zProposalMsgFull, toPropMsgFull, CustomSignalRequest, RespectBreakoutRequest, VoteRequest, VoteWithProp, SetPeriodsRequest } from "@ordao/ortypes/orclient.js";
+import { BreakoutResult, DecodedProposal, RespectBreakout, Proposal, RespectAccountRequest, RespectAccount, Tick, CustomSignal, ProposalMsgFull, PropOfPropType, isPropMsgFull, zProposalMsgFull, toPropMsgFull, CustomSignalRequest, RespectBreakoutRequest, VoteRequest, VoteWithProp, SetPeriodsRequest, SetMinWeightRequest } from "@ordao/ortypes/orclient.js";
 import { TxFailed, ORClient, RemoteOrnode, defaultConfig } from "@ordao/orclient";
 import { EthAddress, ExecStatus, PropType, Stage, VoteStatus, VoteType, zProposedMsg } from "@ordao/ortypes";
 import hre from "hardhat";
@@ -69,6 +69,7 @@ describe("orclient", function() {
   let tickProps: Proposal[] = [];
   let signalProps: Proposal[] = [];
   let setPeriodsProps: Proposal[] = [];
+  let setMinWeightProps: Proposal[] = [];
   let nonRespectedAccs: EthAddress[];
   let groupRes: BreakoutResult[];
   let mintReqs: RespectAccountRequest[];
@@ -101,7 +102,7 @@ describe("orclient", function() {
     );
     cl = new ORClient(ctx, { ...defaultConfig, propResubmitInterval: 1000, propConfirms: 4, otherConfirms: 4 });
   })
-
+  
   function expectDecoded<T extends PropType>(
     propTypeStr: T,
     prop: Proposal
@@ -131,6 +132,10 @@ describe("orclient", function() {
 
   function expectSetPeriods(prop: Proposal) {
     return expectDecoded("setPeriods", prop);
+  }
+
+  function expectSetMinWeight(prop: Proposal) {
+    return expectDecoded("setMinWeight", prop);
   }
 
   async function expectInitPropValues(prop: ProposalMsgFull | Proposal) {
@@ -453,6 +458,46 @@ describe("orclient", function() {
       }
     })
   })
+
+  describe("proposing to set new minimum weight", function() {
+    const mreq1: SetMinWeightRequest = {
+      newMinWeight: 1000
+    };
+    const mreq2: SetMinWeightRequest = {
+      newMinWeight: 2000
+    };
+    let cl2: ORClient;
+    before("connect through a new signer to avoid hitting maxLiveVotes", async function() {
+      cl2 = cl.connect(signers[8]);
+    })
+
+    before("create proposal by calling propose", async function() {
+      setMinWeightProps.push((await confirm(cl2.propose("setMinWeight", mreq1))).proposal);
+    });
+
+    before("create proposal by calling proposeSetMinWeight" , async function() {
+      setMinWeightProps.push((await confirm(cl2.proposeSetMinWeight(mreq2))).proposal);
+    })
+
+    it("should have returned expected setMinWeight proposals", async function() {
+      // Take top two proposals
+      expectInitPropValues(setMinWeightProps[0]);
+      const s1 = expectSetMinWeight(setMinWeightProps[0]);
+      expect(s1.newMinWeight).to.be.equal(mreq1.newMinWeight);
+
+      expectInitPropValues(setMinWeightProps[1]);
+      const s2 = expectSetMinWeight(setMinWeightProps[1]);
+      expect(s2.newMinWeight).to.be.equal(mreq2.newMinWeight);
+    });
+
+    it("should have created new proposal onchain", async function() {
+      // Take top two proposals
+      for (const [index, prop] of setMinWeightProps.entries()) {
+        expectInitOnChainProp(prop);
+      }
+    })
+  })
+
   describe("voting for existing proposal", function() {
     it("should vote YES successfully with respect holder account", async function() {
       ///// Proposal 1 ///

@@ -299,6 +299,34 @@ export const zSetPeriodsRequest = zSetPeriods
   .describe(setPeriodsDescription);
 export type SetPeriodsRequest = z.infer<typeof zSetPeriodsRequest>;
 
+const setMinWeightDescription = `
+Set Minimum Weight
+
+Set the minimum vote weight that a proposal must acquire before it can become passing.
+`
+
+const newMinWeightDesc = `
+Minimum Weight
+
+Minimum vote weight required for a proposal to pass
+`
+
+export const zSetMinWeight = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.setMinWeight),
+  newMinWeight: zVoteWeight.describe(newMinWeightDesc)
+}).describe(setMinWeightDescription);
+export type SetMinWeight = z.infer<typeof zSetMinWeight>;
+
+export const zSetMinWeightRequest = zSetMinWeight
+  .extend({
+    // make it a number so that it generates a proper input form in the gui
+    newMinWeight: z.number().gte(0).describe(newMinWeightDesc)
+  })
+  .omit({ propType: true })
+  .partial({ metadata: true })
+  .describe(setMinWeightDescription);
+export type SetMinWeightRequest = z.infer<typeof zSetMinWeightRequest>;
+
 export const zDecodedProposal = z.union([
   zCustomCall,
   zTick,
@@ -306,7 +334,8 @@ export const zDecodedProposal = z.union([
   zBurnRespect,
   zRespectAccount,
   zRespectBreakout,
-  zSetPeriods
+  zSetPeriods,
+  zSetMinWeight
 ]);
 export type DecodedProposal = z.infer<typeof zDecodedProposal>;
 
@@ -317,7 +346,8 @@ export const zProposalRequest = z.union([
   zBurnRespectRequest,
   zRespectAccountRequest,
   zRespectBreakoutRequest,
-  zSetPeriodsRequest
+  zSetPeriodsRequest,
+  zSetMinWeightRequest
 ]);
 export type ProposalRequest = z.infer<typeof zProposalRequest>;
 
@@ -328,7 +358,8 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "burnRespect": zBurnRespect,
   "respectAccount": zRespectAccount,
   "respectBreakout": zRespectBreakout,
-  "setPeriods": zSetPeriods
+  "setPeriods": zSetPeriods,
+  "setMinWeight": zSetMinWeight
 }
 
 export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
@@ -338,7 +369,8 @@ export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "burnRespect": zBurnRespectRequest,
   "customCall": zCustomCallRequest,
   "customSignal": zCustomSignalRequest,
-  "setPeriods": zSetPeriodsRequest
+  "setPeriods": zSetPeriodsRequest,
+  "setMinWeight": zSetMinWeightRequest
 }
 
 export const zExecErrorType = z.nativeEnum(ErrorType);
@@ -459,7 +491,9 @@ export type PropOfPropType<T extends PropType> =
         : (T extends typeof zPropType.Enum.customCall ? CustomCall
           : (T extends typeof zPropType.Enum.tick ? Tick
             : (T extends typeof zPropType.Enum.setPeriods ? SetPeriods
-              : never
+              : (T extends typeof zPropType.Enum.setMinWeight ? SetMinWeight
+                : never
+              )
             )
           )
         )

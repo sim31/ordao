@@ -67,6 +67,12 @@ type PostV1PutProposalInput = {
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;
+            }
+          | {
+              propType: "setMinWeight";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
             };
         /** Unix timestamp. Should match onchain createTime of proposal */
         createTs?: number | undefined;
@@ -240,6 +246,27 @@ type PostV1PutProposalInput = {
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
         status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+      }
+    | {
+        id: string;
+        content: {
+          addr: string;
+          cdata: string | any;
+          memo: string | any;
+        };
+        attachment: {
+          propType: "setMinWeight";
+          propTitle?: string | undefined;
+          propDescription?: string | undefined;
+          salt?: string | undefined;
+        };
+        /** Unix timestamp. Should match onchain createTime of proposal */
+        createTs?: number | undefined;
+        /** Hash of transaction which created this proposal */
+        createTxHash?: string | undefined;
+        /** Hash of transaction which executed this proposal */
+        executeTxHash?: string | undefined;
+        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
       };
 };
 
@@ -328,6 +355,12 @@ type PostV1GetProposalResponse =
                   }
                 | {
                     propType: "setPeriods";
+                    propTitle?: string | undefined;
+                    propDescription?: string | undefined;
+                    salt?: string | undefined;
+                  }
+                | {
+                    propType: "setMinWeight";
                     propTitle?: string | undefined;
                     propDescription?: string | undefined;
                     salt?: string | undefined;
@@ -499,6 +532,26 @@ type PostV1GetProposalResponse =
           executeTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed";
         }
+      | {
+          id: string;
+          content: {
+            addr: any;
+            cdata: string | any;
+            memo: string | any;
+          };
+          attachment: {
+            propType: "setMinWeight";
+            propTitle?: string | undefined;
+            propDescription?: string | undefined;
+            salt?: string | undefined;
+          };
+          createTs: number;
+          /** Hash of transaction which created this proposal */
+          createTxHash?: string | undefined;
+          /** Hash of transaction which executed this proposal */
+          executeTxHash?: string | undefined;
+          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+        }
     )
   | {
       status: "error";
@@ -602,6 +655,12 @@ type PostV1GetProposalsResponse =
                     }
                   | {
                       propType: "setPeriods";
+                      propTitle?: string | undefined;
+                      propDescription?: string | undefined;
+                      salt?: string | undefined;
+                    }
+                  | {
+                      propType: "setMinWeight";
                       propTitle?: string | undefined;
                       propDescription?: string | undefined;
                       salt?: string | undefined;
@@ -762,6 +821,26 @@ type PostV1GetProposalsResponse =
             };
             attachment: {
               propType: "setPeriods";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+            };
+            createTs: number;
+            /** Hash of transaction which created this proposal */
+            createTxHash?: string | undefined;
+            /** Hash of transaction which executed this proposal */
+            executeTxHash?: string | undefined;
+            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          }
+        | {
+            id: string;
+            content: {
+              addr: any;
+              cdata: string | any;
+              memo: string | any;
+            };
+            attachment: {
+              propType: "setMinWeight";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;

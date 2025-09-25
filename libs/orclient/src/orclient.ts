@@ -1,5 +1,5 @@
 import { DecodedError, ExecutedEvent, ExecutionFailedEvent, PropId, PropType, ProposalNotCreated, ProposalState, encodeVoteMemo, zBytes, zPropId } from "@ordao/ortypes";
-import { BurnRespectRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp } from "@ordao/ortypes/orclient.js";
+import { BurnRespectRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp } from "@ordao/ortypes/orclient.js";
 import { ProposalFull as NProp, ORNodePropStatus } from "@ordao/ortypes/ornode.js";
 import { sleep, stringify } from "@ordao/ts-utils";
 import { ContractTransactionReceipt, ContractTransactionResponse, Signer, toBeHex } from "ethers";
@@ -352,6 +352,26 @@ export class ORClient extends ORClientReader {
   ): Promise<ProposeRes> {
     const v = zVoteWithProp.parse(vote); 
     const proposal = await this._clientToNode.transformSetPeriods(req);
+    return await this._submitProposal(proposal, v);
+  }
+
+  /**
+   * Propose to set new minimum passing weight (minWeight) on OREC.
+   * 
+   * @param req - new minimum weight
+   * @param vote - vote to submit with the result. Default: `{ vote: "Yes" }`.
+   * @returns resulting proposal and its status.
+   * 
+   * @remarks
+   * If `vote` parameter is not specified "Yes" vote is submitted.
+   * If you want to make this proposal but don't want to vote for it, specify `{ vote: "None" }`.
+   */
+  async proposeSetMinWeight(
+    req: SetMinWeightRequest,
+    vote: VoteWithPropRequest = { vote: "Yes" }
+  ): Promise<ProposeRes> {
+    const v = zVoteWithProp.parse(vote);
+    const proposal = await this._clientToNode.transformSetMinWeight(req);
     return await this._submitProposal(proposal, v);
   }
 

@@ -13,6 +13,7 @@ import {
   ProposalMetadata,
   zCustomSignal,
   CustomCall,
+  zCustomCall,
   Tick,
   zTick,
   zVote,
@@ -26,11 +27,12 @@ import {
   VoteStatus,
   zVoteStatus,
   ExecError,
-  zCustomCall,
   zSetPeriods,
   SetPeriods,
   zVoteWeight,
-  VoteWeight
+  VoteWeight,
+  zSetMinWeight,
+  SetMinWeight
 } from "../orclient.js";
 import {
   zStoredProposal as zNProposal,
@@ -49,7 +51,8 @@ import {
   zVote as zNVote,
   Vote as NVote,
   zVoteWeight as zNVoteWeight,
-  VoteWeight as NVoteWeight
+  VoteWeight as NVoteWeight,
+  zSetMinWeightAttachment
 } from "../ornode.js";
 import {
   zEthAddress,
@@ -80,6 +83,7 @@ import {
   voteTypeMap,
   zVoteTypeToStr,
   zSetPeriodsArgs,
+  zSetMinWeightArgs,
   zVoteWeight as zOVoteWeight,
   VoteWeight as OVoteWeight,
   voteWeightToStr
@@ -377,6 +381,38 @@ function mkzNProposalToSetPeriods(orctx: ORContext) {
   }).pipe(zSetPeriods);
 }
 
+function mkzNProposalToSetMinWeight(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zSetMinWeightAttachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getOrecAddr(),
+        "set min weight supposed to be addressed to orec"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = orecInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        orecInterface.getFunction('setMinWeight').name,
+        "expected setMinWeight function to be called"
+      );
+
+      const args = zSetMinWeightArgs.parse(tx?.args);
+
+      const r: SetMinWeight = {
+        propType: zPropType.Enum.setMinWeight,
+        newMinWeight: voteWeightToStr(args.newMinWeight, orctx.oldRespectDecimals),
+        metadata: zNAttachmentToMetadata.parse(attachment)
+      };
+
+      return r;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in zNProposalToSetMinWeight")
+    }
+  }).pipe(zSetMinWeight);
+}
+
 function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToRespectBreakout = mkzNProposalToRespectBreakout(orctx);
   const zNProposalToRespectAccount = mkzNProposalToRespectAccount(orctx);
@@ -385,6 +421,7 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToCustomCall = mkzNProposalToCustomCall(orctx);
   const zNProposalToTick = mkzNProposalToTick(orctx);
   const zNProposalToSetPeriods = mkzNProposalToSetPeriods(orctx);
+  const zNProposalToSetMinWeight = mkzNProposalToSetMinWeight(orctx);
 
   return zNProposalFull.transform(async (val, ctx) => {
     if (val.attachment !== undefined && val) {
@@ -403,6 +440,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
           return await zNProposalToTick.parseAsync(val);
         case 'setPeriods':
           return await zNProposalToSetPeriods.parseAsync(val);
+        case 'setMinWeight':
+          return await zNProposalToSetMinWeight.parseAsync(val);
         default: {
           const exhaustiveCheck: never = val.attachment;
           addCustomIssue(val, ctx, "Exhaustiveness check failed in zProposalToDecodedProp");
