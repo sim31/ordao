@@ -1,6 +1,6 @@
 {
   "name": "@ordao/ts-utils",
-  "version": "1.3.1",
+  "version": "1.3.2",
   "type": "commonjs",
   "module": "dist/esm/index.js",
   "main": "dist/cjs/index.js",
