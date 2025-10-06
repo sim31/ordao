@@ -27,6 +27,7 @@ export function SubmitBreakoutCard({
         mt="2em"
         variant="outline"
         padding={4}
+        mb="2em"
         gap={2}
         flexDirection="column"
         width={{ base: "sm", md: "40em"}}

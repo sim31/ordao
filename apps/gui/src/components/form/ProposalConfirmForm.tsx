@@ -23,6 +23,7 @@ export function ProposalConfirmForm<T extends z.AnyZodObject>({ schema, propRequ
         gap={2}
         flexDirection="column"
         minWidth="40em"
+        mb="2em"
         boxShadow="sm"
       >
         <Flex gap={2} alignItems="center" mb={2}>

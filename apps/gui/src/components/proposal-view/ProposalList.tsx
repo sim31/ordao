@@ -68,7 +68,7 @@ export function ProposalList({
         onClose={onActionModalClose}
       />
 
-      <SimpleGrid columns={1} gap="1em">
+      <SimpleGrid columns={1} gap="1em" pb="2em">
         {proposals.map((prop) => (
           <ProposalCard
             key={prop.id}

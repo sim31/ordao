@@ -11,7 +11,7 @@ export function FractalDoc({ mdText }: FractalDocProps) {
     return <Text>Not found</Text>
   } else {
     return (
-      <Prose fontSize="md">
+      <Prose fontSize="md" pb="2em">
         <Markdown>
           {mdText}
         </Markdown>
