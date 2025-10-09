@@ -597,7 +597,7 @@ export class ORNode implements IORNode {
       ? await this._db.proposals.getByIdAndExecHash(propId, txHash)
       : await this._db.proposals.getLatestById(propId);
     if (!prop) {
-      console.error("Could not find proposal that was executed: ", propId);
+      console.error("Could not find proposal that was executed: ", propId, "txHash: ", txHash);
     }
 
     // check if event being executed is breakout result or individual mint

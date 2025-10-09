@@ -71,7 +71,7 @@ export function ProposalList({
       <SimpleGrid columns={1} gap="1em" pb="2em">
         {proposals.map((prop) => (
           <ProposalCard
-            key={prop.id}
+            key={`${prop.id}-${prop.createTxHash ?? ''}`}
             proposal={prop}
             onExecuteClick={() => onExecuteClick(prop.id)}
             onVoteClick={(vote) => onVoteClick(prop.id, vote)}

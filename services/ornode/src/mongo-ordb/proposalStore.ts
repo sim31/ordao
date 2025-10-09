@@ -119,7 +119,7 @@ export class ProposalStore implements IProposalStore {
   }
 
   async getByIdAndExecHash(id: PropId, execHash: TxHash): Promise<Proposal | null> {
-    const doc = await this.proposals.findOne({ id, execHash });
+    const doc = await this.proposals.findOne({ id, executeTxHash: execHash });
     return doc ? zProposal.parse(withoutId(doc)) : null;
   }
 

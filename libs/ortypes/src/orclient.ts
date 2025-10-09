@@ -274,9 +274,14 @@ Cancel Proposal
 Cancel an onchain proposal on OREC by its id.
 `
 
+const canceledIdDescription = `
+Proposal Id
+
+Id of proposal to cancel
+`
 export const zCancelProposal = zDecodedPropBase.extend({
   propType: z.literal(zPropType.Enum.cancelProposal),
-  canceledId: zPropId
+  canceledId: zPropId.describe(canceledIdDescription)
 }).describe(cancelProposalDescription);
 export type CancelProposal = z.infer<typeof zCancelProposal>;
 

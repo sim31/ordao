@@ -18,4 +18,5 @@ export const execStatusColors: Record<ExecStatus, string> = {
   NotExecuted: "gray",
   Executed: "black",
   ExecutionFailed: "red",
+  Canceled: "orange"
 };

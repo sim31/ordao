@@ -606,8 +606,9 @@ export class NodeToClientTransformer {
 
   async transformProp(nodeProp: NProposal): Promise<Proposal> {
     const propId = nodeProp.id;
-    const onchainProp = await this._ctx.tryGetPropFromChain(propId);
     const { status, execError } = await this.getExecStatus(nodeProp)
+    const onchainProp = status === "NotExecuted"
+      ? await this._ctx.tryGetPropFromChain(propId) : undefined;
     let rProp: Proposal;
     if (onchainProp === undefined) {
       if (status === "NotExecuted") {

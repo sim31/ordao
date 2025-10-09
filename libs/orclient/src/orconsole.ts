@@ -1,11 +1,13 @@
 import { stringify } from "@ordao/ts-utils";
 import { ordaoLibVersions } from "./libVersions.js";
 import { ORClient, ORContext, Config, defaultConfig } from "./orclient.js";
+import { ORClientReader } from "./orclientReader.js";
 
 // TODO: A lot of duplicate code between this file and orconsoleReader.ts
 
 function _getPublicFunctions(): string[] {
   return Object.getOwnPropertyNames(ORClient.prototype)
+    .concat(Object.getOwnPropertyNames(ORClientReader.prototype))
     .filter(m => m[0] != '_');
 }
 
