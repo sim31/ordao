@@ -604,6 +604,7 @@ export class NodeToClientTransformer {
 
     rProp.createTxHash = nodeProp.createTxHash;
     rProp.executeTxHash = nodeProp.executeTxHash;
+    rProp.cancelTxHash = (nodeProp as any).cancelTxHash;
 
     if (nodeProp.content !== undefined) {
       rProp.addr = nodeProp.content.addr;

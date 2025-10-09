@@ -8,7 +8,7 @@ import { Erc1155Mt } from "@ordao/ortypes/erc1155.js";
 import { ORNodePropStatus } from "@ordao/ortypes/ornode.js";
 import { NodeToClientTransformer } from "@ordao/ortypes/transformers/nodeToClientTransformer.js";
 import { ClientToNodeTransformer } from "@ordao/ortypes/transformers/clientToNodeTransformer.js";
-import { EthAddress, PropId } from "@ordao/ortypes";
+import { EthAddress, OffchainPropId, PropId } from "@ordao/ortypes";
 
 // Re-define so that ORContext docs are included
 export class ORContext extends ORContextOrig<ConfigWithOrnode> {}
@@ -40,13 +40,25 @@ export class ORClientReader {
   }
 
   /**
-   * Returns proposal by its id.
-   * @param id - proposal id
-   * 
+   * Get a proposal by id or by OffchainPropId.
+   *
+   * Behavior:
+   * - If `id` is a `PropId` (bytes32), this returns the earliest-created instance for that id
+   *   to preserve legacy links that referenced only the on-chain id.
+   * - If `id` is an `OffchainPropId` (`{ id, createTxHash }`), this returns the exact instance
+   *   created by the given transaction.
+   *
+   * @param id - `PropId` or `{ id, createTxHash }`
+   *
    * @example
+   * // Legacy: first instance with this on-chain id
    * await c.getProposal("0x2f5e1602a2e1ccc9cf707bc57361ae6587cd87e8ae27105cae38c0db12f4fab1")
+   *
+   * @example
+   * // Specific instance by offchain identifier
+   * await c.getProposal({ id: "0x...", createTxHash: "0x..." })
    */
-  async getProposal(id: PropId): Promise<Proposal> {
+  async getProposal(id: PropId | OffchainPropId): Promise<Proposal> {
     //client.provide("get", "/v1/user/retrieve", { id: "10" });
     // const response = await ornodeClient.provide("post", "/v1/getProposal", { propId: id });
     const proposal = await this._ctx.ornode.getProposal(id);
@@ -54,16 +66,18 @@ export class ORClientReader {
   }
 
   /**
-   * Returns a list of proposals ordered from latest to oldest
-   * 
-   * @param spec - specification for query:
-   * * `before` - newest possible creation date for proposal. If specified, only proposals which were created up to this date will be returned;
-   * * `limit` - maximum number of proposals to return. If not specified, it's up to ornode implementation.
-   * * `execStatFilter` - list of ExecutionStatus values. Proposals which have execution status other than any of values in this list, will be filtered out. If undefined, then no filtering based on execution status is done.
-   * * `voteStatFilter` - list of VoteStatus values. Proposals which have vote status other than any of values specified in the list will be filtered out (not returned). If undefined - no filtering based on vote status is done.
-   * * `stageFilter` - list of Stage values. Proposals which are in stage other than any of stages specified in this list will be filtered out. If undefined - no filtering based on proposal stage is done.
-   * @returns List of proposals
-   * 
+   * Get proposals ordered from latest to oldest.
+   *
+   * @param spec - Query specification:
+   * * `before` - newest allowed creation timestamp; only proposals created up to this time are returned.
+   * * `limit` - maximum number of proposals to return.
+   * * `execStatFilter` - filter by execution status (includes "Canceled"). If undefined, no exec-status filtering.
+   * * `voteStatFilter` - filter by vote status. If undefined, no vote-status filtering.
+   * * `stageFilter` - filter by stage. If undefined, no stage filtering.
+   * * `idFilter` - filter by a specific PropId when supported by the server.
+   *
+   * @returns Proposals sorted from latest to oldest.
+   *
    * @example
    * await c.getProposals()
    */

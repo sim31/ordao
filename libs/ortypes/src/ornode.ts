@@ -296,7 +296,7 @@ export type GetVotesSpec = z.infer<typeof zGetVotesSpec>;
 export const zGetProposalsSpecBase = z.object({
   execStatusFilter: z.array(zExecStatusStr).optional(),
   limit: z.number().int().gt(0).optional(),
-  idFilter: z.array(zPropId).optional(),
+  idFilter: zPropId.optional(),
 }).strict()
 export type GetProposalsSpecBase = z.infer<typeof zGetProposalsSpecBase>;
 

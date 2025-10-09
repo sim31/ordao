@@ -80,6 +80,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -109,6 +111,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -141,6 +145,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -165,6 +171,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -189,6 +197,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -213,6 +223,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -236,6 +248,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -259,6 +273,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -282,6 +298,8 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
         status?:
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
           | undefined;
@@ -395,6 +413,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -421,6 +441,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -450,6 +472,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -471,6 +495,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -492,6 +518,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -513,6 +541,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -533,6 +563,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -553,6 +585,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
       | {
@@ -573,6 +607,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
           status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
         }
     )
@@ -591,7 +627,7 @@ type PostV1GetProposalsInput = {
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")[]
           | undefined;
         limit?: number | undefined;
-        idFilter?: string[] | undefined;
+        idFilter?: string | undefined;
         before?: number | undefined;
       }
     | {
@@ -599,7 +635,7 @@ type PostV1GetProposalsInput = {
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")[]
           | undefined;
         limit?: number | undefined;
-        idFilter?: string[] | undefined;
+        idFilter?: string | undefined;
         skip?: number | undefined;
       }
     | {
@@ -607,7 +643,7 @@ type PostV1GetProposalsInput = {
           | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")[]
           | undefined;
         limit?: number | undefined;
-        idFilter?: string[] | undefined;
+        idFilter?: string | undefined;
       };
 };
 
@@ -698,6 +734,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -724,6 +762,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -753,6 +793,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -774,6 +816,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -795,6 +839,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -816,6 +862,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -836,6 +884,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -856,6 +906,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
         | {
@@ -876,6 +928,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
             status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
           }
       )[];

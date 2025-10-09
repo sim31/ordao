@@ -407,7 +407,8 @@ export const zProposal = zOnchainProp.merge(zProposedMsgBase.partial()).extend({
   status: zExecStatus,
   decoded: zDecodedProposal.optional(),
   createTxHash: zTxHash.optional().describe("Hash of transaction which created this proposal"),
-  executeTxHash: zTxHash.optional().describe("Hash of transaction which executed this proposal")
+  executeTxHash: zTxHash.optional().describe("Hash of transaction which executed this proposal"),
+  cancelTxHash: zTxHash.optional().describe("Hash of transaction which cancelled this proposal"),
 }).partial({
   noWeight: true,
   yesWeight: true,
@@ -436,6 +437,7 @@ export const zGetProposalsSpecBase = z.object({
   voteStatFilter: z.array(zVoteStatus).optional(),
   stageFilter: z.array(zStage).optional(),
   limit: z.number().int().gt(0).optional(),
+  idFilter: zTxHash.optional(),
 }).strict()
 
 export const zGetProposalsSpecBefore = zGetProposalsSpecBase.extend({

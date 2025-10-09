@@ -446,7 +446,8 @@ function mkzCSetMinWeightReqToProposal(orctx: ORContext) {
 export const zCGetProposalsSpecToNodeSpec = zCGetProposalsSpec.transform(spec => {
   let base: GetProposalsSpecBase = {
     limit: spec.limit,
-    execStatusFilter: spec.execStatFilter
+    execStatusFilter: spec.execStatFilter,
+    idFilter: spec.idFilter
   };
 
   if (isGetPropSpecBefore(spec)) {

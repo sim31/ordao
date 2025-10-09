@@ -1,5 +1,5 @@
 import { MongoClient, Db, ObjectId } from "mongodb";
-import { PropId, TxHash } from "@ordao/ortypes";
+import { PropId, TxHash, zTxHash } from "@ordao/ortypes";
 import { IProposalStore, GetProposalsSpec, Proposal, zProposal } from "../ordb/iproposalStore.js";
 import { withoutId } from "./utils.js";
 import { withoutUndefined, stringify } from "@ordao/ts-utils";
@@ -46,6 +46,10 @@ export class ProposalStore implements IProposalStore {
 
     if (spec.execStatusFilter !== undefined && spec.execStatusFilter.length > 0) {
       filter['status'] = { $in: spec.execStatusFilter }
+    }
+
+    if (spec.idFilter !== undefined && zTxHash.parse(spec.idFilter)) {
+      filter['id'] = { $in: spec.idFilter }
     }
 
     const limit = spec.limit ? Math.min(spec.limit, this._cfg.maxDocLimit) : this._cfg.defaultDocLimit;
