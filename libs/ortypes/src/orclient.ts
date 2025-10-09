@@ -268,6 +268,24 @@ export type CustomCall = z.infer<typeof zCustomCall>;
 export const zCustomCallRequest = zCustomCall.omit({ propType: true }).describe(customCallDescription);
 export type CustomCallRequest = z.infer<typeof zCustomCallRequest>;
 
+const cancelProposalDescription = `
+Cancel Proposal
+
+Cancel an onchain proposal on OREC by its id.
+`
+
+export const zCancelProposal = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.cancelProposal),
+  canceledId: zPropId
+}).describe(cancelProposalDescription);
+export type CancelProposal = z.infer<typeof zCancelProposal>;
+
+export const zCancelProposalRequest = zCancelProposal
+  .omit({ propType: true })
+  .partial({ metadata: true })
+  .describe(cancelProposalDescription);
+export type CancelProposalRequest = z.infer<typeof zCancelProposalRequest>;
+
 const setPeriodsDescription = `
 Set Periods
 
@@ -335,7 +353,8 @@ export const zDecodedProposal = z.union([
   zRespectAccount,
   zRespectBreakout,
   zSetPeriods,
-  zSetMinWeight
+  zSetMinWeight,
+  zCancelProposal
 ]);
 export type DecodedProposal = z.infer<typeof zDecodedProposal>;
 
@@ -347,7 +366,8 @@ export const zProposalRequest = z.union([
   zRespectAccountRequest,
   zRespectBreakoutRequest,
   zSetPeriodsRequest,
-  zSetMinWeightRequest
+  zSetMinWeightRequest,
+  zCancelProposalRequest
 ]);
 export type ProposalRequest = z.infer<typeof zProposalRequest>;
 
@@ -359,7 +379,8 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "respectAccount": zRespectAccount,
   "respectBreakout": zRespectBreakout,
   "setPeriods": zSetPeriods,
-  "setMinWeight": zSetMinWeight
+  "setMinWeight": zSetMinWeight,
+  "cancelProposal": zCancelProposal
 }
 
 export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
@@ -370,7 +391,8 @@ export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "customCall": zCustomCallRequest,
   "customSignal": zCustomSignalRequest,
   "setPeriods": zSetPeriodsRequest,
-  "setMinWeight": zSetMinWeightRequest
+  "setMinWeight": zSetMinWeightRequest,
+  "cancelProposal": zCancelProposalRequest
 }
 
 export const zExecErrorType = z.nativeEnum(ErrorType);
@@ -487,20 +509,14 @@ export function toPropMsgFull(prop: Proposal | ProposalMsgFull): ProposalMsgFull
 
 export type PropOfPropType<T extends PropType> =
   T extends typeof zPropType.Enum.respectBreakout ? RespectBreakout
-  : (T extends typeof zPropType.enum.respectAccount ? RespectAccount
-    : (T extends typeof zPropType.Enum.burnRespect ? BurnRespect
-      : (T extends typeof zPropType.Enum.customSignal ? CustomSignal
-        : (T extends typeof zPropType.Enum.customCall ? CustomCall
-          : (T extends typeof zPropType.Enum.tick ? Tick
-            : (T extends typeof zPropType.Enum.setPeriods ? SetPeriods
-              : (T extends typeof zPropType.Enum.setMinWeight ? SetMinWeight
-                : never
-              )
-            )
-          )
-        )
-      )
-    )
-  );
+  : T extends typeof zPropType.enum.respectAccount ? RespectAccount
+  : T extends typeof zPropType.Enum.burnRespect ? BurnRespect
+  : T extends typeof zPropType.Enum.customSignal ? CustomSignal
+  : T extends typeof zPropType.Enum.customCall ? CustomCall
+  : T extends typeof zPropType.Enum.tick ? Tick
+  : T extends typeof zPropType.Enum.setPeriods ? SetPeriods
+  : T extends typeof zPropType.Enum.setMinWeight ? SetMinWeight
+  : T extends typeof zPropType.Enum.cancelProposal ? CancelProposal
+  : never;
 
 

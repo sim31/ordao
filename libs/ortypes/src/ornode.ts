@@ -65,6 +65,11 @@ export const zSetMinWeightAttachment = zPropAttachmentBase.extend({
 })
 export type SetMinWeightAttachment = z.infer<typeof zSetMinWeightAttachment>;
 
+export const zCancelProposalAttachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.cancelProposal)
+});
+export type CancelProposalAttachment = z.infer<typeof zCancelProposalAttachment>;
+
 export const zPropAttachment = z.union([
   zRespectBreakoutAttachment,
   zRespectAccountAttachment,
@@ -73,7 +78,8 @@ export const zPropAttachment = z.union([
   zTickAttachment,
   zCustomCallAttachment,
   zSetPeriodsAttachment,
-  zSetMinWeightAttachment
+  zSetMinWeightAttachment,
+  zCancelProposalAttachment
 ]);
 export type PropAttachment = z.infer<typeof zPropAttachment>;
 
@@ -229,6 +235,15 @@ export const zSetMinWeightValid = zSetMinWeight
   .refine(propIdMatchesContent, propIdErr)
   .refine(propMemoMatchesAttachment, memoErr)
 
+export const zCancelProposal = zProposalBaseFull.extend({
+  attachment: zCancelProposalAttachment
+});
+export type CancelProposal = z.infer<typeof zCancelProposal>;
+
+export const zCancelProposalValid = zCancelProposal
+  .refine(propIdMatchesContent, propIdErr)
+  .refine(propMemoMatchesAttachment, memoErr)
+
 export const zProposal = z.union([
   zProposalBase,
   zProposalBaseFull,
@@ -239,7 +254,8 @@ export const zProposal = z.union([
   zTick,
   zCustomCall,
   zSetPeriods,
-  zSetMinWeight
+  zSetMinWeight,
+  zCancelProposal
 ]);
 export type Proposal = z.infer<typeof zProposal>;
 
@@ -253,6 +269,7 @@ export const zStoredProposal = z.union([
   zCustomCall.required({ status: true, createTs: true }),
   zSetPeriods.required({ status: true, createTs: true }),
   zSetMinWeight.required({ status: true, createTs: true }),
+  zCancelProposal.required({ status: true, createTs: true })
 ]);
 export type StoredProposal = z.infer<typeof zStoredProposal>;
 
@@ -265,7 +282,8 @@ export const zProposalFull = z.union([
   zTick,
   zCustomCall,
   zSetPeriods,
-  zSetMinWeight
+  zSetMinWeight,
+  zCancelProposal
 ]);
 export type ProposalFull = z.infer<typeof zProposalFull>;
 
@@ -397,8 +415,10 @@ export function idOfCustomSignalAttach(attachment: CustomSignalAttachment | Tick
   );
 }
 
-export function idOfBaseAttach(attachment: CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment) {
-  const a: Required<CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment> = {
+export function idOfBaseAttach(
+  attachment: CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment | CancelProposalAttachment
+) {
+  const a: Required<CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment | CancelProposalAttachment> = {
     ...attachment,
     propTitle: attachment.propTitle ?? "",
     propDescription: attachment.propDescription ?? "",
@@ -446,6 +466,7 @@ export function attachmentId(attachment: PropAttachment) {
     case 'customCall':
     case 'setPeriods':
     case 'setMinWeight':
+    case 'cancelProposal':
       return idOfBaseAttach(attachment);
     default:
       const exhaustiveCheck: never = attachment;

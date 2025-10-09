@@ -28,8 +28,10 @@ import {
   SetPeriodsRequest,
   SetMinWeightRequest,
   ProposalRequest,
+  CancelProposalRequest,
+  zCancelProposalRequest,
 } from "../orclient.js";
-import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfBaseAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec, GetProposalsSpecBefore, zGetProposalsSpecSkip, GetProposalsSpecSkip, GetProposalsSpecBase, SetPeriodsAttachment, SetPeriods, zSetPeriodsValid, ProposalFull, SetMinWeightAttachment, SetMinWeight, zSetMinWeightValid } from "../ornode.js";
+import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfBaseAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec, GetProposalsSpecBefore, zGetProposalsSpecSkip, GetProposalsSpecSkip, GetProposalsSpecBase, SetPeriodsAttachment, SetPeriods, zSetPeriodsValid, ProposalFull, SetMinWeightAttachment, SetMinWeight, zSetMinWeightValid, CancelProposal, CancelProposalAttachment, zCancelProposalValid } from "../ornode.js";
 import { ConfigWithOrnode, ORContext as OrigORContext } from "../orContext.js";
 import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, strToVtMap, zStrToVoteType, SetPeriodsArgs, SetMinWeightArgs, strToVoteWeight } from "../orec.js";
 import { BurnRespectArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
@@ -442,6 +444,39 @@ function mkzCSetMinWeightReqToProposal(orctx: ORContext) {
   }).pipe(zSetMinWeightValid);
 }
 
+function mkzCCancelProposalReqToProposal(orctx: ORContext) {
+  return zCancelProposalRequest.transform(async (val: CancelProposalRequest, ctx) => {
+    try {
+      const addr = await orctx.getOrecAddr();
+      const cdata = orecInterface.encodeFunctionData('cancelProposal', [val.canceledId]);
+
+      const attachment: CancelProposalAttachment = {
+        propType: zPropType.Enum.cancelProposal,
+        propTitle: val.metadata?.propTitle,
+        propDescription: val.metadata?.propDescription,
+        salt: hexlify(randomBytes(4))
+      }
+
+      const memo = idOfBaseAttach(attachment);
+
+      const content: PropContent = { addr, cdata, memo };
+      const id = propId(content);
+
+      const r: CancelProposal = {
+        id,
+        content,
+        attachment
+      };
+      return r;
+    } catch (err) {
+      addCustomIssue(val, ctx, {
+        message: "exception in mkzCCancelProposalReqToProposal",
+        cause: err
+      });
+    }
+  }).pipe(zCancelProposalValid);
+}
+
 // zCGetProposalSepc is strict, so this checks that no unknown fields are specified
 export const zCGetProposalsSpecToNodeSpec = zCGetProposalsSpec.transform(spec => {
   let base: GetProposalsSpecBase = {
@@ -512,6 +547,7 @@ export class ClientToNodeTransformer {
   private _zCCustomCallReqToProposal: ReturnType<typeof mkzCCustomCallReqToProposal>;
   private _zCSetPeriodsReqToProposal: ReturnType<typeof mkzCSetPeriodsReqToProposal>;
   private _zCSetMinWeightReqToProposal: ReturnType<typeof mkzCSetMinWeightReqToProposal>;
+  private _zCCancelProposalReqToProposal: ReturnType<typeof mkzCCancelProposalReqToProposal>;
   private _zCGetVotesSpecToNodeSpec: ReturnType<typeof mkzCGetVotesSpecToNodeSpec>
 
   constructor(context: ORContext) {
@@ -525,6 +561,7 @@ export class ClientToNodeTransformer {
     this._zCCustomCallReqToProposal = mkzCCustomCallReqToProposal(this._ctx);
     this._zCSetPeriodsReqToProposal = mkzCSetPeriodsReqToProposal(this._ctx);
     this._zCSetMinWeightReqToProposal = mkzCSetMinWeightReqToProposal(this._ctx);
+    this._zCCancelProposalReqToProposal = mkzCCancelProposalReqToProposal(this._ctx);
     this._zCGetVotesSpecToNodeSpec = mkzCGetVotesSpecToNodeSpec(this._ctx);
   }
 
@@ -572,6 +609,10 @@ export class ClientToNodeTransformer {
     return await this._zCSetMinWeightReqToProposal.parseAsync(req);
   }
 
+  async transformCancelProposal(req: CancelProposalRequest): Promise<CancelProposal> {
+    return await this._zCCancelProposalReqToProposal.parseAsync(req);
+  }
+
   /**
    * Will throw if propType does not match structure of req param
    */
@@ -596,6 +637,8 @@ export class ClientToNodeTransformer {
         return await this.transformSetPeriods(req as SetPeriodsRequest);
       case 'setMinWeight':
         return await this.transformSetMinWeight(req as SetMinWeightRequest);
+      case 'cancelProposal':
+        return await this.transformCancelProposal(req as CancelProposalRequest);
       default: {
         const exhaustiveCheck: never = propType;
         throw new Error("Exchaustive check failed");

@@ -32,8 +32,10 @@ import {
   zVoteWeight,
   VoteWeight,
   zSetMinWeight,
-  SetMinWeight
+  SetMinWeight,
+  zCancelProposal
 } from "../orclient.js";
+import { zPropId } from "../orec.js";
 import {
   zStoredProposal as zNProposal,
   zRespectBreakout as zNRespectBreakout,
@@ -52,7 +54,8 @@ import {
   Vote as NVote,
   zVoteWeight as zNVoteWeight,
   VoteWeight as NVoteWeight,
-  zSetMinWeightAttachment
+  zSetMinWeightAttachment,
+  zCancelProposalAttachment
 } from "../ornode.js";
 import {
   zEthAddress,
@@ -105,6 +108,36 @@ export const voteStatusMap: Record<NVoteStatus, VoteStatus> = {
   [NVoteStatus.Failing]: "Failing",
   [NVoteStatus.Passed]: "Passed",
   [NVoteStatus.Passing]: "Passing"
+}
+
+function mkzNProposalToCancelProposal(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zCancelProposalAttachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getOrecAddr(),
+        "cancel proposal supposed to be addressed to orec"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = orecInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        orecInterface.getFunction('cancelProposal').name,
+        "expected cancelProposal function to be called"
+      );
+
+      const r = {
+        propType: zPropType.Enum.cancelProposal,
+        canceledId: zPropId.parse((tx?.args as any)?.[0]),
+        metadata: zNAttachmentToMetadata.parse(attachment)
+      };
+
+      return r;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in zNProposalToCancelProposal")
+    }
+  }).pipe(zCancelProposal);
 }
 
 export const zNAttachmentToMetadata = zPropAttachmentBase.transform((val, ctx) => {
@@ -422,6 +455,7 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToTick = mkzNProposalToTick(orctx);
   const zNProposalToSetPeriods = mkzNProposalToSetPeriods(orctx);
   const zNProposalToSetMinWeight = mkzNProposalToSetMinWeight(orctx);
+  const zNProposalToCancelProposal = mkzNProposalToCancelProposal(orctx);
 
   return zNProposalFull.transform(async (val, ctx) => {
     if (val.attachment !== undefined && val) {
@@ -442,6 +476,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
           return await zNProposalToSetPeriods.parseAsync(val);
         case 'setMinWeight':
           return await zNProposalToSetMinWeight.parseAsync(val);
+        case 'cancelProposal':
+          return await zNProposalToCancelProposal.parseAsync(val);
         default: {
           const exhaustiveCheck: never = val.attachment;
           addCustomIssue(val, ctx, "Exhaustiveness check failed in zProposalToDecodedProp");

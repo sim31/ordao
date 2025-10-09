@@ -1,5 +1,5 @@
 import { DecodedError, ExecutedEvent, ExecutionFailedEvent, PropId, PropType, ProposalNotCreated, ProposalState, encodeVoteMemo, zBytes, zPropId } from "@ordao/ortypes";
-import { BurnRespectRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp } from "@ordao/ortypes/orclient.js";
+import { BurnRespectRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalFull as NProp, ORNodePropStatus } from "@ordao/ortypes/ornode.js";
 import { sleep, stringify } from "@ordao/ts-utils";
 import { ContractTransactionReceipt, ContractTransactionResponse, Signer, toBeHex } from "ethers";
@@ -372,6 +372,18 @@ export class ORClient extends ORClientReader {
   ): Promise<ProposeRes> {
     const v = zVoteWithProp.parse(vote);
     const proposal = await this._clientToNode.transformSetMinWeight(req);
+    return await this._submitProposal(proposal, v);
+  }
+
+  /**
+   * Create a proposal to cancel a live proposal on OREC by its id.
+   */
+  async proposeCancelProposal(
+    req: CancelProposalRequest,
+    vote: VoteWithPropRequest = { vote: "Yes" }
+  ): Promise<ProposeRes> {
+    const v = zVoteWithProp.parse(vote);
+    const proposal = await this._clientToNode.transformCancelProposal(req);
     return await this._submitProposal(proposal, v);
   }
 

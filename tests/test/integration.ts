@@ -1003,6 +1003,49 @@ describe("orclient", function() {
       it("should execute successfully");
       it("should emit a Signal event with proposed data")
     })
+    describe("canceling a proposal", function() {
+      let targetProp: Proposal;
+      let cancelProp: Proposal;
+      let cl2: ORClient;
+
+      before("connect through a new signer to avoid hitting maxLiveVotes", async function() {
+        cl2 = cl.connect(signers[17]);
+      })
+
+      before("create target proposal to be canceled", async function() {
+        // create a simple tick proposal as the cancellation target (not executed)
+        targetProp = (await confirm(cl2.proposeTick({ metadata: { propDescription: "to be canceled" } }))).proposal;
+      });
+
+      before("create cancel proposal for the target", async function() {
+        cancelProp = (await confirm(cl2.proposeCancelProposal({ canceledId: targetProp.id, metadata: { propTitle: "Cancel target" } })) ).proposal;
+      });
+
+      before("vote YES on cancel proposal to ensure it passes", async function() {
+        const voterA = cl.connect(signers[10]);
+        const voterB = cl.connect(signers[14]);
+        const voterC = cl.connect(signers[1]);
+
+        await expect(voterA.vote(cancelProp.id, "Yes", "yes A")).to.not.be.rejected;
+        await time.increase(HOUR_1);
+        await expect(voterB.vote(cancelProp.id, "Yes", "yes B")).to.not.be.rejected;
+        await time.increase(HOUR_1);
+        await expect(voterC.vote(cancelProp.id, "Yes", "yes C")).to.not.be.rejected;
+      });
+
+      it("should execute cancel proposal successfully and mark target as canceled", async function() {
+        // move time to after vote and veto windows
+        await time.increase(DAY_1 * 2n);
+        await time.increase(DAY_6);
+
+        const execRes = await cl2.execute(cancelProp.id);
+        await sleep(3000);
+
+        const updatedTarget = await cl.getProposal(targetProp.id);
+        expect(updatedTarget.status).to.be.equal("Canceled");
+        expect(updatedTarget.cancelTxHash, "cancelTxHash should be set").to.be.equal(execRes.txReceipt.hash);
+      });
+    })
   });
   // TODO:
   describe("proposing to burn respect of an individual account", function() {})
