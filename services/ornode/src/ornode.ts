@@ -10,6 +10,7 @@ import {
   PropId,
   ExecutedEvent,
   ExecutionFailedEvent,
+  ProposalCanceledEvent,
   SignalEvent,
   zSignalType,
   zTickSignalType,
@@ -158,6 +159,7 @@ export class ORNode implements IORNode {
     orec.on(orec.getEvent("ProposalCreated"), this._propCreatedHandler);
     orec.on(orec.getEvent("Executed"), this._propExecHandler);
     orec.on(orec.getEvent("ExecutionFailed"), this._propExecFailedHandler);
+    orec.on(orec.getEvent("ProposalCanceled"), this._propCanceledHandler);
     orec.on(orec.getEvent("Signal"), this._signalEventHandler);
     orec.on(orec.getEvent("WeightedVoteIn"), this._weightedVoteHandler);
     orec.on(orec.getEvent("EmptyVoteIn"), this._emptyVoteHandler);
@@ -228,6 +230,19 @@ export class ORNode implements IORNode {
         ) as TypedEventLog<ProposalCreatedEvent.Event>;
 
         await this._propCreatedHandlerImpl(propId, eventLog);
+        break;
+      }
+      case "ProposalCanceled": {
+        const propId = ld.args['propId'] as PropId;
+        const eventLog = (
+          new EventLog(
+            log,
+            orec.interface,
+            orec.interface.getEvent("ProposalCanceled")
+          ) as unknown
+        ) as TypedEventLog<any>;
+
+        await this._propCanceledHandlerImpl(propId, eventLog);
         break;
       }
       case "EmptyVoteIn": {
@@ -335,7 +350,7 @@ export class ORNode implements IORNode {
       throw new ProposalInvalid(proposal, err);
     }
 
-    const exProp = await this._db.proposals.getProposal(proposal.id);
+    const exProp = await this._db.proposals.getLatestUnexecutedById(proposal.id);
     if (exProp === null) {
       throw new ProposalNotCreated(proposal);
     }
@@ -352,19 +367,18 @@ export class ORNode implements IORNode {
         content: proposal.content,
         attachment: proposal.attachment
       };
-      await this._db.proposals.updateProposal(exProp.id, updated)
+      await this._db.proposals.updateLatestUnexecutedById(exProp.id, updated)
       return zORNodePropStatus.Enum.ProposalStored;
     }
   } 
 
-  async getProposal(id: PropId): Promise<Proposal> {
-    const exProp = await this._db.proposals.getProposal(id);
+  async getProposal(id: PropId, ordinal?: number): Promise<Proposal> {
+    const ord = ordinal ?? 1;
+    const exProp = await this._db.proposals.getByIdAndOrdinal(id, ord);
     if (exProp === null) {
-      // TODO: check if proposal is created onchain. If so then return Proposal with unknown fields as undefined
       throw new ProposalNotFound(id);
-    } else {
-      return exProp;
     }
+    return exProp;
   }
 
   async getProposals(spec?: GetProposalsSpec): Promise<Proposal[]> {
@@ -505,11 +519,16 @@ export class ORNode implements IORNode {
         const { txHash } = this._parseEventObject(event);
         const { createTime } = await this._ctx.orec.proposals(propId);
 
+        // assign 1-based instance ordinal per id
+        const latest = await this._db.proposals.getLatestById(propId);
+        const instanceOrdinal = (latest?.instanceOrdinal ?? 0) + 1;
+
         const prop: Proposal = {
           id: propId,
           createTs: Number(createTime),
           createTxHash: txHash,
-          status: "NotExecuted"
+          status: "NotExecuted",
+          instanceOrdinal
         };
         await this._db.proposals.createProposal(prop);
       } catch (error) {
@@ -703,6 +722,23 @@ export class ORNode implements IORNode {
   private _propExecFailedHandler: TypedListener<ExecutionFailedEvent.Event> =
     this._propExecFailedHandlerImpl;
 
+  private _propCanceledHandlerImpl =
+    async (
+      propId: string,
+      event: TypedEventLog<ProposalCanceledEvent.Event>
+    ) => {
+      console.debug("ProposalCanceled event. PropId: ", propId, ", event: ", event);
+      const { txHash } = this._parseEventObject(event);
+      try {
+        await this._db.proposals.updateLatestUnexecutedById(propId, { status: "Canceled" });
+      } catch (err) {
+        console.error("Error in _propCanceledHandlerImpl. Error: ", err, ", propId: ", propId, ", tx: ", txHash);
+      }
+    }
+
+  private _propCanceledHandler: TypedListener<any> =
+    this._propCanceledHandlerImpl;
+
   private _signalEventHandlerImpl =
     async (signalType: bigint, data: string, event: TypedEventLog<SignalEvent.Event>) => {
       console.log("Signal event. signalType: ", signalType, "data: ", data, "event: ", event);
@@ -814,7 +850,7 @@ export class ORNode implements IORNode {
     txHash?: string
   ) {
     try {
-      await this._db.proposals.updateProposal(
+      await this._db.proposals.updateLatestUnexecutedById(
         propId,
         { executeTxHash: txHash, status }
       )

@@ -19,7 +19,8 @@ export {
   ExecutionFailedEvent,
   EmptyVoteInEvent,
   WeightedVoteInEvent,
-  SignalEvent
+  SignalEvent,
+  ProposalCanceledEvent
 } from "@ordao/orec/typechain-types/contracts/Orec.js";
 export * from "@ordao/orec/typechain-types/common.js";
 
@@ -53,7 +54,7 @@ export enum ExecStatus {
 const zExecStatusEnum = z.nativeEnum(ExecStatus);
 export const zExecStatus = z.preprocess(val => zUint8.parse(val), zExecStatusEnum);
 
-export const zExecStatusStr = z.enum(["NotExecuted", "Executed", "ExecutionFailed"]);
+export const zExecStatusStr = z.enum(["NotExecuted", "Executed", "ExecutionFailed", "Canceled"]);
 export type ExecStatusStr = z.infer<typeof zExecStatusStr>;
 
 export const execStatusMap: Record<ExecStatus, ExecStatusStr> = {

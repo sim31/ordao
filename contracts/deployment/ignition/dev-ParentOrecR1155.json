@@ -1,7 +1,7 @@
 {
   "ParentOrec": {
-    "votePeriod": 240,
-    "vetoPeriod": 240,
+    "votePeriod": 60,
+    "vetoPeriod": 60,
     "voteThreshold": 8,
     "maxLiveYesVotes": 6
   },

@@ -20,4 +20,21 @@ export interface IProposalStore {
   updateProposal: (id: PropId, prop: Partial<Proposal>) => Promise<void>;
 
   deleteProp: (id: PropId) => Promise<void>;
+
+  /**
+   * New APIs for handling non-unique proposal ids
+   */
+  getByIdAndOrdinal: (id: PropId, ordinal: number) => Promise<Proposal | null>;
+
+  /** Latest by instanceOrdinal (desc) regardless of status */
+  getLatestById: (id: PropId) => Promise<Proposal | null>;
+
+  /** Latest NotExecuted by instanceOrdinal (desc) */
+  getLatestUnexecutedById: (id: PropId) => Promise<Proposal | null>;
+
+  /** Full history ordered from oldest (ordinal 1) to newest */
+  getByIdAll: (id: PropId) => Promise<Proposal[]>;
+
+  /** Update only the latest NotExecuted instance for this id */
+  updateLatestUnexecutedById: (id: PropId, prop: Partial<Proposal>) => Promise<void>;
 }

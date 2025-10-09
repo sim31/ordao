@@ -46,7 +46,7 @@ export type Stage = z.infer<typeof zStage>;
 export const zVoteStatus = z.enum(["Passing", "Failing", "Passed", "Failed"]);
 export type VoteStatus = z.infer<typeof zVoteStatus>;
 
-export const zExecStatus = z.enum(["NotExecuted", "Executed", "ExecutionFailed"]);
+export const zExecStatus = z.enum(["NotExecuted", "Executed", "ExecutionFailed", "Canceled"]);
 export type ExecStatus = z.infer<typeof zExecStatus>;
 
 export const zVoteWeight = z.string()

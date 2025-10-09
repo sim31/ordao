@@ -25,9 +25,11 @@ export interface IORNode {
    */
   putProposal: (proposal: ProposalFull) => Promise<ORNodePropStatus>;
   /**
-   * Should return only proposals which have been submitted onchain
+   * Return a specific proposal instance identified by (id, ordinal).
+   * If ordinal is undefined, it defaults to 1 (the first instance created for this id).
+   * Only proposals that have been submitted onchain should be returned.
    */
-  getProposal: (id: PropId) => Promise<StoredProposal>;
+  getProposal: (id: PropId, ordinal?: number) => Promise<StoredProposal>;
   getProposals: (spec?: GetProposalsSpec) => Promise<StoredProposal[]>
 
   getPeriodNum: () => Promise<number>;

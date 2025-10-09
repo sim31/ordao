@@ -95,4 +95,43 @@ export class ProposalStore implements IProposalStore {
       console.debug("Failed to delete proposal id", id);
     }
   }
+
+  async getByIdAndOrdinal(id: PropId, ordinal: number): Promise<Proposal | null> {
+    const doc = await this.proposals.findOne({ id, instanceOrdinal: ordinal });
+    return doc ? zProposal.parse(withoutId(doc)) : null;
+  }
+
+  async getLatestById(id: PropId): Promise<Proposal | null> {
+    const doc = await this.proposals.find({ id }).sort({ instanceOrdinal: -1 }).limit(1).next();
+    return doc ? zProposal.parse(withoutId(doc)) : null;
+  }
+
+  async getLatestUnexecutedById(id: PropId): Promise<Proposal | null> {
+    const doc = await this.proposals
+      .find({ id, status: "NotExecuted" })
+      .sort({ instanceOrdinal: -1 })
+      .limit(1)
+      .next();
+    return doc ? zProposal.parse(withoutId(doc)) : null;
+  }
+
+  async getByIdAll(id: PropId): Promise<Proposal[]> {
+    const cursor = this.proposals.find({ id }).sort({ instanceOrdinal: 1 });
+    const arr = await cursor.toArray();
+    return arr.map(d => zProposal.parse(withoutId(d)));
+  }
+
+  async updateLatestUnexecutedById(id: PropId, update: Partial<Proposal>): Promise<void> {
+    const res = await this.proposals.updateOne(
+      { id, status: "NotExecuted" },
+      { $set: update },
+      { sort: { instanceOrdinal: -1 } as any }
+    );
+    if (res.matchedCount !== 1) {
+      throw new Error(`Failed to find latest unexecuted proposal for id: ${id}`);
+    }
+    if (res.modifiedCount !== 1) {
+      throw new Error(`Failed to update latest unexecuted proposal for id: ${id}`);
+    }
+  }
 }

@@ -80,7 +80,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -107,7 +111,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -137,7 +145,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -159,7 +171,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -181,7 +197,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -203,7 +223,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -224,7 +248,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -245,7 +273,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       }
     | {
         id: string;
@@ -266,7 +298,11 @@ type PostV1PutProposalInput = {
         createTxHash?: string | undefined;
         /** Hash of transaction which executed this proposal */
         executeTxHash?: string | undefined;
-        status?: ("NotExecuted" | "Executed" | "ExecutionFailed") | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+        /** 1-based ordinal of this proposal instance for a given id */
+        instanceOrdinal?: number | undefined;
       };
 };
 
@@ -372,7 +408,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -398,7 +435,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -427,7 +465,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -448,7 +487,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -469,7 +509,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -490,7 +531,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -510,7 +552,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -530,7 +573,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
       | {
           id: string;
@@ -550,7 +594,8 @@ type PostV1GetProposalResponse =
           createTxHash?: string | undefined;
           /** Hash of transaction which executed this proposal */
           executeTxHash?: string | undefined;
-          status: "NotExecuted" | "Executed" | "ExecutionFailed";
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          instanceOrdinal: number;
         }
     )
   | {
@@ -565,21 +610,21 @@ type PostV1GetProposalsInput = {
   spec:
     | {
         execStatusFilter?:
-          | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")[]
           | undefined;
         limit?: number | undefined;
         before?: number | undefined;
       }
     | {
         execStatusFilter?:
-          | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")[]
           | undefined;
         limit?: number | undefined;
         skip?: number | undefined;
       }
     | {
         execStatusFilter?:
-          | ("NotExecuted" | "Executed" | "ExecutionFailed")[]
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")[]
           | undefined;
         limit?: number | undefined;
       };
@@ -672,7 +717,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -698,7 +744,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -727,7 +774,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -748,7 +796,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -769,7 +818,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -790,7 +840,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -810,7 +861,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -830,7 +882,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
         | {
             id: string;
@@ -850,7 +903,8 @@ type PostV1GetProposalsResponse =
             createTxHash?: string | undefined;
             /** Hash of transaction which executed this proposal */
             executeTxHash?: string | undefined;
-            status: "NotExecuted" | "Executed" | "ExecutionFailed";
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+            instanceOrdinal: number;
           }
       )[];
     }
