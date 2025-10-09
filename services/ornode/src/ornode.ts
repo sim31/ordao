@@ -372,13 +372,22 @@ export class ORNode implements IORNode {
     }
   } 
 
-  async getProposal(id: PropId, ordinal?: number): Promise<Proposal> {
-    const ord = ordinal ?? 1;
-    const exProp = await this._db.proposals.getByIdAndOrdinal(id, ord);
-    if (exProp === null) {
-      throw new ProposalNotFound(id);
+  async getProposal(id: PropId | { id: PropId, createTxHash: string }): Promise<Proposal> {
+    let exProp: Proposal | null = null;
+    if (typeof id === 'object' && 'createTxHash' in id && 'id' in id) {
+      exProp = await this._db.proposals.getByOffchainId(id.id, id.createTxHash);
+      if (exProp === null) {
+        throw new ProposalNotFound(id.id);
+      }
+      return exProp;
+    } else {
+      // Legacy behavior: resolve to the first-created instance for this id
+      exProp = await this._db.proposals.getEarliestById(id as PropId);
+      if (exProp === null) {
+        throw new ProposalNotFound(id as PropId);
+      }
+      return exProp;
     }
-    return exProp;
   }
 
   async getProposals(spec?: GetProposalsSpec): Promise<Proposal[]> {
@@ -518,17 +527,11 @@ export class ORNode implements IORNode {
       try {
         const { txHash } = this._parseEventObject(event);
         const { createTime } = await this._ctx.orec.proposals(propId);
-
-        // assign 1-based instance ordinal per id
-        const latest = await this._db.proposals.getLatestById(propId);
-        const instanceOrdinal = (latest?.instanceOrdinal ?? 0) + 1;
-
         const prop: Proposal = {
           id: propId,
           createTs: Number(createTime),
           createTxHash: txHash,
-          status: "NotExecuted",
-          instanceOrdinal
+          status: "NotExecuted"
         };
         await this._db.proposals.createProposal(prop);
       } catch (error) {
@@ -588,12 +591,16 @@ export class ORNode implements IORNode {
     event: TypedEventLog<ExecutedEvent.Event>,
     txHash?: TxHash,
   ) {
-    // check if event being executed is breakout result or individual mint
-    const prop = await this._db.proposals.getProposal(propId);
+    // Getting by exec hash is more reliable as it is theoretically possible
+    // for new proposal to be created with the same id right after execution of the previous
+    const prop = txHash
+      ? await this._db.proposals.getByIdAndExecHash(propId, txHash)
+      : await this._db.proposals.getLatestById(propId);
     if (!prop) {
       console.error("Could not find proposal that was executed: ", propId);
     }
 
+    // check if event being executed is breakout result or individual mint
     const propType = prop?.attachment?.propType;
 
     if (txHash === undefined) {

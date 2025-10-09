@@ -131,15 +131,14 @@ export const zProposalBase = z.object({
   createTs: zTimestamp.optional().describe("Unix timestamp. Should match onchain createTime of proposal"),
   createTxHash: zTxHash.optional().describe("Hash of transaction which created this proposal"),
   executeTxHash: zTxHash.optional().describe("Hash of transaction which executed this proposal"),
-  status: zExecStatusStr.optional(),
-  instanceOrdinal: z.number().int().gt(0).optional().describe("1-based ordinal of this proposal instance for a given id")
+  status: zExecStatusStr.optional()
 });
+
 export type ProposalBase = z.infer<typeof zProposalBase>;
 
 export const zStoredProposalBase = zProposalBase.required({
   createTs: true,
   status: true,
-  instanceOrdinal: true
 })
 
 export const zProposalBaseFull = zProposalBase.required({
@@ -245,14 +244,14 @@ export type Proposal = z.infer<typeof zProposal>;
 
 export const zStoredProposal = z.union([
   zStoredProposalBase,
-  zRespectBreakout.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zRespectAccount.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zBurnRespect.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zCustomSignal.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zTick.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zCustomCall.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zSetPeriods.required({ status: true, createTs: true, instanceOrdinal: true }),
-  zSetMinWeight.required({ status: true, createTs: true, instanceOrdinal: true }),
+  zRespectBreakout.required({ status: true, createTs: true }),
+  zRespectAccount.required({ status: true, createTs: true }),
+  zBurnRespect.required({ status: true, createTs: true }),
+  zCustomSignal.required({ status: true, createTs: true }),
+  zTick.required({ status: true, createTs: true }),
+  zCustomCall.required({ status: true, createTs: true }),
+  zSetPeriods.required({ status: true, createTs: true }),
+  zSetMinWeight.required({ status: true, createTs: true }),
 ]);
 export type StoredProposal = z.infer<typeof zStoredProposal>;
 
@@ -295,7 +294,8 @@ export type GetVotesSpec = z.infer<typeof zGetVotesSpec>;
 
 export const zGetProposalsSpecBase = z.object({
   execStatusFilter: z.array(zExecStatusStr).optional(),
-  limit: z.number().int().gt(0).optional()
+  limit: z.number().int().gt(0).optional(),
+  idFilter: z.array(zPropId).optional(),
 }).strict()
 export type GetProposalsSpecBase = z.infer<typeof zGetProposalsSpecBase>;
 

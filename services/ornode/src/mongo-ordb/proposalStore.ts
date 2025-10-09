@@ -25,19 +25,13 @@ export class ProposalStore implements IProposalStore {
     this._cfg = config;
   }
 
-  private get proposals() {
-    return this.db.collection<Proposal>("proposals");
+  async getByOffchainId(id: PropId, createTxHash: TxHash): Promise<Proposal | null> {
+    const doc = await this.proposals.findOne({ id, createTxHash });
+    return doc ? zProposal.parse(withoutId(doc)) : null;
   }
 
-  async getProposal(id: PropId): Promise<Proposal | null> {
-    const doc = await this.proposals.findOne({ id: id });
-    if (doc !== null) {
-      console.debug("Retrieved proposal _id: ", doc._id, ", id: ", id);
-      return zProposal.parse(withoutId(doc))
-    } else {
-      console.debug("Did not find proposal id: ", id);
-      return null;
-    }
+  private get proposals() {
+    return this.db.collection<Proposal>("proposals");
   }
 
   /**
@@ -69,6 +63,8 @@ export class ProposalStore implements IProposalStore {
     return rval;
   }
 
+  // removed: countBeforeByCreatePointer (deprecated)
+
   async createProposal(prop: Proposal): Promise<void> {
     const res = await this.proposals.insertOne(withoutUndefined(prop));
     console.debug("Inserted proposal _id: ", res.insertedId);
@@ -96,36 +92,38 @@ export class ProposalStore implements IProposalStore {
     }
   }
 
-  async getByIdAndOrdinal(id: PropId, ordinal: number): Promise<Proposal | null> {
-    const doc = await this.proposals.findOne({ id, instanceOrdinal: ordinal });
-    return doc ? zProposal.parse(withoutId(doc)) : null;
-  }
+  // removed: getByIdAndOrdinal (deprecated)
 
   async getLatestById(id: PropId): Promise<Proposal | null> {
-    const doc = await this.proposals.find({ id }).sort({ instanceOrdinal: -1 }).limit(1).next();
+    const doc = await this.proposals.find({ id }).sort({ createTs: -1, _id: -1 }).limit(1).next();
     return doc ? zProposal.parse(withoutId(doc)) : null;
   }
 
   async getLatestUnexecutedById(id: PropId): Promise<Proposal | null> {
     const doc = await this.proposals
       .find({ id, status: "NotExecuted" })
-      .sort({ instanceOrdinal: -1 })
+      .sort({ createTs: -1, _id: -1 })
       .limit(1)
       .next();
     return doc ? zProposal.parse(withoutId(doc)) : null;
   }
 
   async getByIdAll(id: PropId): Promise<Proposal[]> {
-    const cursor = this.proposals.find({ id }).sort({ instanceOrdinal: 1 });
+    const cursor = this.proposals.find({ id }).sort({ createTs: 1, _id: 1 });
     const arr = await cursor.toArray();
     return arr.map(d => zProposal.parse(withoutId(d)));
+  }
+
+  async getByIdAndExecHash(id: PropId, execHash: TxHash): Promise<Proposal | null> {
+    const doc = await this.proposals.findOne({ id, execHash });
+    return doc ? zProposal.parse(withoutId(doc)) : null;
   }
 
   async updateLatestUnexecutedById(id: PropId, update: Partial<Proposal>): Promise<void> {
     const res = await this.proposals.updateOne(
       { id, status: "NotExecuted" },
       { $set: update },
-      { sort: { instanceOrdinal: -1 } as any }
+      { sort: { createTs: -1, _id: -1 } as any }
     );
     if (res.matchedCount !== 1) {
       throw new Error(`Failed to find latest unexecuted proposal for id: ${id}`);
@@ -133,5 +131,10 @@ export class ProposalStore implements IProposalStore {
     if (res.modifiedCount !== 1) {
       throw new Error(`Failed to update latest unexecuted proposal for id: ${id}`);
     }
+  }
+
+  async getEarliestById(id: PropId): Promise<Proposal | null> {
+    const doc = await this.proposals.find({ id }).sort({ createTs: 1, _id: 1 }).limit(1).next();
+    return doc ? zProposal.parse(withoutId(doc)) : null;
   }
 }

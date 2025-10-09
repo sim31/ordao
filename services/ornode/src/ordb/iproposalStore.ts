@@ -8,8 +8,6 @@ export const zProposal = zStoredProposal;
 export type Proposal = z.infer<typeof zProposal>;
 
 export interface IProposalStore {
-  getProposal: (id: PropId) => Promise<Proposal | null>;
-
   /**
    * Returns proposals ordered from oldest to newest
    */
@@ -22,19 +20,21 @@ export interface IProposalStore {
   deleteProp: (id: PropId) => Promise<void>;
 
   /**
-   * New APIs for handling non-unique proposal ids
+   * New APIs for handling non-unique on-chain PropIds off-chain
    */
-  getByIdAndOrdinal: (id: PropId, ordinal: number) => Promise<Proposal | null>;
+  /** Retrieve a specific offchain proposal instance by (PropId, createTxHash) */
+  getByOffchainId: (id: PropId, createTxHash: TxHash) => Promise<Proposal | null>;
 
-  /** Latest by instanceOrdinal (desc) regardless of status */
-  getLatestById: (id: PropId) => Promise<Proposal | null>;
+  /** Earliest-created instance for this id (stable legacy target) */
+  getEarliestById: (id: PropId) => Promise<Proposal | null>;
 
-  /** Latest NotExecuted by instanceOrdinal (desc) */
+  /** Latest NotExecuted by creation order (blockNumber/logIndex desc) */
   getLatestUnexecutedById: (id: PropId) => Promise<Proposal | null>;
-
-  /** Full history ordered from oldest (ordinal 1) to newest */
-  getByIdAll: (id: PropId) => Promise<Proposal[]>;
 
   /** Update only the latest NotExecuted instance for this id */
   updateLatestUnexecutedById: (id: PropId, prop: Partial<Proposal>) => Promise<void>;
+
+  getLatestById: (id: PropId) => Promise<Proposal | null>;
+
+  getByIdAndExecHash: (id: PropId, execHash: TxHash) => Promise<Proposal | null>;
 }

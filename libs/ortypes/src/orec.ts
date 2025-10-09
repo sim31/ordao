@@ -1,7 +1,7 @@
 import { Orec, Orec__factory } from "@ordao/orec/typechain-types";
 import { ExecutedEvent } from "@ordao/orec/typechain-types/contracts/Orec.js";
 import { z } from "zod";
-import { Bytes, zBigNumberish, zBytes, zBytes32, zBytesLike, zEthAddress, zUint, zUint8 } from "./eth.js";
+import { Bytes, zBigNumberish, zBytes, zBytes32, zBytesLike, zEthAddress, zTxHash, zUint, zUint8 } from "./eth.js";
 import { preprocessResultOrObj } from "./utils.js";
 import { hexlify, toUtf8Bytes, toUtf8String } from "ethers";
 import Big from "big.js";
@@ -49,7 +49,8 @@ export const zVoteStatus = z.preprocess(
 export enum ExecStatus {
   NotExecuted = 0,
   Executed = 1,
-  ExecutionFailed
+  ExecutionFailed,
+  Canceled
 }
 const zExecStatusEnum = z.nativeEnum(ExecStatus);
 export const zExecStatus = z.preprocess(val => zUint8.parse(val), zExecStatusEnum);
@@ -60,7 +61,8 @@ export type ExecStatusStr = z.infer<typeof zExecStatusStr>;
 export const execStatusMap: Record<ExecStatus, ExecStatusStr> = {
   [ExecStatus.Executed]: "Executed",
   [ExecStatus.ExecutionFailed]: "ExecutionFailed",
-  [ExecStatus.NotExecuted]: "NotExecuted"
+  [ExecStatus.NotExecuted]: "NotExecuted",
+  [ExecStatus.Canceled]: "Canceled"
 }
 
 export const zExecStatusToStr = zExecStatus.transform((s) => {
@@ -70,6 +72,12 @@ export const zExecStatusToStr = zExecStatus.transform((s) => {
 
 export const zPropId = zBytes32;
 export type PropId = z.infer<typeof zPropId>;
+
+export const zOffchainPropId = z.object({
+  id: zPropId,
+  createTxHash: zTxHash
+});
+export type OffchainPropId = z.infer<typeof zOffchainPropId>;
 
 export enum VoteType {
   None = 0,

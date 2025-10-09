@@ -1,5 +1,5 @@
 import { stringify } from "@ordao/ts-utils";
-import { PropId } from "./orec.js";
+import { OffchainPropId, PropId } from "./orec.js";
 import {
   ErrorType,
   ORNodePropStatus,
@@ -25,11 +25,11 @@ export interface IORNode {
    */
   putProposal: (proposal: ProposalFull) => Promise<ORNodePropStatus>;
   /**
-   * Return a specific proposal instance identified by (id, ordinal).
-   * If ordinal is undefined, it defaults to 1 (the first instance created for this id).
-   * Only proposals that have been submitted onchain should be returned.
+   * Get proposal by id. If an OffchainPropId { id, createTxHash } is provided,
+   * returns that specific instance. If only PropId is provided, returns the
+   * earliest-created instance for that id (stable legacy behavior).
    */
-  getProposal: (id: PropId, ordinal?: number) => Promise<StoredProposal>;
+  getProposal: (id: PropId | OffchainPropId) => Promise<StoredProposal>;
   getProposals: (spec?: GetProposalsSpec) => Promise<StoredProposal[]>
 
   getPeriodNum: () => Promise<number>;

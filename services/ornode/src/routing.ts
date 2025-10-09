@@ -10,7 +10,7 @@ import {
   zGetVotesSpec,
   zVote,
 } from "@ordao/ortypes/ornode.js";
-import { zContractMetadata, zEthAddress, zPropId } from "@ordao/ortypes";
+import { zContractMetadata, zEthAddress, zOffchainPropId, zPropId } from "@ordao/ortypes";
 import { resultHandler } from "./resultHandler.js";
 import { getOrnode } from "./mongoOrnode.js";
 import { stringify } from "@ordao/ts-utils";
@@ -65,7 +65,7 @@ const getPeriodNum = factory.build({
 
 const getProposal = factory.build({
   method: "post",
-  input: z.object({ propId: zPropId }),
+  input: z.object({ propId: z.union([zPropId, zOffchainPropId]) }),
   output: zStoredProposal,
   handler: async ({input, options, logger}) => {
     logger.debug(`getProposal ${stringify(input)}. options: ${stringify(options)}`);
