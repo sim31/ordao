@@ -131,6 +131,7 @@ export const zProposalBase = z.object({
   createTs: zTimestamp.optional().describe("Unix timestamp. Should match onchain createTime of proposal"),
   createTxHash: zTxHash.optional().describe("Hash of transaction which created this proposal"),
   executeTxHash: zTxHash.optional().describe("Hash of transaction which executed this proposal"),
+  cancelTxHash: zTxHash.optional().describe("Hash of transaction which cancelled this proposal"),
   status: zExecStatusStr.optional()
 });
 

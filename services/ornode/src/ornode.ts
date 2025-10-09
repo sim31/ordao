@@ -737,7 +737,7 @@ export class ORNode implements IORNode {
       console.debug("ProposalCanceled event. PropId: ", propId, ", event: ", event);
       const { txHash } = this._parseEventObject(event);
       try {
-        await this._db.proposals.updateLatestUnexecutedById(propId, { status: "Canceled" });
+        await this._db.proposals.updateLatestUnexecutedById(propId, { status: "Canceled", cancelTxHash: txHash });
       } catch (err) {
         console.error("Error in _propCanceledHandlerImpl. Error: ", err, ", propId: ", propId, ", tx: ", txHash);
       }
