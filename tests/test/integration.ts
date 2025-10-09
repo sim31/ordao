@@ -2,7 +2,7 @@ import chai, { expect } from "chai";
 import { time, mine } from "@nomicfoundation/hardhat-toolbox/network-helpers.js";
 import { BreakoutResult, DecodedProposal, RespectBreakout, Proposal, RespectAccountRequest, RespectAccount, Tick, CustomSignal, ProposalMsgFull, PropOfPropType, isPropMsgFull, zProposalMsgFull, toPropMsgFull, CustomSignalRequest, RespectBreakoutRequest, VoteRequest, VoteWithProp, SetPeriodsRequest, SetMinWeightRequest } from "@ordao/ortypes/orclient.js";
 import { TxFailed, ORClient, RemoteOrnode, defaultConfig } from "@ordao/orclient";
-import { EthAddress, ExecStatus, PropType, Stage, VoteStatus, VoteType, zProposedMsg } from "@ordao/ortypes";
+import { EthAddress, ExecStatus, PropType, Stage, VoteStatus, VoteType, zProposedMsg, OffchainPropId } from "@ordao/ortypes";
 import hre from "hardhat";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers.js";
 import {
@@ -1043,10 +1043,94 @@ describe("orclient", function() {
 
         const updatedTarget = await cl.getProposal(targetProp.id);
         expect(updatedTarget.status).to.be.equal("Canceled");
-        expect(updatedTarget.cancelTxHash, "cancelTxHash should be set").to.be.equal(execRes.txReceipt.hash);
+        expect(updatedTarget.cancelTxHash).to.be.equal(execRes.txReceipt.hash);
       });
     })
   });
+  describe("proposal id collision handling", function() {
+    let first: Proposal;
+    let second: Proposal;
+    let firstCreateHash: string;
+    let secondCreateHash: string;
+    let sameId: string;
+    let cl2: ORClient;
+    let cl3: ORClient
+    const metadata = { propTitle: "collision test", propDescription: "1" };
+    const data = "0x1234";
+
+    before("connect through a new signer to avoid hitting maxLiveVotes", async function() {
+      cl2 = cl.connect(signers[16]);
+      cl3 = cl.connect(signers[17]);
+    })
+
+    before("create a proposal with deterministic id", async function() {
+      // Use a fixed data value so cdata is identical between the two proposals
+      const res = await confirm(cl2.proposeTick({
+        data, metadata
+      }));
+      first = res.proposal;
+      firstCreateHash = res.txReceipt.hash;
+      sameId = first.id;
+    });
+
+    before("vote to pass and execute the first proposal", async function() {
+      const voterA = cl.connect(signers[10]);
+      const voterB = cl.connect(signers[14]);
+      await expect(voterA.vote(first.id, "Yes", "yes1")).to.not.be.rejected;
+      await time.increase(HOUR_1);
+      await expect(voterB.vote(first.id, "Yes", "yes2")).to.not.be.rejected;
+
+      // move time to end of veto and execute
+      await time.increase(DAY_1 * 2n);
+      await time.increase(DAY_6);
+      await expect(cl2.execute(first.id)).to.not.be.rejected;
+      await sleep(2000);
+    });
+
+    before("create a new proposal with the same id", async function() {
+      const res2 = await confirm(cl3.proposeTick({
+        data, metadata
+      }));
+      second = res2.proposal;
+      secondCreateHash = res2.txReceipt.hash;
+      // sanity: ids should be equal
+      expect(second.id).to.equal(sameId);
+    });
+
+    it("getProposal(id) should return the earliest-created instance with correct status", async function() {
+      const p = await cl.getProposal(sameId);
+      expect(p.id).to.equal(sameId);
+      expect(p.createTxHash).to.equal(firstCreateHash);
+      expect(p.status).to.equal("Executed");
+      expect(p.decoded?.metadata).to.deep.equal(metadata);
+      const decoded = expectDecoded("tick", p);
+      expect(decoded.data).to.be.equal(data);
+    });
+
+    it("getProposal({id, createTxHash}) should return the right instance by tx hash with correct status", async function() {
+      const off1: OffchainPropId = { id: sameId, createTxHash: firstCreateHash };
+      const off2: OffchainPropId = { id: sameId, createTxHash: secondCreateHash };
+      const p1 = await cl.getProposal(off1);
+      const p2 = await cl.getProposal(off2);
+      expect(p1.createTxHash).to.equal(firstCreateHash);
+      expect(p1.status).to.equal("Executed");
+      expect(p1.decoded?.metadata).to.deep.equal(metadata);
+      expect(p2.createTxHash).to.equal(secondCreateHash);
+      // second should be unexecuted initially
+      expect(p2.status).to.equal("NotExecuted");
+      expect(p2.decoded?.metadata).to.deep.equal(metadata);
+    });
+
+    it("getProposals({ idFilter }) should return both instances ordered from newest to oldest", async function() {
+      const list = await cl.getProposals({ idFilter: sameId });
+      expect(list.length).to.be.equal(2);
+      expect(list[0].createTxHash).to.be.equal(secondCreateHash);
+      expect(list[1].createTxHash).to.be.equal(firstCreateHash);
+      // expect(list[0].createTime).to.be.greaterThan(list[1].createTime);
+      expect(list[0].status).to.be.equal("NotExecuted");
+      expect(list[1].status).to.be.equal("Executed");
+    });
+  })
   // TODO:
   describe("proposing to burn respect of an individual account", function() {})
   describe("burning respect of individual account", function() {});

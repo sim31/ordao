@@ -49,7 +49,7 @@ export class ProposalStore implements IProposalStore {
     }
 
     if (spec.idFilter !== undefined && zTxHash.parse(spec.idFilter)) {
-      filter['id'] = { $in: spec.idFilter }
+      filter['id'] = spec.idFilter;
     }
 
     const limit = spec.limit ? Math.min(spec.limit, this._cfg.maxDocLimit) : this._cfg.defaultDocLimit;
