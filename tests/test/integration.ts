@@ -483,11 +483,11 @@ describe("orclient", function() {
       // Take top two proposals
       expectInitPropValues(setMinWeightProps[0]);
       const s1 = expectSetMinWeight(setMinWeightProps[0]);
-      expect(s1.newMinWeight).to.be.equal(mreq1.newMinWeight);
+      expect(s1.newMinWeight).to.be.equal(mreq1.newMinWeight.toString());
 
       expectInitPropValues(setMinWeightProps[1]);
       const s2 = expectSetMinWeight(setMinWeightProps[1]);
-      expect(s2.newMinWeight).to.be.equal(mreq2.newMinWeight);
+      expect(s2.newMinWeight).to.be.equal(mreq2.newMinWeight.toString());
     });
 
     it("should have created new proposal onchain", async function() {
