@@ -15,6 +15,7 @@ import {
 import { RespectAwardMt, RespectFungibleMt } from "./respect1155.js";
 import { Erc1155Mt, TokenId } from "./erc1155.js";
 import { ContractMetadata } from "./erc7572.js";
+import { TxHash } from "./eth.js";
 
 export interface IORNode {
   /**
@@ -51,8 +52,10 @@ export class ProposalNotFound extends Error {
   name: ErrorType = zErrorType.enum.ProposalNotFound;
   statusCode: number = 400
 
-  constructor(propId: PropId) {
-    const msg = `Proposal with id ${propId} does not exist`;
+  constructor(propId: PropId, createTxHash?: TxHash) {
+    const msg = createTxHash 
+    ? `Proposal with id ${propId} and createTxHash ${createTxHash} does not exist`
+    : `Proposal with id ${propId} does not exist`;
     super(msg);
   }
 }

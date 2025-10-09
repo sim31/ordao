@@ -46,7 +46,9 @@ export function FullProposalCard({ proposal }: FullProposalCardProps) {
       console.log("success");
       navigate({
         to: `/proposals/$propId`,
-        params: { propId: actionPromise.propId }
+        params: { propId: actionPromise.propId },
+        // If we have createTxHash on the current proposal, include it to target this specific instance
+        search: proposal.createTxHash ? { txHash: proposal.createTxHash } : undefined,
       })
     }
     setActionPromise(undefined);

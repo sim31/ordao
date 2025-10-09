@@ -53,7 +53,11 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
 
       <Card.Body pt="0" pl="1em" gap="1em">
         <Card.Title fontSize="2xl" asChild color="black">
-          <Link to={`/proposals/$propId`} params={ { propId: proposal.id }}>
+          <Link
+            to={`/proposals/$propId`}
+            params={{ propId: proposal.id }}
+            search={proposal.createTxHash ? { txHash: proposal.createTxHash } : undefined}
+          >
             {propTitle}
           </Link>
         </Card.Title>
@@ -68,12 +72,18 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
           <VoteButtons proposal={proposal} onVoteClick={onVoteClick}/>
           <ExecuteButton proposal={proposal} onClick={onExecuteClick} />
           <Button asChild>
-            <Link to={`/proposals/$propId`} params={ { propId: proposal.id }}>
+            <Link
+              to={`/proposals/$propId`}
+              params={{ propId: proposal.id }}
+              search={proposal.createTxHash ? { txHash: proposal.createTxHash } : undefined}
+            >
               Details
             </Link>  
           </Button>
 
-          <Clipboard.Root value={`${window.location.origin}/proposals/${proposal.id}`}>
+          <Clipboard.Root
+            value={`${window.location.origin}/proposals/${proposal.id}${proposal.createTxHash ? `?txHash=${proposal.createTxHash}` : ''}`}
+          >
             <Clipboard.Trigger asChild>
               <Button size="sm">
                 <Clipboard.Indicator />
