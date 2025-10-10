@@ -1,6 +1,7 @@
 import { ZodIssueCode, ZodType, ZodTypeAny, z } from "zod";
 import {
   BurnRespectRequest,
+  BurnRespectBatchRequest,
   CustomCallRequest,
   CustomSignalRequest,
   RespectAccountRequest,
@@ -8,6 +9,7 @@ import {
   TickRequest,
   zBreakoutResult,
   zBurnRespectRequest,
+  zBurnRespectBatchRequest,
   zCustomCallRequest,
   zCustomSignalRequest,
   zRespectAccountRequest,
@@ -31,10 +33,66 @@ import {
   CancelProposalRequest,
   zCancelProposalRequest,
 } from "../orclient.js";
-import { BurnRespect, BurnRespectAttachment, CustomCall, CustomCallAttachment, CustomSignal, CustomSignalAttachment, PropContent, Proposal, RespectAccount, RespectAccountAttachment, RespectBreakout, RespectBreakoutAttachment, Tick, TickAttachment, TickValid, idOfBurnRespectAttach, idOfBaseAttach, idOfCustomSignalAttach, idOfRespectAccountAttachV1, idOfRespectBreakoutAttach, zBurnRespect, zBurnRespectValid, zCustomCall, zCustomCallValid, zCustomSignal, zCustomSignalValid, zRespectAccount, zRespectAccountValid, zRespectBreakout, zRespectBreakoutValid, zTick, zTickValid, zGetProposalsSpec, GetProposalsSpec, zGetAwardsSpec, GetAwardsSpec, GetVotesSpec, zGetVotesSpec, GetProposalsSpecBefore, zGetProposalsSpecSkip, GetProposalsSpecSkip, GetProposalsSpecBase, SetPeriodsAttachment, SetPeriods, zSetPeriodsValid, ProposalFull, SetMinWeightAttachment, SetMinWeight, zSetMinWeightValid, CancelProposal, CancelProposalAttachment, zCancelProposalValid } from "../ornode.js";
+import { 
+  BurnRespect, 
+  BurnRespectAttachment, 
+  BurnRespectBatch, 
+  BurnRespectBatchAttachment, 
+  CustomCall, 
+  CustomCallAttachment, 
+  CustomSignal, 
+  CustomSignalAttachment, 
+  PropContent, 
+  Proposal, 
+  RespectAccount, 
+  RespectAccountAttachment, 
+  RespectBreakout, 
+  RespectBreakoutAttachment, 
+  Tick, 
+  TickAttachment, 
+  TickValid, 
+  idOfBurnRespectAttach, 
+  idOfBaseAttach, 
+  idOfCustomSignalAttach, 
+  idOfRespectAccountAttachV1, 
+  idOfRespectBreakoutAttach, 
+  zBurnRespect, 
+  zBurnRespectValid, 
+  zBurnRespectBatchValid,
+  zCustomCall, 
+  zCustomCallValid, 
+  zCustomSignal, 
+  zCustomSignalValid, 
+  zRespectAccount, 
+  zRespectAccountValid, 
+  zRespectBreakout, 
+  zRespectBreakoutValid, 
+  zTick, 
+  zTickValid, 
+  zGetProposalsSpec, 
+  GetProposalsSpec, 
+  zGetAwardsSpec, 
+  GetAwardsSpec, 
+  zGetVotesSpec, 
+  GetVotesSpec, 
+  GetProposalsSpecBefore, 
+  zGetProposalsSpecSkip, 
+  GetProposalsSpecSkip, 
+  GetProposalsSpecBase, 
+  SetPeriodsAttachment, 
+  SetPeriods, 
+  zSetPeriodsValid, 
+  ProposalFull, 
+  SetMinWeightAttachment, 
+  SetMinWeight, 
+  zSetMinWeightValid, 
+  CancelProposal, 
+  CancelProposalAttachment, 
+  zCancelProposalValid 
+} from "../ornode.js";
 import { ConfigWithOrnode, ORContext as OrigORContext } from "../orContext.js";
 import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, strToVtMap, zStrToVoteType, SetPeriodsArgs, SetMinWeightArgs, strToVoteWeight } from "../orec.js";
-import { BurnRespectArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
+import { BurnRespectArgs, BurnRespectGroupArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
 import { propId } from "@ordao/orec/utils";
 import { addCustomIssue } from "../zErrorHandling.js";
 import { PropType, zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue } from "../fractal.js";
@@ -83,6 +141,46 @@ function mkzCRespectBreakoutToMintArgs(orctx: ORContext) {
       addCustomIssue(val, ctx, err, "exception in zCRespectBreakoutToMintArgs");
     }
   }).pipe(zBreakoutMintRequest);
+}
+
+function mkzCBurnRespBatchReqToProposal(orctx: ORContext) {
+  return zBurnRespectBatchRequest.transform(async (val, ctx) => {
+    try {
+      const args: BurnRespectGroupArgs = {
+        ids: val.tokenIds.map(t => zBigNumberishToBigint.parse(t)),
+        data: "0x"
+      };
+      const cdata = respectInterface.encodeFunctionData(
+        "burnRespectGroup",
+        [args.ids, args.data]
+      );
+      const addr = await orctx.getNewRespectAddr();
+
+      const attachment: BurnRespectBatchAttachment = {
+        propType: zPropType.Enum.burnRespectBatch,
+        burnReason: val.reason,
+        propTitle: val.metadata?.propTitle,
+        propDescription: val.metadata?.propDescription
+      };
+
+      const memo = idOfBurnRespectAttach(attachment);
+
+      const content: PropContent = { addr, cdata, memo };
+      const id = propId(content);
+
+      const r: BurnRespectBatch = {
+        id,
+        content,
+        attachment
+      }
+      return r;
+    } catch (err) {
+      addCustomIssue(val, ctx, {
+        message: "exception in zCBurnRespBatchReqToProposal",
+        cause: err
+      });
+    }
+  }).pipe(zBurnRespectBatchValid);
 }
 
 function mkzCRespectBreakoutToProposal(orctx: ORContext) {
@@ -542,6 +640,7 @@ export class ClientToNodeTransformer {
   private _zCRespBreakoutReqToProposal: ReturnType<typeof mkzCRespectBreakoutToProposal>;
   private _zCRespAccountReqToProposal: ReturnType<typeof mkzCRespAccountReqToProposal>
   private _zCBurnRespReqToProposal: ReturnType<typeof mkzCBurnRespReqToProposal>;
+  private _zCBurnRespBatchReqToProposal: ReturnType<typeof mkzCBurnRespBatchReqToProposal>;
   private _zCCustomSignalReqToProposal: ReturnType<typeof mkzCCustomSignalReqToProposal>;
   private _zCTickReqToProposal: ReturnType<typeof mkzTickReqToProposal>;
   private _zCCustomCallReqToProposal: ReturnType<typeof mkzCCustomCallReqToProposal>;
@@ -556,6 +655,7 @@ export class ClientToNodeTransformer {
     this._zCRespBreakoutReqToProposal = mkzCRespectBreakoutToProposal(this._ctx);
     this._zCRespAccountReqToProposal = mkzCRespAccountReqToProposal(this._ctx);
     this._zCBurnRespReqToProposal = mkzCBurnRespReqToProposal(this._ctx);
+    this._zCBurnRespBatchReqToProposal = mkzCBurnRespBatchReqToProposal(this._ctx);
     this._zCCustomSignalReqToProposal = mkzCCustomSignalReqToProposal(this._ctx);
     this._zCTickReqToProposal = mkzTickReqToProposal(this._ctx);
     this._zCCustomCallReqToProposal = mkzCCustomCallReqToProposal(this._ctx);
@@ -587,6 +687,10 @@ export class ClientToNodeTransformer {
 
   async transformBurnRespect(req: BurnRespectRequest): Promise<BurnRespect> {
     return await this._zCBurnRespReqToProposal.parseAsync(req);
+  }
+
+  async transformBurnRespectBatch(req: BurnRespectBatchRequest): Promise<BurnRespectBatch> {
+    return await this._zCBurnRespBatchReqToProposal.parseAsync(req);
   }
 
   async transformCustomSignal(req: CustomSignalRequest): Promise<CustomSignal> {
@@ -627,6 +731,8 @@ export class ClientToNodeTransformer {
         return await this.transformRespectAccount(req as RespectAccountRequest);
       case 'burnRespect':
         return await this.transformBurnRespect(req as BurnRespectRequest);
+      case 'burnRespectBatch':
+        return await this.transformBurnRespectBatch(req as BurnRespectBatchRequest);
       case 'customSignal':
         return await this.transformCustomSignal(req as CustomSignalRequest);
       case 'customCall':

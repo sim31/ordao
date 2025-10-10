@@ -1,5 +1,5 @@
 import { DecodedError, ExecutedEvent, ExecutionFailedEvent, PropId, PropType, ProposalNotCreated, ProposalState, encodeVoteMemo, zBytes, zPropId } from "@ordao/ortypes";
-import { BurnRespectRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest } from "@ordao/ortypes/orclient.js";
+import { BurnRespectRequest, BurnRespectBatchRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalFull as NProp, ORNodePropStatus } from "@ordao/ortypes/ornode.js";
 import { sleep, stringify } from "@ordao/ts-utils";
 import { ContractTransactionReceipt, ContractTransactionResponse, Signer, toBeHex } from "ethers";
@@ -272,6 +272,34 @@ export class ORClient extends ORClientReader {
   ): Promise<ProposeRes> {
     const v = zVoteWithProp.parse(vote); 
     const proposal = await this._clientToNode.transformBurnRespect(req);
+    return await this._submitProposal(proposal, v);
+  }
+
+  /**
+   * Create a proposal to burn multiple Respect awards at once.
+   * @param req - specification with a list of tokenIds to burn plus optional metadata and reason.
+   * @param vote - vote to submit with the result. Default: `{ vote: "Yes" }`.
+   * @returns resulting proposal and its status.
+   * 
+   * @remarks
+   * If `vote` parameter is not specified "Yes" vote is submitted.
+   * If you want to make this proposal but don't want to vote for it, specify `{ vote: "None" }`.
+   * 
+   * @example
+   * await c.proposeBurnRespectBatch({
+   *   tokenIds: [
+   *     "0x000000010000000000000000f39fd6e51aad88f6f4ce6ab8827279cfffb92266",
+   *     "0x00000001000000000000000070997970c51812dc3a010c7d01b50e0d17dc79c8"
+   *   ],
+   *   reason: "cleanup"
+   * })
+   */
+  async proposeBurnRespectBatch(
+    req: BurnRespectBatchRequest,
+    vote: VoteWithPropRequest = { vote: "Yes" }
+  ): Promise<ProposeRes> {
+    const v = zVoteWithProp.parse(vote);
+    const proposal = await this._clientToNode.transformBurnRespectBatch(req);
     return await this._submitProposal(proposal, v);
   }
 

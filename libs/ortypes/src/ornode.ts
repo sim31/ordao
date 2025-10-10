@@ -39,6 +39,12 @@ export const zBurnRespectAttachment = zPropAttachmentBase.extend({
 });
 export type BurnRespectAttachment = z.infer<typeof zBurnRespectAttachment>;
 
+export const zBurnRespectBatchAttachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.burnRespectBatch),
+  burnReason: z.string()
+});
+export type BurnRespectBatchAttachment = z.infer<typeof zBurnRespectBatchAttachment>;
+
 export const zCustomSignalAttachment = zPropAttachmentBase.extend({
   propType: z.literal(zPropType.Enum.customSignal),
   link: z.string().optional()
@@ -75,6 +81,7 @@ export const zPropAttachment = z.union([
   zRespectBreakoutAttachment,
   zRespectAccountAttachment,
   zBurnRespectAttachment,
+  zBurnRespectBatchAttachment,
   zCustomSignalAttachment,
   zTickAttachment,
   zCustomCallAttachment,
@@ -188,6 +195,16 @@ export const zBurnRespectValid = zBurnRespect
   .brand<"zBurnRespectValid">();
 export type BurnRespectValid = z.infer<typeof zBurnRespectValid>;
 
+export const zBurnRespectBatch = zProposalBaseFull.extend({
+  attachment: zBurnRespectBatchAttachment
+});
+export type BurnRespectBatch = z.infer<typeof zBurnRespectBatch>;
+
+export const zBurnRespectBatchValid = zBurnRespectBatch
+  .refine(propIdMatchesContent, propIdErr).refine(propMemoMatchesAttachment, memoErr)
+  .brand<"zBurnRespectBatchValid">();
+export type BurnRespectBatchValid = z.infer<typeof zBurnRespectBatchValid>;
+
 export const zCustomSignal = zProposalBaseFull.extend({
   attachment: zCustomSignalAttachment
 });
@@ -251,6 +268,7 @@ export const zProposal = z.union([
   zRespectBreakout,
   zRespectAccount,
   zBurnRespect,
+  zBurnRespectBatch,
   zCustomSignal,
   zTick,
   zCustomCall,
@@ -265,6 +283,7 @@ export const zStoredProposal = z.union([
   zRespectBreakout.required({ status: true, createTs: true }),
   zRespectAccount.required({ status: true, createTs: true }),
   zBurnRespect.required({ status: true, createTs: true }),
+  zBurnRespectBatch.required({ status: true, createTs: true }),
   zCustomSignal.required({ status: true, createTs: true }),
   zTick.required({ status: true, createTs: true }),
   zCustomCall.required({ status: true, createTs: true }),
@@ -279,6 +298,7 @@ export const zProposalFull = z.union([
   zRespectBreakout,
   zRespectAccount,
   zBurnRespect,
+  zBurnRespectBatch,
   zCustomSignal,
   zTick,
   zCustomCall,
@@ -388,8 +408,8 @@ export function idOfRespectAccountAttachV0(attachment: RespectAccountAttachment)
   );
 }
 
-export function idOfBurnRespectAttach(attachment: BurnRespectAttachment) {
-  const a: Required<BurnRespectAttachment> = {
+export function idOfBurnRespectAttach(attachment: BurnRespectAttachment | BurnRespectBatchAttachment) {
+  const a: Required<BurnRespectAttachment | BurnRespectBatchAttachment> = {
     ...attachment,
     propTitle: attachment.propTitle ?? "",
     propDescription: attachment.propDescription ?? "",
@@ -461,6 +481,7 @@ export function attachmentId(attachment: PropAttachment) {
       }
     }
     case 'burnRespect':
+    case 'burnRespectBatch':
       return idOfBurnRespectAttach(attachment);
     case 'customSignal':
     case 'tick':

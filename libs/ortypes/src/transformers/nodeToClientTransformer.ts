@@ -8,6 +8,8 @@ import {
   RespectAccount,
   zBurnRespect,
   BurnRespect,
+  zBurnRespectBatch,
+  BurnRespectBatch,
   CustomSignal,
   zProposalMetadata,
   ProposalMetadata,
@@ -45,6 +47,7 @@ import {
   zRespectBreakoutAttachment,
   zRespectAccountAttachment,
   zBurnRespectAttachment,
+  zBurnRespectBatchAttachment,
   zCustomSignalAttachment,
   zPropAttachmentBase,
   zCustomCallAttachment,
@@ -68,7 +71,7 @@ import { z } from "zod";
 import { ConfigWithOrnode, ORContext as OrigORContext, OnchainPropNotFound } from "../orContext.js";
 import { addCustomIssue } from "../zErrorHandling.js";
 import { Optional } from "utility-types";
-import { MeetingNum, Factory as Respect1155Factory, zBurnRespectArgs, zMeetingNum, zMintRespectArgs, zTokenIdData } from "../respect1155.js";
+import { MeetingNum, Factory as Respect1155Factory, zBurnRespectArgs, zBurnRespectGroupArgs, zMeetingNum, zMintRespectArgs, zTokenIdData } from "../respect1155.js";
 import { Orec__factory as OrecFactory } from "@ordao/orec/typechain-types";
 import { zBreakoutMintRequest, zPropType } from "../fractal.js";
 import { expect } from "chai";
@@ -108,6 +111,40 @@ export const voteStatusMap: Record<NVoteStatus, VoteStatus> = {
   [NVoteStatus.Failing]: "Failing",
   [NVoteStatus.Passed]: "Passed",
   [NVoteStatus.Passing]: "Passing"
+}
+
+function mkzNProposalToBurnRespectBatch(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zBurnRespectBatchAttachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getNewRespectAddr(),
+        "respect batch burn message expected to be addressed to newRespectAddr"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = respectInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        respectInterface.getFunction('burnRespectGroup').name,
+        "expected burnRespectGroup function to be called"
+      );
+
+      const args = zBurnRespectGroupArgs.parse(tx?.args);
+      const ids = args.ids;
+
+      const r: BurnRespectBatch = {
+        propType: zPropType.Enum.burnRespectBatch,
+        tokenIds: ids.map(id => zBigIntToBytes32.parse(id)),
+        reason: attachment.burnReason,
+        metadata: zNAttachmentToMetadata.parse(attachment)
+      };
+
+      return r;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in zProposalToBurnRespectBatch");
+    }
+  }).pipe(zBurnRespectBatch);
 }
 
 function mkzNProposalToCancelProposal(orctx: ORContext) {
@@ -456,6 +493,7 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToSetPeriods = mkzNProposalToSetPeriods(orctx);
   const zNProposalToSetMinWeight = mkzNProposalToSetMinWeight(orctx);
   const zNProposalToCancelProposal = mkzNProposalToCancelProposal(orctx);
+  const zNProposalToBurnRespectBatch = mkzNProposalToBurnRespectBatch(orctx);
 
   return zNProposalFull.transform(async (val, ctx) => {
     if (val.attachment !== undefined && val) {
@@ -466,6 +504,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
           return await zNProposalToRespectAccount.parseAsync(val);
         case 'burnRespect':
           return await zNProposalToBurnRespect.parseAsync(val);
+        case 'burnRespectBatch':
+          return await zNProposalToBurnRespectBatch.parseAsync(val);
         case 'customSignal':
           return await zNProposalToCustomSignal.parseAsync(val);
         case 'customCall':

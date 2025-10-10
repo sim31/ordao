@@ -43,6 +43,13 @@ type PostV1PutProposalInput = {
               burnReason: string;
             }
           | {
+              propType: "burnRespectBatch";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+              burnReason: string;
+            }
+          | {
               propType: "customSignal";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
@@ -166,6 +173,32 @@ type PostV1PutProposalInput = {
         };
         attachment: {
           propType: "burnRespect";
+          propTitle?: string | undefined;
+          propDescription?: string | undefined;
+          salt?: string | undefined;
+          burnReason: string;
+        };
+        /** Unix timestamp. Should match onchain createTime of proposal */
+        createTs?: number | undefined;
+        /** Hash of transaction which created this proposal */
+        createTxHash?: string | undefined;
+        /** Hash of transaction which executed this proposal */
+        executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+      }
+    | {
+        id: string;
+        content: {
+          addr: string;
+          cdata: string | any;
+          memo: string | any;
+        };
+        attachment: {
+          propType: "burnRespectBatch";
           propTitle?: string | undefined;
           propDescription?: string | undefined;
           salt?: string | undefined;
@@ -406,6 +439,13 @@ type PostV1GetProposalResponse =
                     burnReason: string;
                   }
                 | {
+                    propType: "burnRespectBatch";
+                    propTitle?: string | undefined;
+                    propDescription?: string | undefined;
+                    salt?: string | undefined;
+                    burnReason: string;
+                  }
+                | {
                     propType: "customSignal";
                     propTitle?: string | undefined;
                     propDescription?: string | undefined;
@@ -522,6 +562,29 @@ type PostV1GetProposalResponse =
           };
           attachment: {
             propType: "burnRespect";
+            propTitle?: string | undefined;
+            propDescription?: string | undefined;
+            salt?: string | undefined;
+            burnReason: string;
+          };
+          createTs: number;
+          /** Hash of transaction which created this proposal */
+          createTxHash?: string | undefined;
+          /** Hash of transaction which executed this proposal */
+          executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+        }
+      | {
+          id: string;
+          content: {
+            addr: any;
+            cdata: string | any;
+            memo: string | any;
+          };
+          attachment: {
+            propType: "burnRespectBatch";
             propTitle?: string | undefined;
             propDescription?: string | undefined;
             salt?: string | undefined;
@@ -755,6 +818,13 @@ type PostV1GetProposalsResponse =
                       burnReason: string;
                     }
                   | {
+                      propType: "burnRespectBatch";
+                      propTitle?: string | undefined;
+                      propDescription?: string | undefined;
+                      salt?: string | undefined;
+                      burnReason: string;
+                    }
+                  | {
                       propType: "customSignal";
                       propTitle?: string | undefined;
                       propDescription?: string | undefined;
@@ -871,6 +941,29 @@ type PostV1GetProposalsResponse =
             };
             attachment: {
               propType: "burnRespect";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+              burnReason: string;
+            };
+            createTs: number;
+            /** Hash of transaction which created this proposal */
+            createTxHash?: string | undefined;
+            /** Hash of transaction which executed this proposal */
+            executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          }
+        | {
+            id: string;
+            content: {
+              addr: any;
+              cdata: string | any;
+              memo: string | any;
+            };
+            attachment: {
+              propType: "burnRespectBatch";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;
@@ -1349,6 +1442,7 @@ type PostV1GetAwardsInput = {
     limit?: number | undefined;
     recipient?: string | undefined;
     burned?: boolean | undefined;
+    tokenIdFilter?: string[] | undefined;
   };
 };
 

@@ -102,6 +102,7 @@ export type TokenIdData = z.infer<typeof zTokenIdData>;
 export type CMintRespectGroupArgs = Parameters<Respect1155["mintRespectGroup"]>
 export type CMintRespectArgs = Parameters<Respect1155["mintRespect"]>;
 export type CBurnRespectArgs = Parameters<Respect1155['burnRespect']>;
+export type CBurnRespectGroupArgs = Parameters<Respect1155['burnRespectGroup']>;
 
 export const zMintRequestBase = z.object({
   id: zTokenIdNum,
@@ -154,6 +155,20 @@ const burnRespectVerify = zBurnRespectArgs.refine((val) => {
   return true;
 });
 export type BurnRespectArgs = z.infer<typeof zBurnRespectArgs>;
+
+export const zBurnRespectGroupArgsBase = z.object({
+  ids: z.array(zTokenIdNum),
+  data: zBytesLike
+});
+export const zBurnRespectGroupArgs = preprocessResultOrObj(zBurnRespectGroupArgsBase);
+const burnRespectGroupVerify = zBurnRespectGroupArgs.refine((val) => {
+  const args: CBurnRespectGroupArgs = [
+    val.ids,
+    val.data
+  ];
+  return true;
+});
+export type BurnRespectGroupArgs = z.infer<typeof zBurnRespectGroupArgs>;
 
 /**
  * Metadata for fungible respect

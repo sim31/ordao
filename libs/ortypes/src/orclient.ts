@@ -181,6 +181,29 @@ export const zBurnRespectRequest = zBurnRespect
   .describe(burnRespectDescription);
 export type BurnRespectRequest = z.infer<typeof zBurnRespectRequest>;
 
+const burnRespectBatchDescription = `
+Burn Respect Batch
+
+Burn multiple Respect awards at once.
+`
+const tokenIdsDesc = `
+Tokens
+
+
+`
+export const zBurnRespectBatch = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.burnRespectBatch),
+  tokenIds: z.array(zTokenId).min(1).describe(tokenIdsDesc),
+  reason: z.string().describe(reason)
+}).describe(burnRespectBatchDescription);
+export type BurnRespectBatch = z.infer<typeof zBurnRespectBatch>;
+
+export const zBurnRespectBatchRequest = zBurnRespectBatch
+  .omit({ propType: true })
+  .partial({ metadata: true })
+  .describe(burnRespectBatchDescription);
+export type BurnRespectBatchRequest = z.infer<typeof zBurnRespectBatchRequest>;
+
 const signalBytesDesc = `
 Data
 
@@ -355,6 +378,7 @@ export const zDecodedProposal = z.union([
   zTick,
   zCustomSignal,
   zBurnRespect,
+  zBurnRespectBatch,
   zRespectAccount,
   zRespectBreakout,
   zSetPeriods,
@@ -368,6 +392,7 @@ export const zProposalRequest = z.union([
   zTickRequest,
   zCustomSignalRequest,
   zBurnRespectRequest,
+  zBurnRespectBatchRequest,
   zRespectAccountRequest,
   zRespectBreakoutRequest,
   zSetPeriodsRequest,
@@ -381,6 +406,7 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "tick": zTick,
   "customSignal": zCustomSignal,
   "burnRespect": zBurnRespect,
+  "burnRespectBatch": zBurnRespectBatch,
   "respectAccount": zRespectAccount,
   "respectBreakout": zRespectBreakout,
   "setPeriods": zSetPeriods,
@@ -393,6 +419,7 @@ export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "respectAccount": zRespectAccountRequest,
   "respectBreakout": zRespectBreakoutRequest,
   "burnRespect": zBurnRespectRequest,
+  "burnRespectBatch": zBurnRespectBatchRequest,
   "customCall": zCustomCallRequest,
   "customSignal": zCustomSignalRequest,
   "setPeriods": zSetPeriodsRequest,
@@ -517,6 +544,7 @@ export type PropOfPropType<T extends PropType> =
   T extends typeof zPropType.Enum.respectBreakout ? RespectBreakout
   : T extends typeof zPropType.enum.respectAccount ? RespectAccount
   : T extends typeof zPropType.Enum.burnRespect ? BurnRespect
+  : T extends typeof zPropType.Enum.burnRespectBatch ? BurnRespectBatch
   : T extends typeof zPropType.Enum.customSignal ? CustomSignal
   : T extends typeof zPropType.Enum.customCall ? CustomCall
   : T extends typeof zPropType.Enum.tick ? Tick
