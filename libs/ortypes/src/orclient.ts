@@ -1,7 +1,7 @@
 import { ZodType, z } from "zod";
 import { PropType, zGroupNum, zPropType, zRankings } from "./fractal.js";
 import { zCustomSignalType, zOnchainProp as zNOnchainProp, zPeriodLength, zPropId, zProposedMsgBase } from "./orec.js";
-import { zMeetingNum, zMintType, zTokenId } from "./respect1155.js";
+import { zMeetingNum, zMintType, zTokenId, zTokenIdNum } from "./respect1155.js";
 import { zBytes, zEthAddress, zTxHash, zUint } from "./eth.js";
 import { zTimestamp } from "./common.js";
 import { ErrorType } from "@ordao/ethers-decode-error";
@@ -496,7 +496,8 @@ export const zGetAwardsSpec = z.object({
   before: z.date().optional(),
   limit: z.number().int().gt(0).optional(),
   recipient: zEthAddress.optional(),
-  burned: z.boolean().optional()
+  burned: z.boolean().optional(),
+  tokenIdFilter: zTokenId.array().optional(),
 }).strict();
 export type GetAwardsSpec = z.infer<typeof zGetAwardsSpec>;
 

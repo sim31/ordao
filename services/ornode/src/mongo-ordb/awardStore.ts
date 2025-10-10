@@ -28,17 +28,30 @@ export class AwardStore implements IAwardStore {
   }
 
   async getAward(id: TokenId): Promise<RespectAwardMt | null> {
+    // Return the newest active (not burned) award for the given tokenId.
+    // If multiple active rows exist, log an error and return the newest by mintTs.
     const filter = {
       "properties.tokenId": id,
-    };
-    const doc = await this.awards.findOne(filter);
-    if (doc !== null) {
-      console.debug("Retrieved award _id: ", doc._id, ", id: ", id);
-      return zRespectAwardMt.parse(withoutId(doc));
-    } else {
-      console.debug("Did not find award id: ", id);
+      "properties.burn": null
+    } as const;
+
+    const docs = await this.awards.find(filter)
+      .sort({ "properties.mintTs": -1 })
+      .limit(2)
+      .toArray();
+
+    if (docs.length === 0) {
+      console.debug("Did not find active award id: ", id);
       return null;
     }
+
+    if (docs.length > 1) {
+      throw new Error(`Multiple active awards found for tokenId ${id}.`);
+    }
+
+    const newest = docs[0];
+    console.debug("Retrieved award _id: ", newest._id, ", id: ", id);
+    return zRespectAwardMt.parse(withoutId(newest));
   }
 
   async getAwards(spec?: GetAwardsSpec): Promise<RespectAwardMt[]> {
@@ -53,6 +66,10 @@ export class AwardStore implements IAwardStore {
     }
     if (spec?.recipient !== undefined) {
       filter['properties.recipient'] = spec.recipient;
+    }
+    const tokenIdFilter = spec?.tokenIdFilter as TokenId[] | undefined;
+    if (tokenIdFilter !== undefined) {
+      filter['properties.tokenId'] = { $in: tokenIdFilter };
     }
 
     const cursor = await this.awards.find(filter)
@@ -116,7 +133,10 @@ export class AwardStore implements IAwardStore {
   }
 
   async burnAwards(tokenIds: TokenId[], burnData: BurnData): Promise<void> {
-    const filter = { "properties.tokenId": { $in: tokenIds } };
+    const filter = { 
+      "properties.tokenId": { $in: tokenIds },
+      "properties.burn": null
+    };
     const update = { $set: { "properties.burn": burnData } };
     const result = await this.awards.updateMany(filter, update);
     console.debug(`Requested to burn: ${tokenIds}. Burn data: ${JSON.stringify(burnData)}, modified count: ${result.modifiedCount}`);

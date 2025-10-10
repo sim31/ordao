@@ -4,6 +4,7 @@ import { PropId, VoteType, zExecStatus, zExecStatusStr, zPropId, zProposedMsg, z
 import { zGroupNum, zPropType } from "./fractal.js";
 import { propId } from "@ordao/orec/utils";
 import { zBytesLikeToBytes, zEthAddress, zTxHash } from "./eth.js";
+import { zTokenId } from "./respect1155.js";
 import { zTimestamp } from "./common.js";
 
 export const zPropContent = zProposedMsg;
@@ -339,7 +340,8 @@ export const zGetAwardsSpec = z.object({
   before: zTimestamp.optional(),
   limit: z.number().int().gt(0).optional(),
   recipient: zEthAddress.optional(),
-  burned: z.boolean().optional()
+  burned: z.boolean().optional(),
+  tokenIdFilter: z.array(zTokenId).optional()
 }).strict();
 export type GetAwardsSpec = z.infer<typeof zGetAwardsSpec>;
 

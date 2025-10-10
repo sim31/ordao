@@ -158,19 +158,19 @@ export class ORClientReader {
    * @param tokenId - id of a token.
    * 
    * @remarks
-   * If `tokenId` is an id of a burned token, this function might return a metadata for token which is burned onchain.
+   * Throws if token is not found or is burned.
    */
   async getToken(tokenId: TokenId): Promise<Erc1155Mt> {
     return await this._ctx.ornode.getToken(tokenId);
   }
 
   /**
-   * Get metadata of specific Respect award NTT.
+   * Get metadata of specific Respect award NTT. Throws if token is not found or is burned.
    * 
    * @param tokenId - id of a token.
    * 
    * @remarks
-   * If `tokenId` is an id of a burned token, this function might return a metadata for token which is burned onchain.
+   * Throws if token is not found or is burned.
    */
   async getAward(tokenId: TokenId): Promise<RespectAwardMt> {
     return await this._ctx.ornode.getAward(tokenId);

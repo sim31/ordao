@@ -4,6 +4,7 @@ import { BreakoutResult, DecodedProposal, RespectBreakout, Proposal, RespectAcco
 import { TxFailed, ORClient, RemoteOrnode, defaultConfig } from "@ordao/orclient";
 import { EthAddress, ExecStatus, PropType, Stage, VoteStatus, VoteType, zProposedMsg, OffchainPropId } from "@ordao/ortypes";
 import hre from "hardhat";
+import { toBeHex } from "ethers";
 import { HardhatEthersSigner } from "@nomicfoundation/hardhat-ethers/signers.js";
 import {
   Respect1155,
@@ -180,6 +181,16 @@ describe("orclient", function() {
     const diff = now - (date.getTime() / 1000);
     // console.log("diff: ", diff);
     expect(Math.abs(diff) < maxDiffSec).to.be.true;
+  }
+
+  async function passAndExecute(pid: string) {
+    // Ensure enough YES votes then advance time and execute
+    const voter = cl.connect(signers[14]);
+    await expect(voter.vote(pid, "Yes", "")).to.not.be.rejected;
+    await time.increase(DAY_1 * 2n);
+    await time.increase(DAY_6 + DAY_1);
+    await expect(cl.execute(pid)).to.not.be.rejected;
+    await sleep(100);
   }
 
   describe("submitting breakout room results", function() {
@@ -1131,6 +1142,174 @@ describe("orclient", function() {
       expect(list[1].status).to.be.equal("Executed");
     });
   })
+
+  describe("TokenId collision handling", function() {
+    let baseMeetingNum: number;
+    const account = () => addrs[3];
+    const value = 7n;
+    const mintType = 1; // unspecified mint type default
+    const mintType2 = 2; // Use different for second test
+
+    before("establish base meeting number", async function() {
+      baseMeetingNum = await cl.getNextMeetingNum();
+    });
+
+    describe("TokenId collision, one token active", function() {
+      let firstTokenId: string;
+      let secondTokenId: string;
+
+      it("should mint, burn, remint same tokenId and assert queries", async function() {
+        const initAwardsLength = (await cl.getAwards()).length;
+        // 1. Breakout to have some unrelated tokens
+        const grp = {
+          groupNum: 1,
+          rankings: [ addrs[0], addrs[1], addrs[2], addrs[4], addrs[5], addrs[6] ]
+        };
+        const rankingsLen = grp.rankings.length;
+        const br = await cl.proposeBreakoutResult(grp, { vote: "Yes" });
+        await passAndExecute(br.proposal.id);
+
+
+        // 2. Mint respect to an account with controlled meetingNum
+        const mint1 = await cl.proposeRespectTo({
+          account: account(),
+          value,
+          title: "t1",
+          reason: "r1",
+          meetingNum: baseMeetingNum,
+          mintType
+        }, { vote: "Yes" });
+        await passAndExecute(mint1.proposal.id);
+
+        const periodNumber = baseMeetingNum - 1;
+        firstTokenId = toBeHex(packTokenId({ owner: account(), mintType, periodNumber }), 32);
+
+        // 3. Burn that respect
+        const burn1 = await cl.proposeBurnRespect({ tokenId: firstTokenId, reason: "burn1" }, { vote: "Yes" });
+        await passAndExecute(burn1.proposal.id);
+
+        // 4. Remint same tokenId (same meetingNum & mintType)
+        const mint2 = await cl.proposeRespectTo({
+          account: account(),
+          value,
+          title: "t2",
+          reason: "r2",
+          meetingNum: baseMeetingNum,
+          mintType
+        }, { vote: "Yes" });
+        await passAndExecute(mint2.proposal.id);
+
+        secondTokenId = toBeHex(packTokenId({ owner: account(), mintType, periodNumber }), 32);
+
+        expect(secondTokenId).to.equal(firstTokenId, "Expected same tokenId after remint");
+
+        // Tests
+        // getAward should return the new token only (not burned)
+        const award = await cl.getAward(secondTokenId);
+        expect(award.properties.burn).to.be.oneOf([undefined, null]);
+        expect(award.properties.title).to.equal("t2");
+        expect(award.properties.reason).to.equal("r2");
+
+        // getAwards without spec should include breakout tokens and new token only (does not return burned)
+        const latest = await cl.getAwards();
+        const found = latest.filter(a => a.properties.tokenId === secondTokenId);
+        expect(found.length).to.be.equal(1);
+        expect(latest.length).to.be.eq(initAwardsLength + rankingsLen + 1);
+
+        // getAwards without spec and burned: true, should include breakout tokens and both new tokens
+        const latestWithBurned = await cl.getAwards({ burned: true });
+        const bothTokens = latestWithBurned.filter(a => a.properties.tokenId === secondTokenId);
+        expect(bothTokens.length).to.be.equal(2);
+        expect(latestWithBurned.length).to.be.eq(initAwardsLength + rankingsLen + 2);
+
+        // getAwards with tokenIdFilter and burn: true should return both rows
+        const both = await cl.getAwards({ burned: true, tokenIdFilter: [ secondTokenId ] });
+        expect(both.length).to.be.eq(2);
+        expect(both.filter(a => a.properties.tokenId === secondTokenId).length).to.be.eq(2);
+        const burnedRow = both.find(a => a.properties.burn && a.properties.title === "t1");
+        expect(burnedRow?.properties.burn?.burnTxHash).to.not.be.undefined;
+
+        // getAwards with tokenIdFilter and burn: false should return only the new token
+        const onlyActive = await cl.getAwards({ burned: false, tokenIdFilter: [ secondTokenId ] });
+        expect(onlyActive.length).to.equal(1);
+        expect(onlyActive[0].properties.title).to.equal("t2");
+      });
+    });
+
+    describe("TokenId collision, both tokens burned", function() {
+      let tokenId: string;
+
+      it("should mint, burn, remint same tokenId, burn again and assert queries", async function() {
+        const initAwardsLength = (await cl.getAwards()).length;
+
+        // Breakout to have some unrelated tokens
+        const grp = {
+          groupNum: 1,
+          rankings: [ addrs[0], addrs[1], addrs[2], addrs[4], addrs[5], addrs[6] ],
+          meetingNum: 100 // to not collide with mints done in previous test
+        };
+        const rankingsLen = grp.rankings.length;
+        const br = await cl.proposeBreakoutResult(grp, { vote: "Yes" });
+        await passAndExecute(br.proposal.id);
+
+        // Mint
+        const mint1 = await cl.proposeRespectTo({
+          account: account(),
+          value,
+          title: "t3",
+          reason: "r3",
+          meetingNum: baseMeetingNum,
+          mintType: mintType2
+        }, { vote: "Yes" });
+        await passAndExecute(mint1.proposal.id);
+
+        const periodNumber = baseMeetingNum - 1;
+        tokenId = toBeHex(packTokenId({ owner: account(), mintType, periodNumber }), 32);
+
+        // Burn first
+        const burn1 = await cl.proposeBurnRespect({ tokenId, reason: "burnA" }, { vote: "Yes" });
+        await passAndExecute(burn1.proposal.id);
+
+        // Remint same
+        const mint2 = await cl.proposeRespectTo({
+          account: account(),
+          value,
+          title: "t4",
+          reason: "r4",
+          meetingNum: baseMeetingNum,
+          mintType: mintType2
+        }, { vote: "Yes" });
+        await passAndExecute(mint2.proposal.id);
+
+        // Burn second
+        const burn2 = await cl.proposeBurnRespect({ tokenId, reason: "burnB" }, { vote: "Yes" });
+        await passAndExecute(burn2.proposal.id);
+
+        // Tests
+        // getAward should not return any tokens with that id (should throw)
+        await expect(cl.getAward(tokenId)).to.be.rejected;
+
+        // getAwards (burn: true) should return both rows and include breakout tokens in general listing
+        const allBurned = await cl.getAwards({ burned: true });
+        expect(allBurned.length).to.be.eq(initAwardsLength + rankingsLen + 2);
+        expect(allBurned.filter(a => a.properties.tokenId === tokenId).length).to.be.eq(2);
+
+        // getAwards should return none of the new rows and include breakout tokens in general listing
+        const getAwardsDefault = await cl.getAwards();
+        expect(getAwardsDefault.length).to.be.eq(initAwardsLength + rankingsLen);
+        expect(getAwardsDefault.filter(a => a.properties.tokenId === tokenId).length).to.be.eq(0);
+
+        // getAwards with tokenIdFilter burned: true should return both tokens (and only them)
+        const both = await cl.getAwards({ burned: true, tokenIdFilter: [ tokenId ] });
+        expect(both.length).to.be.eq(2);
+        expect(both.filter(a => a.properties.tokenId === tokenId).length).to.be.eq(2);
+
+        // getAwards with tokenIdFilter burned: false should return none
+        const none = await cl.getAwards({ burned: false, tokenIdFilter: [ tokenId ] });
+        expect(none.length).to.equal(0);
+      });
+    });
+  });
   // TODO:
   describe("proposing to burn respect of an individual account", function() {})
   describe("burning respect of individual account", function() {});
