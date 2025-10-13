@@ -7,7 +7,7 @@ import {
 import { Text } from "../Text.js";
 import { Button } from "../Button.js";
 import { ProposeRes } from "@ordao/orclient";
-import { RespectBreakoutRequest, zRespectBreakoutRequest } from "@ordao/ortypes/orclient.js";
+import { respectBreakoutReqSchemas, RespectBreakoutRequest, RespectBreakoutX2Request } from "@ordao/ortypes/orclient.js";
 import copy from "copy-to-clipboard";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { fromError } from 'zod-validation-error';
@@ -17,6 +17,7 @@ import OnchainActionModal from "../OnchainActionModal.js";
 import { toaster } from "../ui/toaster";
 import SubmitBreakoutResModal from "./SubmitBreakoutResModal";
 import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
+import { config } from "../../global/config.js";
 
 export type SubmitBreakoutFormProps = {
   searchParams: SearchParams;
@@ -32,7 +33,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
   const [errorStr, setErrorStr] = useState<string | undefined>(undefined);
   const [submitOpen, setSubmitOpen] = useState<boolean>(false);
   const [consensusId, setConsensusId] = useState<string>("");
-  const [request, setRequest] = useState<RespectBreakoutRequest>();
+  const [request, setRequest] = useState<RespectBreakoutRequest | RespectBreakoutX2Request>();
   const [txPromise, setTxPromise] = useState<Promise<ProposeRes> | undefined>(undefined);
 
   useEffect(() => {
@@ -70,7 +71,7 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
       throw new Error("orclient not initialized");
     }
     closeSubmitModal();
-    setTxPromise(orclient.proposeBreakoutResult(request));
+    setTxPromise(orclient.propose(config.defBreakoutType, request));
   }, [request, orclient, initialized])
 
   const onSubmitClick = async () => {
@@ -91,7 +92,9 @@ export default function SubmitBreakoutForm({ onComplete, searchParams, setSearch
     }
 
     try {
-      const parsed = zRespectBreakoutRequest.parse(request);
+      const breakoutType = config.defBreakoutType;
+      const schema = respectBreakoutReqSchemas[breakoutType];
+      const parsed = schema.parse(request);
       setErrorStr(undefined);
       console.log("Parsed: ", parsed);
       await openSubmitModal(parsed);

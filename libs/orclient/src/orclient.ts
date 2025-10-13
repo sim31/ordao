@@ -212,6 +212,41 @@ export class ORClient extends ORClientReader {
     return await this._submitProposal(proposal, v);
   }
 
+
+  /**
+   * Create a proposal to award respect game participants of a single breakout room, based on results of that breakout room.
+   * Double respect distribution from the standard one.
+   * @param request - breakout room results, plus optional metadata.
+   * @param vote - vote to submit with the result. Default: `{ vote: "Yes" }`.
+   * @returns resulting proposal and its status.
+   * 
+   * @remarks
+   * The respect amounts to award are calculated automatically based on rankings:
+   * * Level 6 - 110
+   * * Level 5 - 68
+   * * Level 4 - 42
+   * * Level 3 - 26
+   * * Level 2 - 16
+   * * Level 1 - 10
+   * 
+   * The actual onchain proposal is just for minting Respect according to distribution above.
+   * 
+   * If `vote` parameter is not specified "Yes" vote is submitted.
+   * If you want to make this proposal but don't want to vote for it, specify `{ vote: "None" }`.
+   * 
+   */
+  async proposeBreakoutResultX2(
+    request: RespectBreakoutRequest,
+    vote: VoteWithPropRequest = { vote: "Yes" }
+  ): Promise<ProposeRes> {
+    console.debug("submitting breakout result");
+    const v = zVoteWithProp.parse(vote); 
+    console.debug("parsed vote");
+    const proposal = await this._clientToNode.transformRespectBreakoutX2(request);
+    return await this._submitProposal(proposal, v);
+  }
+
+
   /**
    * Propose to mint a single Respect award to a single account.
    * 

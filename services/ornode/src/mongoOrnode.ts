@@ -18,7 +18,8 @@ export async function createORNode(
       contractRunner,
       tokenCfg: config.tokenMetadataCfg,
       startPeriodNumber: config.ornode.startPeriodNum,
-      listenToEvents: config.ornode.listenForEvents
+      listenToEvents: config.ornode.listenForEvents,
+      breakoutType: config.ornode.defBreakoutType
     }, mordb);
 }
 

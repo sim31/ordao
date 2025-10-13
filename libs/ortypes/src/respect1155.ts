@@ -67,8 +67,8 @@ const mintTypeDesc = `
 Mint type
 
 A number identifying a type of a mint.
-
 0 - Respect Breakout
+10 - Respect Breakout x2
 `
 export const zMintType = z.coerce.number().int().gte(0).describe(mintTypeDesc);
 export type MintType = z.infer<typeof zMintType>;
@@ -85,6 +85,9 @@ export type InitialMintType = z.infer<typeof zInitialMintType>;
 // Need a range types for migration, because sometimes you need to join earnings from multiple accounts into one new account on the new platform.
 export const zMigrationMintType = z.number().int().gte(3).lt(10);
 export type MigrationMintType = z.infer<typeof zMigrationMintType>;
+
+export const zBreakoutX2MintType = z.literal(10);
+export type BreakoutX2MintType = z.infer<typeof zBreakoutX2MintType>;
 
 export const zTokenIdData = z.object({
   periodNumber: zPeriodNum,

@@ -1,6 +1,6 @@
 import { createConfig } from "express-zod-api";
 import fs from "fs";
-import { zContractMetadata, zEthAddress } from "@ordao/ortypes";
+import { zBreakoutType, zContractMetadata, zEthAddress } from "@ordao/ortypes";
 import { z } from "zod"
 import "dotenv/config";
 import jsonfile from "jsonfile";
@@ -58,7 +58,8 @@ export const zOrnodeCfg = z.object({
   sync: zSyncConfig.optional(),
   listenForEvents: z.boolean().default(true),
   wsResetInterval: z.number().int().default(0)
-    .describe("Interval in seconds for how often to reset ws connection. 0 for never.")
+    .describe("Interval in seconds for how often to reset ws connection. 0 for never."),
+  defBreakoutType: zBreakoutType.default(zBreakoutType.Values.respectBreakout)
 })
 export type OrnodeCfg = z.infer<typeof zOrnodeCfg>;
 

@@ -38,6 +38,8 @@ import {
   zExecStatusStr,
   ContractMetadata,
   TypedContractEvent,
+  breakoutSchemas,
+  BreakoutType,
 } from "@ordao/ortypes"
 import { TokenMtCfg, SyncConfig } from "./config.js"
 import { IOrdb } from "./ordb/iordb.js";
@@ -89,6 +91,7 @@ export interface ConstructorConfig {
   weghtlessPropAliveness?: number,
   startPeriodNumber?: number
   tokenCfg: TokenMtCfg,
+  breakoutType: BreakoutType
 }
 
 export interface Config extends ConstructorConfig {
@@ -139,7 +142,8 @@ export class ORNode implements IORNode {
     const cfg: ConstructorConfig = {
       weghtlessPropAliveness: propAliveness,
       tokenCfg: config.tokenCfg,
-      startPeriodNumber: config.startPeriodNumber
+      startPeriodNumber: config.startPeriodNumber,
+      breakoutType: config.breakoutType
     }
 
     const ornode = new ORNode(ctx, db, cfg);
@@ -650,7 +654,7 @@ export class ORNode implements IORNode {
         return ts;
       }
 
-      if (propType === 'respectBreakout') {
+      if (propType === 'respectBreakout' || propType === 'respectBreakoutX2') {
         for (const award of awards) {
           award.properties = {
             ...award.properties,
@@ -795,7 +799,7 @@ export class ORNode implements IORNode {
             throw new IllegalEvent(logDesc, "value in event should be 1")
           }
           const denomination = await this._ctx.newRespect.valueOfToken(idsVal);
-          const levelRes = zValueToRanking.safeParse(denomination);
+          const levelRes = breakoutSchemas[this._cfg.breakoutType].zValueToRanking.safeParse(denomination);
           console.debug("levelRes: ", levelRes);
 
           const tData = unpackTokenId(idsVal);

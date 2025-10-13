@@ -21,6 +21,18 @@ type PostV1PutProposalInput = {
               groupNum: number;
             }
           | {
+              propType: "respectBreakoutX2";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+              /**
+            Group number
+            
+            
+             */
+              groupNum: number;
+            }
+          | {
               propType: "respectAccount";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
@@ -108,6 +120,37 @@ type PostV1PutProposalInput = {
         };
         attachment: {
           propType: "respectBreakout";
+          propTitle?: string | undefined;
+          propDescription?: string | undefined;
+          salt?: string | undefined;
+          /**
+            Group number
+            
+            
+             */
+          groupNum: number;
+        };
+        /** Unix timestamp. Should match onchain createTime of proposal */
+        createTs?: number | undefined;
+        /** Hash of transaction which created this proposal */
+        createTxHash?: string | undefined;
+        /** Hash of transaction which executed this proposal */
+        executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+      }
+    | {
+        id: string;
+        content: {
+          addr: string;
+          cdata: string | any;
+          memo: string | any;
+        };
+        attachment: {
+          propType: "respectBreakoutX2";
           propTitle?: string | undefined;
           propDescription?: string | undefined;
           salt?: string | undefined;
@@ -417,6 +460,18 @@ type PostV1GetProposalResponse =
                     groupNum: number;
                   }
                 | {
+                    propType: "respectBreakoutX2";
+                    propTitle?: string | undefined;
+                    propDescription?: string | undefined;
+                    salt?: string | undefined;
+                    /**
+        Group number
+        
+        
+         */
+                    groupNum: number;
+                  }
+                | {
                     propType: "respectAccount";
                     propTitle?: string | undefined;
                     propDescription?: string | undefined;
@@ -503,6 +558,34 @@ type PostV1GetProposalResponse =
           };
           attachment: {
             propType: "respectBreakout";
+            propTitle?: string | undefined;
+            propDescription?: string | undefined;
+            salt?: string | undefined;
+            /**
+        Group number
+        
+        
+         */
+            groupNum: number;
+          };
+          createTs: number;
+          /** Hash of transaction which created this proposal */
+          createTxHash?: string | undefined;
+          /** Hash of transaction which executed this proposal */
+          executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+        }
+      | {
+          id: string;
+          content: {
+            addr: any;
+            cdata: string | any;
+            memo: string | any;
+          };
+          attachment: {
+            propType: "respectBreakoutX2";
             propTitle?: string | undefined;
             propDescription?: string | undefined;
             salt?: string | undefined;
@@ -796,6 +879,18 @@ type PostV1GetProposalsResponse =
                       groupNum: number;
                     }
                   | {
+                      propType: "respectBreakoutX2";
+                      propTitle?: string | undefined;
+                      propDescription?: string | undefined;
+                      salt?: string | undefined;
+                      /**
+            Group number
+            
+            
+             */
+                      groupNum: number;
+                    }
+                  | {
                       propType: "respectAccount";
                       propTitle?: string | undefined;
                       propDescription?: string | undefined;
@@ -882,6 +977,34 @@ type PostV1GetProposalsResponse =
             };
             attachment: {
               propType: "respectBreakout";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+              /**
+            Group number
+            
+            
+             */
+              groupNum: number;
+            };
+            createTs: number;
+            /** Hash of transaction which created this proposal */
+            createTxHash?: string | undefined;
+            /** Hash of transaction which executed this proposal */
+            executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          }
+        | {
+            id: string;
+            content: {
+              addr: any;
+              cdata: string | any;
+              memo: string | any;
+            };
+            attachment: {
+              propType: "respectBreakoutX2";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;

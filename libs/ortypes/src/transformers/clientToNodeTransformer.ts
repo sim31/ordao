@@ -6,6 +6,7 @@ import {
   CustomSignalRequest,
   RespectAccountRequest,
   RespectBreakoutRequest,
+  RespectBreakoutX2Request,
   TickRequest,
   zBreakoutResult,
   zBurnRespectRequest,
@@ -14,6 +15,7 @@ import {
   zCustomSignalRequest,
   zRespectAccountRequest,
   zRespectBreakoutRequest,
+  zRespectBreakoutX2Request,
   zTickRequest,
   zSetPeriodsRequest,
   zSetMinWeightRequest,
@@ -47,7 +49,9 @@ import {
   RespectAccount, 
   RespectAccountAttachment, 
   RespectBreakout, 
+  RespectBreakoutX2,
   RespectBreakoutAttachment, 
+  RespectBreakoutX2Attachment,
   Tick, 
   TickAttachment, 
   TickValid, 
@@ -66,7 +70,9 @@ import {
   zRespectAccount, 
   zRespectAccountValid, 
   zRespectBreakout, 
+  zRespectBreakoutX2,
   zRespectBreakoutValid, 
+  zRespectBreakoutX2Valid,
   zTick, 
   zTickValid, 
   zGetProposalsSpec, 
@@ -92,10 +98,10 @@ import {
 } from "../ornode.js";
 import { ConfigWithOrnode, ORContext as OrigORContext } from "../orContext.js";
 import { CustomSignalArgs, OrecFactory, zTickSignalType, zVoteType, VoteType, strToVtMap, zStrToVoteType, SetPeriodsArgs, SetMinWeightArgs, strToVoteWeight } from "../orec.js";
-import { BurnRespectArgs, BurnRespectGroupArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
+import { BurnRespectArgs, BurnRespectGroupArgs, MintRequest, MintRespectArgs, MintRespectGroupArgs, Factory as Respect1155Factory, zBreakoutMintType, zBreakoutX2MintType, zMintRespectArgs, zUnspecifiedMintType } from "../respect1155.js";
 import { propId } from "@ordao/orec/utils";
 import { addCustomIssue } from "../zErrorHandling.js";
-import { PropType, zBreakoutMintRequest, zGroupNum, zPropType, zRankNumToValue } from "../fractal.js";
+import { BreakoutType, PropType, breakoutSchemas, zGroupNum, zPropType } from "../fractal.js";
 import { zBigNumberish, zBigNumberishToBigint } from "../eth.js";
 import { packTokenId } from "@ordao/respect1155/utils/tokenId.js";
 import { hexlify, randomBytes } from "ethers";
@@ -110,7 +116,7 @@ export const clientToOrecVoteMap = strToVtMap;
 
 export const zCVoteTypeToOrec = zStrToVoteType;
 
-function mkzCRespectBreakoutToMintArgs(orctx: ORContext) {
+function mkzCRespectBreakoutToMintArgs(orctx: ORContext, breakoutType: BreakoutType) {
   return zRespectBreakoutRequest.transform(async (val, ctx) => {
     try {
       const periodNumber = val.meetingNum === undefined
@@ -120,10 +126,10 @@ function mkzCRespectBreakoutToMintArgs(orctx: ORContext) {
       const mintReqs: MintRequest[] = [];
 
       for (const [i, addr] of val.rankings.entries()) {
-        const value = zRankNumToValue.parse(i + 1);
+        const value = breakoutSchemas[breakoutType].zRankNumToValue.parse(i + 1);
         const id = packTokenId({
           owner: addr,
-          mintType: zBreakoutMintType.value,
+          mintType: breakoutSchemas[breakoutType].zMintType.value,
           periodNumber
         })
         mintReqs.push({
@@ -137,10 +143,9 @@ function mkzCRespectBreakoutToMintArgs(orctx: ORContext) {
       }
       return r;
     } catch (err) {
-      // TODO: pass the parent err in some way, instead of passing it through message...
       addCustomIssue(val, ctx, err, "exception in zCRespectBreakoutToMintArgs");
     }
-  }).pipe(zBreakoutMintRequest);
+  }).pipe(breakoutSchemas[breakoutType].zMintRequest);
 }
 
 function mkzCBurnRespBatchReqToProposal(orctx: ORContext) {
@@ -184,7 +189,7 @@ function mkzCBurnRespBatchReqToProposal(orctx: ORContext) {
 }
 
 function mkzCRespectBreakoutToProposal(orctx: ORContext) {
-  const _zCRespectBreakoutToMintArgs = mkzCRespectBreakoutToMintArgs(orctx);
+  const _zCRespectBreakoutToMintArgs = mkzCRespectBreakoutToMintArgs(orctx, "respectBreakout");
 
   return zRespectBreakoutRequest.transform(async (val, ctx) => {
     try {
@@ -220,6 +225,45 @@ function mkzCRespectBreakoutToProposal(orctx: ORContext) {
       });
     }
   }).pipe(zRespectBreakoutValid);
+}
+
+function mkzCRespectBreakoutX2ToProposal(orctx: ORContext) {
+  const _zCRespectBreakoutX2ToMintArgs = mkzCRespectBreakoutToMintArgs(orctx, "respectBreakoutX2");
+
+  return zRespectBreakoutX2Request.transform(async (val, ctx) => {
+    try {
+      const mintArgs = await _zCRespectBreakoutX2ToMintArgs.parseAsync(val);
+      const cdata = respectInterface.encodeFunctionData(
+        "mintRespectGroup",
+        [mintArgs.mintRequests, mintArgs.data]
+      );
+      const addr = await orctx.getNewRespectAddr();
+
+      const attachment: RespectBreakoutX2Attachment = {
+        propType: zPropType.Enum.respectBreakoutX2,
+        groupNum: zGroupNum.parse(val.groupNum),
+        propTitle: val.metadata?.propTitle,
+        propDescription: val.metadata?.propDescription
+      };
+
+      const memo = idOfRespectBreakoutAttach(attachment);
+
+      const content: PropContent = { addr, cdata, memo };
+      const id = propId(content);
+
+      const r: RespectBreakoutX2 = {
+        id,
+        content,
+        attachment
+      }
+      return r;
+    } catch (err) {
+      addCustomIssue(val, ctx, {
+        message: "exception in zCRespectBreakoutX2ReqToProposal",
+        cause: err
+      });
+    }
+  }).pipe(zRespectBreakoutX2Valid);
 }
 
 function mkzCRespectAccountReqToMintArgs(orctx: ORContext) {
@@ -638,6 +682,7 @@ function mkzCGetVotesSpecToNodeSpec(orctx: ORContext) {
 export class ClientToNodeTransformer {
   private _ctx: ORContext
   private _zCRespBreakoutReqToProposal: ReturnType<typeof mkzCRespectBreakoutToProposal>;
+  private _zCRespectBreakoutX2ReqToProposal: ReturnType<typeof mkzCRespectBreakoutX2ToProposal>;
   private _zCRespAccountReqToProposal: ReturnType<typeof mkzCRespAccountReqToProposal>
   private _zCBurnRespReqToProposal: ReturnType<typeof mkzCBurnRespReqToProposal>;
   private _zCBurnRespBatchReqToProposal: ReturnType<typeof mkzCBurnRespBatchReqToProposal>;
@@ -663,6 +708,7 @@ export class ClientToNodeTransformer {
     this._zCSetMinWeightReqToProposal = mkzCSetMinWeightReqToProposal(this._ctx);
     this._zCCancelProposalReqToProposal = mkzCCancelProposalReqToProposal(this._ctx);
     this._zCGetVotesSpecToNodeSpec = mkzCGetVotesSpecToNodeSpec(this._ctx);
+    this._zCRespectBreakoutX2ReqToProposal = mkzCRespectBreakoutX2ToProposal(this._ctx);
   }
 
   transformGetProposalsSpec(spec: CGetProposalsSpec): GetProposalsSpec {
@@ -679,6 +725,11 @@ export class ClientToNodeTransformer {
 
   async transformRespectBreakout(req: RespectBreakoutRequest): Promise<RespectBreakout> {
     return await this._zCRespBreakoutReqToProposal.parseAsync(req);
+  }
+
+
+  async transformRespectBreakoutX2(req: RespectBreakoutX2Request): Promise<RespectBreakoutX2> {
+    return await this._zCRespectBreakoutX2ReqToProposal.parseAsync(req);
   }
 
   async transformRespectAccount(req: RespectAccountRequest): Promise<RespectAccount> {
@@ -727,6 +778,8 @@ export class ClientToNodeTransformer {
     switch (propType) {
       case 'respectBreakout':
         return await this.transformRespectBreakout(req as RespectBreakoutRequest);
+      case 'respectBreakoutX2':
+        return await this.transformRespectBreakoutX2(req as RespectBreakoutX2Request);
       case 'respectAccount':
         return await this.transformRespectAccount(req as RespectAccountRequest);
       case 'burnRespect':

@@ -106,6 +106,11 @@ export const zBigNumberishToBigint = zBigNumberish.transform((val, ctx) => {
   return getBigInt(val);
 }).pipe(z.bigint());
 
+export const zBigNumberishToNumber = zBigNumberish.transform((val, ctx) => {
+  const big = getBigInt(val);
+  return Number(big);
+}).pipe(z.number());
+
 export const zBigIntToBytes32 = z.bigint().transform(val => {
   return toBeHex(val, 32);
 }).pipe(zBytes32);

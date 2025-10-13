@@ -32,6 +32,7 @@
   },
   "ornode": {
     "startPeriodNum": 0,
-    "listenForEvents": true
+    "listenForEvents": true,
+    "defBreakoutType": "respectBreakoutX2"
   }
 }

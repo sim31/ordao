@@ -1,5 +1,5 @@
 import { ZodType, z } from "zod";
-import { PropType, zGroupNum, zPropType, zRankings } from "./fractal.js";
+import { PropType, zBreakoutType, zGroupNum, zPropType, zRankings } from "./fractal.js";
 import { zCustomSignalType, zOnchainProp as zNOnchainProp, zPeriodLength, zPropId, zProposedMsgBase } from "./orec.js";
 import { zMeetingNum, zMintType, zTokenId, zTokenIdNum } from "./respect1155.js";
 import { zBytes, zEthAddress, zTxHash, zUint } from "./eth.js";
@@ -103,6 +103,30 @@ export const zRespectBreakout = zDecodedPropBase.merge(zBreakoutResult).extend({
   mintData: zBytes
 }).describe(respectBreakoutDesc);
 export type RespectBreakout = z.infer<typeof zRespectBreakout>;
+
+const respectBreakoutX2Desc = `
+Respect Breakout x2
+
+Mint Respect to a breakout group from Respect game, using doubled denominations and mint type 10.
+`
+
+export const zRespectBreakoutX2Request = zBreakoutResult.extend({
+  meetingNum: zMeetingNum.optional(),
+  metadata: zProposalMetadata.optional()
+}).describe(respectBreakoutX2Desc);
+export type RespectBreakoutX2Request = z.infer<typeof zRespectBreakoutX2Request>;
+
+export const zRespectBreakoutX2 = zDecodedPropBase.merge(zBreakoutResult).extend({
+  propType: z.literal(zPropType.Enum.respectBreakoutX2),
+  meetingNum: zMeetingNum,
+  mintData: zBytes
+}).describe(respectBreakoutX2Desc);
+export type RespectBreakoutX2 = z.infer<typeof zRespectBreakoutX2>;
+
+export const respectBreakoutReqSchemas = {
+  [zBreakoutType.Values.respectBreakout]: zRespectBreakoutRequest,
+  [zBreakoutType.Values.respectBreakoutX2]: zRespectBreakoutX2Request
+} as const;
 
 const accountDesc = `
 Account (recipient)
@@ -381,6 +405,7 @@ export const zDecodedProposal = z.union([
   zBurnRespectBatch,
   zRespectAccount,
   zRespectBreakout,
+  zRespectBreakoutX2,
   zSetPeriods,
   zSetMinWeight,
   zCancelProposal
@@ -395,6 +420,7 @@ export const zProposalRequest = z.union([
   zBurnRespectBatchRequest,
   zRespectAccountRequest,
   zRespectBreakoutRequest,
+  zRespectBreakoutX2Request,
   zSetPeriodsRequest,
   zSetMinWeightRequest,
   zCancelProposalRequest
@@ -409,6 +435,7 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "burnRespectBatch": zBurnRespectBatch,
   "respectAccount": zRespectAccount,
   "respectBreakout": zRespectBreakout,
+  "respectBreakoutX2": zRespectBreakoutX2,
   "setPeriods": zSetPeriods,
   "setMinWeight": zSetMinWeight,
   "cancelProposal": zCancelProposal
@@ -418,6 +445,7 @@ export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "tick": zTickRequest,
   "respectAccount": zRespectAccountRequest,
   "respectBreakout": zRespectBreakoutRequest,
+  "respectBreakoutX2": zRespectBreakoutX2Request,
   "burnRespect": zBurnRespectRequest,
   "burnRespectBatch": zBurnRespectBatchRequest,
   "customCall": zCustomCallRequest,
@@ -542,6 +570,7 @@ export function toPropMsgFull(prop: Proposal | ProposalMsgFull): ProposalMsgFull
 
 export type PropOfPropType<T extends PropType> =
   T extends typeof zPropType.Enum.respectBreakout ? RespectBreakout
+  : T extends typeof zPropType.Enum.respectBreakoutX2 ? RespectBreakoutX2
   : T extends typeof zPropType.enum.respectAccount ? RespectAccount
   : T extends typeof zPropType.Enum.burnRespect ? BurnRespect
   : T extends typeof zPropType.Enum.burnRespectBatch ? BurnRespectBatch

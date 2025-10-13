@@ -35,7 +35,9 @@ import {
   VoteWeight,
   zSetMinWeight,
   SetMinWeight,
-  zCancelProposal
+  zCancelProposal,
+  RespectBreakoutX2,
+  zRespectBreakoutX2,
 } from "../orclient.js";
 import { zPropId } from "../orec.js";
 import {
@@ -45,6 +47,7 @@ import {
   StoredProposal as NProposal,
   zProposalValid as zNProposalFull,
   zRespectBreakoutAttachment,
+  zRespectBreakoutX2Attachment,
   zRespectAccountAttachment,
   zBurnRespectAttachment,
   zBurnRespectBatchAttachment,
@@ -64,6 +67,7 @@ import {
   zEthAddress,
   EthAddress,
   zBigNumberishToBigint,
+  zBigNumberishToNumber,
   zBytesLikeToBytes,
   zBigIntToBytes32,
 } from "../eth.js";
@@ -73,7 +77,7 @@ import { addCustomIssue } from "../zErrorHandling.js";
 import { Optional } from "utility-types";
 import { MeetingNum, Factory as Respect1155Factory, zBurnRespectArgs, zBurnRespectGroupArgs, zMeetingNum, zMintRespectArgs, zTokenIdData } from "../respect1155.js";
 import { Orec__factory as OrecFactory } from "@ordao/orec/typechain-types";
-import { zBreakoutMintRequest, zPropType } from "../fractal.js";
+import { breakoutSchemas, zPropType } from "../fractal.js";
 import { expect } from "chai";
 import { unpackTokenId } from "@ordao/respect1155/utils/tokenId.js";
 import {
@@ -111,6 +115,33 @@ export const voteStatusMap: Record<NVoteStatus, VoteStatus> = {
   [NVoteStatus.Failing]: "Failing",
   [NVoteStatus.Passed]: "Passed",
   [NVoteStatus.Passing]: "Passing"
+}
+
+function mkzNProposalToRespectBreakoutX2(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zRespectBreakoutX2Attachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getNewRespectAddr(),
+        "respect breakout message expected to be addressed to newRespectAddr"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = respectInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        respectInterface.getFunction('mintRespectGroup').name,
+        "expected mintRespectGroup function to be called"
+      );
+      const respectBreakout = zMintArgsToRespectBreakoutX2.parse(tx?.args);
+      respectBreakout.groupNum = attachment.groupNum;
+      respectBreakout.metadata = zNAttachmentToMetadata.parse(attachment)
+
+      return respectBreakout;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in zNProposalToRespectBreakoutX2");
+    }
+  }).pipe(zRespectBreakoutX2);
 }
 
 function mkzNProposalToBurnRespectBatch(orctx: ORContext) {
@@ -188,7 +219,7 @@ export const zNAttachmentToMetadata = zPropAttachmentBase.transform((val, ctx) =
 const respectInterface = Respect1155Factory.createInterface();
 const orecInterface = OrecFactory.createInterface();
 
-export const zMintArgsToRespectBreakout = zBreakoutMintRequest.transform((val, ctx) => {
+export const zMintArgsToRespectBreakout = breakoutSchemas[zPropType.Values.respectBreakout].zMintRequest.transform((val, ctx) => {
   try {
     expect(val.mintRequests.length).to.be.greaterThanOrEqual(3).and.to.be.lessThanOrEqual(6);
 
@@ -197,6 +228,9 @@ export const zMintArgsToRespectBreakout = zBreakoutMintRequest.transform((val, c
 
     for (const [i, req] of val.mintRequests.entries()) {
       const tokenIdData = unpackTokenId(req.id);
+      breakoutSchemas[zPropType.Values.respectBreakout].zMintType.parse(
+        zBigNumberishToNumber.parse(tokenIdData.mintType)
+      );
       const periodNum = zBigNumberishToBigint.parse(tokenIdData.periodNumber); 
       if (meetingNum === undefined) {
         meetingNum = zMeetingNum.parse(periodNum + 1n);
@@ -220,6 +254,43 @@ export const zMintArgsToRespectBreakout = zBreakoutMintRequest.transform((val, c
     addCustomIssue(val, ctx, err, "Exception in zMintArgsToRespectBreakout");
   }
 }).pipe(zRespectBreakout.partial({ groupNum: true }));
+
+export const zMintArgsToRespectBreakoutX2 = breakoutSchemas[zPropType.Values.respectBreakoutX2].zMintRequest.transform((val, ctx) => {
+  try {
+    expect(val.mintRequests.length).to.be.greaterThanOrEqual(3).and.to.be.lessThanOrEqual(6);
+
+    const rankings: EthAddress[] = [];
+    let meetingNum: MeetingNum | undefined;
+
+    for (const [i, req] of val.mintRequests.entries()) {
+      const tokenIdData = unpackTokenId(req.id);
+      breakoutSchemas[zPropType.Values.respectBreakoutX2].zMintType.parse(
+        zBigNumberishToNumber.parse(tokenIdData.mintType)
+      );
+
+      const periodNum = zBigNumberishToBigint.parse(tokenIdData.periodNumber); 
+      if (meetingNum === undefined) {
+        meetingNum = zMeetingNum.parse(periodNum + 1n);
+      } else {
+        expect(periodNum + 1n).to.be.equal(BigInt(meetingNum));
+      }
+      rankings.push(tokenIdData.owner);
+    }
+    
+    if (meetingNum !== undefined) {
+      const r: Optional<RespectBreakoutX2, 'groupNum'> = {
+        propType: zPropType.Enum.respectBreakoutX2,
+        meetingNum: meetingNum,
+        rankings,
+        mintData: zBytesLikeToBytes.parse(val.data),
+        metadata: {}
+      };
+      return r;
+    }
+  } catch (err) {
+    addCustomIssue(val, ctx, err, "Exception in zMintArgsToRespectBreakoutX2");
+  }
+}).pipe(zRespectBreakoutX2.partial({ groupNum: true }));
 
 function mkzNProposalToRespectBreakout(orctx: ORContext) {
   return zNProposalFull.transform(async (val, ctx) => {
@@ -485,6 +556,7 @@ function mkzNProposalToSetMinWeight(orctx: ORContext) {
 
 function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToRespectBreakout = mkzNProposalToRespectBreakout(orctx);
+  const zNProposalToRespectBreakoutX2 = mkzNProposalToRespectBreakoutX2(orctx);
   const zNProposalToRespectAccount = mkzNProposalToRespectAccount(orctx);
   const zNProposalToBurnRespect = mkzNProposalToBurnRespect(orctx);
   const zNProposalToCustomSignal = mkzNProposalToCustomSignal(orctx);
@@ -500,6 +572,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
       switch (val.attachment.propType) {
         case 'respectBreakout':
           return await zNProposalToRespectBreakout.parseAsync(val);
+        case 'respectBreakoutX2':
+          return await zNProposalToRespectBreakoutX2.parseAsync(val);
         case 'respectAccount':
           return await zNProposalToRespectAccount.parseAsync(val);
         case 'burnRespect':

@@ -24,6 +24,12 @@ export const zRespectBreakoutAttachment = zPropAttachmentBase.extend({
 });
 export type RespectBreakoutAttachment = z.infer<typeof zRespectBreakoutAttachment>;
 
+export const zRespectBreakoutX2Attachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.respectBreakoutX2),
+  groupNum: zGroupNum
+});
+export type RespectBreakoutX2Attachment = z.infer<typeof zRespectBreakoutX2Attachment>;
+
 export const zRespectAccountAttachment = zPropAttachmentBase.extend({
   propType: z.literal(zPropType.Enum.respectAccount),
   mintReason: z.string(),
@@ -79,6 +85,7 @@ export type CancelProposalAttachment = z.infer<typeof zCancelProposalAttachment>
 
 export const zPropAttachment = z.union([
   zRespectBreakoutAttachment,
+  zRespectBreakoutX2Attachment,
   zRespectAccountAttachment,
   zBurnRespectAttachment,
   zBurnRespectBatchAttachment,
@@ -170,10 +177,20 @@ export const zRespectBreakout = zProposalBaseFull.extend({
 });
 export type RespectBreakout = z.infer<typeof zRespectBreakout>;
 
+export const zRespectBreakoutX2 = zProposalBaseFull.extend({
+  attachment: zRespectBreakoutX2Attachment
+});
+export type RespectBreakoutX2 = z.infer<typeof zRespectBreakoutX2>;
+
 export const zRespectBreakoutValid = zRespectBreakout
   .refine(propIdMatchesContent, propIdErr).refine(propMemoMatchesAttachment, memoErr)
   .brand<"respectBreakoutValid">();
 export type RespectBreakoutValid = z.infer<typeof zRespectBreakoutValid>;
+
+export const zRespectBreakoutX2Valid = zRespectBreakoutX2
+  .refine(propIdMatchesContent, propIdErr).refine(propMemoMatchesAttachment, memoErr)
+  .brand<"respectBreakoutX2Valid">();
+export type RespectBreakoutX2Valid = z.infer<typeof zRespectBreakoutX2Valid>;
 
 export const zRespectAccount = zProposalBaseFull.extend({
   attachment: zRespectAccountAttachment
@@ -266,6 +283,7 @@ export const zProposal = z.union([
   zProposalBase,
   zProposalBaseFull,
   zRespectBreakout,
+  zRespectBreakoutX2,
   zRespectAccount,
   zBurnRespect,
   zBurnRespectBatch,
@@ -281,6 +299,7 @@ export type Proposal = z.infer<typeof zProposal>;
 export const zStoredProposal = z.union([
   zStoredProposalBase,
   zRespectBreakout.required({ status: true, createTs: true }),
+  zRespectBreakoutX2.required({ status: true, createTs: true }),
   zRespectAccount.required({ status: true, createTs: true }),
   zBurnRespect.required({ status: true, createTs: true }),
   zBurnRespectBatch.required({ status: true, createTs: true }),
@@ -296,6 +315,7 @@ export type StoredProposal = z.infer<typeof zStoredProposal>;
 export const zProposalFull = z.union([
   zProposalBaseFull,
   zRespectBreakout,
+  zRespectBreakoutX2,
   zRespectAccount,
   zBurnRespect,
   zBurnRespectBatch,
@@ -365,8 +385,8 @@ export const zGetAwardsSpec = z.object({
 }).strict();
 export type GetAwardsSpec = z.infer<typeof zGetAwardsSpec>;
 
-export function idOfRespectBreakoutAttach(attachment: RespectBreakoutAttachment) {
-  const a: Required<RespectBreakoutAttachment> = {
+export function idOfRespectBreakoutAttach(attachment: RespectBreakoutAttachment | RespectBreakoutX2Attachment) {
+  const a: Required<RespectBreakoutAttachment | RespectBreakoutX2Attachment> = {
     ...attachment,
     propTitle: attachment.propTitle ?? "",
     propDescription: attachment.propDescription ?? "",
@@ -470,7 +490,9 @@ export function idOfSetPeriodsAttach(attachment: SetPeriodsAttachment) {
 export function attachmentId(attachment: PropAttachment) {
   switch (attachment.propType) {
     case 'respectBreakout':
+    case 'respectBreakoutX2': {
       return idOfRespectBreakoutAttach(attachment);
+    }
     case 'respectAccount': {
       if (attachment.version === undefined) {
         return idOfRespectAccountAttachV0(attachment);
