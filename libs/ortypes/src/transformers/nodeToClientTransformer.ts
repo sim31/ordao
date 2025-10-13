@@ -38,6 +38,8 @@ import {
   zCancelProposal,
   RespectBreakoutX2,
   zRespectBreakoutX2,
+  RespectAccountBatch,
+  zRespectAccountBatch,
 } from "../orclient.js";
 import { zPropId } from "../orec.js";
 import {
@@ -49,6 +51,7 @@ import {
   zRespectBreakoutAttachment,
   zRespectBreakoutX2Attachment,
   zRespectAccountAttachment,
+  zRespectAccountBatchAttachment,
   zBurnRespectAttachment,
   zBurnRespectBatchAttachment,
   zCustomSignalAttachment,
@@ -75,7 +78,7 @@ import { z } from "zod";
 import { ConfigWithOrnode, ORContext as OrigORContext, OnchainPropNotFound } from "../orContext.js";
 import { addCustomIssue } from "../zErrorHandling.js";
 import { Optional } from "utility-types";
-import { MeetingNum, Factory as Respect1155Factory, zBurnRespectArgs, zBurnRespectGroupArgs, zMeetingNum, zMintRespectArgs, zTokenIdData } from "../respect1155.js";
+import { MeetingNum, Factory as Respect1155Factory, zBurnRespectArgs, zBurnRespectGroupArgs, zMeetingNum, zMintRespectArgs, zMintRespectGroupArgs, zTokenIdData } from "../respect1155.js";
 import { Orec__factory as OrecFactory } from "@ordao/orec/typechain-types";
 import { breakoutSchemas, zPropType } from "../fractal.js";
 import { expect } from "chai";
@@ -115,6 +118,53 @@ export const voteStatusMap: Record<NVoteStatus, VoteStatus> = {
   [NVoteStatus.Failing]: "Failing",
   [NVoteStatus.Passed]: "Passed",
   [NVoteStatus.Passing]: "Passing"
+}
+
+function mkzNProposalTorespectAccountBatch(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zRespectAccountBatchAttachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getNewRespectAddr(),
+        "respect accounts message expected to be addressed to newRespectAddr"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = respectInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        respectInterface.getFunction('mintRespectGroup').name,
+        "expected mintRespectGroup function to be called"
+      );
+
+      const args = zMintRespectGroupArgs.parse(tx?.args);
+
+      const awards: RespectAccountBatch["awards"] = args.mintRequests.map((req, i) => {
+        const tdata = zTokenIdData.parse(unpackTokenId(req.id));
+        const meta = attachment.awards[i];
+        return {
+          meetingNum: tdata.periodNumber + 1,
+          mintType: tdata.mintType,
+          groupNum: meta?.groupNum,
+          account: tdata.owner,
+          value: req.value,
+          title: meta?.mintTitle ?? "",
+          reason: meta?.mintReason ?? "",
+          tokenId: zBigIntToBytes32.parse(req.id)
+        };
+      });
+
+      const r: RespectAccountBatch = {
+        propType: zPropType.Enum.respectAccountBatch,
+        awards,
+        metadata: zNAttachmentToMetadata.parse(attachment)
+      };
+
+      return r;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in zNProposalTorespectAccountBatch");
+    }
+  }).pipe(zRespectAccountBatch);
 }
 
 function mkzNProposalToRespectBreakoutX2(orctx: ORContext) {
@@ -558,6 +608,7 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToRespectBreakout = mkzNProposalToRespectBreakout(orctx);
   const zNProposalToRespectBreakoutX2 = mkzNProposalToRespectBreakoutX2(orctx);
   const zNProposalToRespectAccount = mkzNProposalToRespectAccount(orctx);
+  const zNProposalTorespectAccountBatch = mkzNProposalTorespectAccountBatch(orctx);
   const zNProposalToBurnRespect = mkzNProposalToBurnRespect(orctx);
   const zNProposalToCustomSignal = mkzNProposalToCustomSignal(orctx);
   const zNProposalToCustomCall = mkzNProposalToCustomCall(orctx);
@@ -574,6 +625,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
           return await zNProposalToRespectBreakout.parseAsync(val);
         case 'respectBreakoutX2':
           return await zNProposalToRespectBreakoutX2.parseAsync(val);
+        case 'respectAccountBatch':
+          return await zNProposalTorespectAccountBatch.parseAsync(val);
         case 'respectAccount':
           return await zNProposalToRespectAccount.parseAsync(val);
         case 'burnRespect':

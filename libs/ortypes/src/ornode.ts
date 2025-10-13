@@ -39,6 +39,19 @@ export const zRespectAccountAttachment = zPropAttachmentBase.extend({
 });
 export type RespectAccountAttachment = z.infer<typeof zRespectAccountAttachment>;
 
+export const zRespectAccountBatchItemAttachment = z.object({
+  mintReason: z.string(),
+  mintTitle: z.string(),
+  groupNum: zGroupNum.optional(),
+});
+export type RespectAccountBatchItemAttachment = z.infer<typeof zRespectAccountBatchItemAttachment>;
+
+export const zRespectAccountBatchAttachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.respectAccountBatch),
+  awards: z.array(zRespectAccountBatchItemAttachment).min(1)
+});
+export type RespectAccountBatchAttachment = z.infer<typeof zRespectAccountBatchAttachment>;
+
 export const zBurnRespectAttachment = zPropAttachmentBase.extend({
   propType: z.literal(zPropType.Enum.burnRespect),
   burnReason: z.string()
@@ -87,6 +100,7 @@ export const zPropAttachment = z.union([
   zRespectBreakoutAttachment,
   zRespectBreakoutX2Attachment,
   zRespectAccountAttachment,
+  zRespectAccountBatchAttachment,
   zBurnRespectAttachment,
   zBurnRespectBatchAttachment,
   zCustomSignalAttachment,
@@ -116,6 +130,30 @@ export type Vote = z.infer<typeof zVote>;
 function propIdMatchesContent(prop: ProposalBaseFull): boolean {
   const pid = propId(prop.content);
   return prop.id === pid;
+}
+
+export function idOfRespectAccountBatchAttach(attachment: RespectAccountBatchAttachment) {
+  const a: Required<RespectAccountBatchAttachment> = {
+    ...attachment,
+    propTitle: attachment.propTitle ?? "",
+    propDescription: attachment.propDescription ?? "",
+    salt: attachment.salt ?? "",
+    awards: attachment.awards.map(item => ({
+      mintReason: item.mintReason,
+      mintTitle: item.mintTitle,
+      groupNum: item.groupNum ?? 0
+    }))
+  };
+
+  const perItemHashes = a.awards.map(item =>
+    solidityPackedKeccak256(["string","string","uint"], [item.mintReason, item.mintTitle, item.groupNum])
+  );
+  const itemsHash = solidityPackedKeccak256(Array(perItemHashes.length).fill("bytes32"), perItemHashes);
+
+  return solidityPackedKeccak256(
+    [ "string", "string", "string", "string", "bytes32" ],
+    [ a.propType, a.propTitle, a.propDescription, a.salt, itemsHash ]
+  );
 }
 
 export type ZProposalType = 
@@ -197,10 +235,20 @@ export const zRespectAccount = zProposalBaseFull.extend({
 })
 export type RespectAccount = z.infer<typeof zRespectAccount>;
 
+export const zRespectAccountBatch = zProposalBaseFull.extend({
+  attachment: zRespectAccountBatchAttachment
+});
+export type RespectAccountBatch = z.infer<typeof zRespectAccountBatch>;
+
 export const zRespectAccountValid = zRespectAccount
   .refine(propIdMatchesContent, propIdErr).refine(propMemoMatchesAttachment, memoErr)
   .brand<"RespectAccountValid">();
 export type RespectAccountValid = z.infer<typeof zRespectAccountValid>;
+
+export const zRespectAccountBatchValid = zRespectAccountBatch
+  .refine(propIdMatchesContent, propIdErr).refine(propMemoMatchesAttachment, memoErr)
+  .brand<"RespectAccountBatchValid">();
+export type RespectAccountBatchValid = z.infer<typeof zRespectAccountBatchValid>;
 
 export const zBurnRespect = zProposalBaseFull.extend({
   attachment: zBurnRespectAttachment
@@ -285,6 +333,7 @@ export const zProposal = z.union([
   zRespectBreakout,
   zRespectBreakoutX2,
   zRespectAccount,
+  zRespectAccountBatch,
   zBurnRespect,
   zBurnRespectBatch,
   zCustomSignal,
@@ -301,6 +350,7 @@ export const zStoredProposal = z.union([
   zRespectBreakout.required({ status: true, createTs: true }),
   zRespectBreakoutX2.required({ status: true, createTs: true }),
   zRespectAccount.required({ status: true, createTs: true }),
+  zRespectAccountBatch.required({ status: true, createTs: true }),
   zBurnRespect.required({ status: true, createTs: true }),
   zBurnRespectBatch.required({ status: true, createTs: true }),
   zCustomSignal.required({ status: true, createTs: true }),
@@ -317,6 +367,7 @@ export const zProposalFull = z.union([
   zRespectBreakout,
   zRespectBreakoutX2,
   zRespectAccount,
+  zRespectAccountBatch,
   zBurnRespect,
   zBurnRespectBatch,
   zCustomSignal,
@@ -492,6 +543,9 @@ export function attachmentId(attachment: PropAttachment) {
     case 'respectBreakout':
     case 'respectBreakoutX2': {
       return idOfRespectBreakoutAttach(attachment);
+    }
+    case 'respectAccountBatch': {
+      return idOfRespectAccountBatchAttach(attachment);
     }
     case 'respectAccount': {
       if (attachment.version === undefined) {

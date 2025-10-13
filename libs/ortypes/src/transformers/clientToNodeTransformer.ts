@@ -4,6 +4,7 @@ import {
   BurnRespectBatchRequest,
   CustomCallRequest,
   CustomSignalRequest,
+  RespectAccountBatchRequest,
   RespectAccountRequest,
   RespectBreakoutRequest,
   RespectBreakoutX2Request,
@@ -13,6 +14,7 @@ import {
   zBurnRespectBatchRequest,
   zCustomCallRequest,
   zCustomSignalRequest,
+  zRespectAccountBatchRequest,
   zRespectAccountRequest,
   zRespectBreakoutRequest,
   zRespectBreakoutX2Request,
@@ -47,7 +49,9 @@ import {
   PropContent, 
   Proposal, 
   RespectAccount, 
+  RespectAccountBatch,
   RespectAccountAttachment, 
+  RespectAccountBatchAttachment,
   RespectBreakout, 
   RespectBreakoutX2,
   RespectBreakoutAttachment, 
@@ -60,6 +64,7 @@ import {
   idOfCustomSignalAttach, 
   idOfRespectAccountAttachV1, 
   idOfRespectBreakoutAttach, 
+  idOfRespectAccountBatchAttach,
   zBurnRespect, 
   zBurnRespectValid, 
   zBurnRespectBatchValid,
@@ -69,6 +74,7 @@ import {
   zCustomSignalValid, 
   zRespectAccount, 
   zRespectAccountValid, 
+  zRespectAccountBatchValid,
   zRespectBreakout, 
   zRespectBreakoutX2,
   zRespectBreakoutValid, 
@@ -303,11 +309,11 @@ function mkzCRespectAccountReqToMintArgs(orctx: ORContext) {
 }
 
 function mkzCRespAccountReqToProposal(orctx: ORContext) {
-  const _zCRespectAccountReqToMintArgs = mkzCRespectAccountReqToMintArgs(orctx);
+  const _zCRespAccountReqToMintArgs = mkzCRespectAccountReqToMintArgs(orctx);
 
   return zRespectAccountRequest.transform(async (val, ctx) => {
     try {
-      const mintArgs = await _zCRespectAccountReqToMintArgs.parseAsync(val);
+      const mintArgs = await _zCRespAccountReqToMintArgs.parseAsync(val);
       const cdata = respectInterface.encodeFunctionData(
         "mintRespect",
         [mintArgs.request, mintArgs.data]
@@ -342,6 +348,72 @@ function mkzCRespAccountReqToProposal(orctx: ORContext) {
       });
     }
   }).pipe(zRespectAccountValid);
+}
+
+function mkzCRespectAccountBatchReqToProposal(orctx: ORContext) {
+  return zRespectAccountBatchRequest.transform(async (val, ctx) => {
+    try {
+      const currentPeriod = await orctx.ornode.getPeriodNum();
+      const mintReqs: MintRequest[] = [];
+
+      for (const award of val.awards) {
+        const periodNumber = award.meetingNum === undefined
+          ? currentPeriod
+          : award.meetingNum - 1;
+        const mintType = award.mintType === undefined
+          ? zUnspecifiedMintType.value
+          : award.mintType;
+
+        const id = packTokenId({
+          owner: award.account,
+          mintType,
+          periodNumber
+        });
+
+        mintReqs.push({
+          id: zBigNumberishToBigint.parse(id),
+          value: award.value
+        });
+      }
+
+      const args: MintRespectGroupArgs = {
+        mintRequests: mintReqs,
+        data: "0x"
+      };
+
+      const cdata = respectInterface.encodeFunctionData(
+        "mintRespectGroup",
+        [args.mintRequests, args.data]
+      );
+      const addr = await orctx.getNewRespectAddr();
+
+      const attachment: RespectAccountBatchAttachment = {
+        propType: zPropType.Enum.respectAccountBatch,
+        awards: val.awards.map(a => ({
+          mintReason: a.reason,
+          mintTitle: a.title,
+          groupNum: a.groupNum
+        })),
+        propTitle: val.metadata?.propTitle,
+        propDescription: val.metadata?.propDescription
+      };
+
+      const content: PropContent = { addr, cdata, memo: idOfRespectAccountBatchAttach(attachment) };
+      const id = propId(content);
+
+      const r: RespectAccountBatch = {
+        id,
+        content,
+        attachment
+      };
+      return r;
+    } catch (err) {
+      addCustomIssue(val, ctx, {
+        message: "exception in mkzCRespectAccountBatchReqToProposal",
+        cause: err
+      });
+    }
+  }).pipe(zRespectAccountBatchValid);
 }
 
 function mkzCBurnRespReqToProposal(orctx: ORContext) {
@@ -693,6 +765,7 @@ export class ClientToNodeTransformer {
   private _zCSetMinWeightReqToProposal: ReturnType<typeof mkzCSetMinWeightReqToProposal>;
   private _zCCancelProposalReqToProposal: ReturnType<typeof mkzCCancelProposalReqToProposal>;
   private _zCGetVotesSpecToNodeSpec: ReturnType<typeof mkzCGetVotesSpecToNodeSpec>
+  private _zCRespectAccountBatchReqToProposal: ReturnType<typeof mkzCRespectAccountBatchReqToProposal>;
 
   constructor(context: ORContext) {
     this._ctx = context;
@@ -709,6 +782,7 @@ export class ClientToNodeTransformer {
     this._zCCancelProposalReqToProposal = mkzCCancelProposalReqToProposal(this._ctx);
     this._zCGetVotesSpecToNodeSpec = mkzCGetVotesSpecToNodeSpec(this._ctx);
     this._zCRespectBreakoutX2ReqToProposal = mkzCRespectBreakoutX2ToProposal(this._ctx);
+    this._zCRespectAccountBatchReqToProposal = mkzCRespectAccountBatchReqToProposal(this._ctx);
   }
 
   transformGetProposalsSpec(spec: CGetProposalsSpec): GetProposalsSpec {
@@ -734,6 +808,10 @@ export class ClientToNodeTransformer {
 
   async transformRespectAccount(req: RespectAccountRequest): Promise<RespectAccount> {
     return await this._zCRespAccountReqToProposal.parseAsync(req);
+  }
+
+  async transformRespectAccountBatch(req: RespectAccountBatchRequest): Promise<RespectAccountBatch> {
+    return await this._zCRespectAccountBatchReqToProposal.parseAsync(req);
   }
 
   async transformBurnRespect(req: BurnRespectRequest): Promise<BurnRespect> {
@@ -780,6 +858,8 @@ export class ClientToNodeTransformer {
         return await this.transformRespectBreakout(req as RespectBreakoutRequest);
       case 'respectBreakoutX2':
         return await this.transformRespectBreakoutX2(req as RespectBreakoutX2Request);
+      case 'respectAccountBatch':
+        return await this.transformRespectAccountBatch(req as RespectAccountBatchRequest);
       case 'respectAccount':
         return await this.transformRespectAccount(req as RespectAccountRequest);
       case 'burnRespect':

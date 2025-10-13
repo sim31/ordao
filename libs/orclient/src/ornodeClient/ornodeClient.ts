@@ -48,6 +48,22 @@ type PostV1PutProposalInput = {
               version?: number | undefined;
             }
           | {
+              propType: "respectAccountBatch";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+              awards: {
+                mintReason: string;
+                mintTitle: string;
+                /**
+                Group number
+                
+                
+                 */
+                groupNum?: number | undefined;
+              }[];
+            }
+          | {
               propType: "burnRespect";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
@@ -194,6 +210,41 @@ type PostV1PutProposalInput = {
              */
           groupNum?: number | undefined;
           version?: number | undefined;
+        };
+        /** Unix timestamp. Should match onchain createTime of proposal */
+        createTs?: number | undefined;
+        /** Hash of transaction which created this proposal */
+        createTxHash?: string | undefined;
+        /** Hash of transaction which executed this proposal */
+        executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+      }
+    | {
+        id: string;
+        content: {
+          addr: string;
+          cdata: string | any;
+          memo: string | any;
+        };
+        attachment: {
+          propType: "respectAccountBatch";
+          propTitle?: string | undefined;
+          propDescription?: string | undefined;
+          salt?: string | undefined;
+          awards: {
+            mintReason: string;
+            mintTitle: string;
+            /**
+                Group number
+                
+                
+                 */
+            groupNum?: number | undefined;
+          }[];
         };
         /** Unix timestamp. Should match onchain createTime of proposal */
         createTs?: number | undefined;
@@ -487,6 +538,22 @@ type PostV1GetProposalResponse =
                     version?: number | undefined;
                   }
                 | {
+                    propType: "respectAccountBatch";
+                    propTitle?: string | undefined;
+                    propDescription?: string | undefined;
+                    salt?: string | undefined;
+                    awards: {
+                      mintReason: string;
+                      mintTitle: string;
+                      /**
+            Group number
+            
+            
+             */
+                      groupNum?: number | undefined;
+                    }[];
+                  }
+                | {
                     propType: "burnRespect";
                     propTitle?: string | undefined;
                     propDescription?: string | undefined;
@@ -626,6 +693,38 @@ type PostV1GetProposalResponse =
          */
             groupNum?: number | undefined;
             version?: number | undefined;
+          };
+          createTs: number;
+          /** Hash of transaction which created this proposal */
+          createTxHash?: string | undefined;
+          /** Hash of transaction which executed this proposal */
+          executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+        }
+      | {
+          id: string;
+          content: {
+            addr: any;
+            cdata: string | any;
+            memo: string | any;
+          };
+          attachment: {
+            propType: "respectAccountBatch";
+            propTitle?: string | undefined;
+            propDescription?: string | undefined;
+            salt?: string | undefined;
+            awards: {
+              mintReason: string;
+              mintTitle: string;
+              /**
+            Group number
+            
+            
+             */
+              groupNum?: number | undefined;
+            }[];
           };
           createTs: number;
           /** Hash of transaction which created this proposal */
@@ -906,6 +1005,22 @@ type PostV1GetProposalsResponse =
                       version?: number | undefined;
                     }
                   | {
+                      propType: "respectAccountBatch";
+                      propTitle?: string | undefined;
+                      propDescription?: string | undefined;
+                      salt?: string | undefined;
+                      awards: {
+                        mintReason: string;
+                        mintTitle: string;
+                        /**
+                Group number
+                
+                
+                 */
+                        groupNum?: number | undefined;
+                      }[];
+                    }
+                  | {
                       propType: "burnRespect";
                       propTitle?: string | undefined;
                       propDescription?: string | undefined;
@@ -1045,6 +1160,38 @@ type PostV1GetProposalsResponse =
              */
               groupNum?: number | undefined;
               version?: number | undefined;
+            };
+            createTs: number;
+            /** Hash of transaction which created this proposal */
+            createTxHash?: string | undefined;
+            /** Hash of transaction which executed this proposal */
+            executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          }
+        | {
+            id: string;
+            content: {
+              addr: any;
+              cdata: string | any;
+              memo: string | any;
+            };
+            attachment: {
+              propType: "respectAccountBatch";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+              awards: {
+                mintReason: string;
+                mintTitle: string;
+                /**
+                Group number
+                
+                
+                 */
+                groupNum?: number | undefined;
+              }[];
             };
             createTs: number;
             /** Hash of transaction which created this proposal */
@@ -1290,8 +1437,8 @@ type PostV1GetTokenResponse =
         Mint type
         
         A number identifying a type of a mint.
-        
         0 - Respect Breakout
+        10 - Respect Breakout x2
          */
             mintType: number;
             mintTs?: number | undefined;
@@ -1351,8 +1498,8 @@ type PostV1GetAwardResponse =
         Mint type
         
         A number identifying a type of a mint.
-        
         0 - Respect Breakout
+        10 - Respect Breakout x2
          */
         mintType: number;
         mintTs?: number | undefined;
@@ -1482,8 +1629,8 @@ type GetV1TokenTokenIdResponse =
         Mint type
         
         A number identifying a type of a mint.
-        
         0 - Respect Breakout
+        10 - Respect Breakout x2
          */
             mintType: number;
             mintTxHash?: string | undefined;
@@ -1524,8 +1671,8 @@ type GetV1TokenTokenIdResponse =
         Mint type
         
         A number identifying a type of a mint.
-        
         0 - Respect Breakout
+        10 - Respect Breakout x2
          */
             mintType: number;
             mintTs?: number | undefined;
@@ -1587,8 +1734,8 @@ type PostV1GetAwardsResponse =
             Mint type
             
             A number identifying a type of a mint.
-            
             0 - Respect Breakout
+            10 - Respect Breakout x2
              */
           mintType: number;
           mintTs?: number | undefined;

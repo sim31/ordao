@@ -154,8 +154,8 @@ Respect Account
 
 Mint Respect to an account.
 `
-export const zRespectAccount = zDecodedPropBase.extend({
-  propType: z.literal(zPropType.Enum.respectAccount),
+
+export const zRespectAccountFields = z.object({
   meetingNum: zMeetingNum,
   mintType: zMintType,
   groupNum: zGroupNum.optional(),
@@ -164,23 +164,48 @@ export const zRespectAccount = zDecodedPropBase.extend({
   title: z.string().max(64).describe(titleDesc),
   reason: z.string().describe(reasonDesc),
   tokenId: zTokenId
+});
+
+
+export const zRespectAccount = zDecodedPropBase.merge(zRespectAccountFields).extend({
+  propType: z.literal(zPropType.Enum.respectAccount),
 }).describe(respectAccountDescription);
 export type RespectAccount = z.infer<typeof zRespectAccount>;
-
-// const respectAccountRequestEx = {
-//   meetingNum: 1,
-//   mintType: 1,
-//   account: "0x0165878A594ca255338adfa4d48449f69242Eb8F",
-//   value: 10n,
-//   title
-
-// }
 
 export const zRespectAccountRequest = zRespectAccount
   .describe(respectAccountDescription)
   .omit({ propType: true, tokenId: true })
   .partial({ mintType: true, meetingNum: true, metadata: true })
 export type RespectAccountRequest = z.infer<typeof zRespectAccountRequest>;
+
+
+const respectAccountBatchDescription = `
+Respect Account Batch
+
+Mint multiple respect awards at once
+`
+const awardsDesc = `
+Awards
+
+List of awards to mint
+`
+
+export const zRespectAccountBatch = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.respectAccountBatch),
+  awards: z.array(zRespectAccountFields).min(1).describe(awardsDesc)
+}).describe(respectAccountBatchDescription);
+export type RespectAccountBatch = z.infer<typeof zRespectAccountBatch>;
+
+export const zRespectAccountReqFields = zRespectAccountFields
+  .omit({ tokenId: true })
+  .partial({ mintType: true, meetingNum: true })
+
+export const zRespectAccountBatchRequest = zRespectAccountBatch
+  .extend({ awards: z.array(zRespectAccountReqFields).min(1).describe(awardsDesc) })
+  .describe(respectAccountBatchDescription)
+  .omit({ propType: true })
+  .partial({ metadata: true })
+export type RespectAccountBatchRequest = z.infer<typeof zRespectAccountBatchRequest>;
 
 const reason = `
 Reason for burning
@@ -403,6 +428,7 @@ export const zDecodedProposal = z.union([
   zCustomSignal,
   zBurnRespect,
   zBurnRespectBatch,
+  zRespectAccountBatch,
   zRespectAccount,
   zRespectBreakout,
   zRespectBreakoutX2,
@@ -418,6 +444,7 @@ export const zProposalRequest = z.union([
   zCustomSignalRequest,
   zBurnRespectRequest,
   zBurnRespectBatchRequest,
+  zRespectAccountBatchRequest,
   zRespectAccountRequest,
   zRespectBreakoutRequest,
   zRespectBreakoutX2Request,
@@ -433,6 +460,7 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "customSignal": zCustomSignal,
   "burnRespect": zBurnRespect,
   "burnRespectBatch": zBurnRespectBatch,
+  "respectAccountBatch": zRespectAccountBatch,
   "respectAccount": zRespectAccount,
   "respectBreakout": zRespectBreakout,
   "respectBreakoutX2": zRespectBreakoutX2,
@@ -443,6 +471,7 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
 
 export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "tick": zTickRequest,
+  "respectAccountBatch": zRespectAccountBatchRequest,
   "respectAccount": zRespectAccountRequest,
   "respectBreakout": zRespectBreakoutRequest,
   "respectBreakoutX2": zRespectBreakoutX2Request,
@@ -571,6 +600,7 @@ export function toPropMsgFull(prop: Proposal | ProposalMsgFull): ProposalMsgFull
 export type PropOfPropType<T extends PropType> =
   T extends typeof zPropType.Enum.respectBreakout ? RespectBreakout
   : T extends typeof zPropType.Enum.respectBreakoutX2 ? RespectBreakoutX2
+  : T extends typeof zPropType.enum.respectAccountBatch ? RespectAccountBatch
   : T extends typeof zPropType.enum.respectAccount ? RespectAccount
   : T extends typeof zPropType.Enum.burnRespect ? BurnRespect
   : T extends typeof zPropType.Enum.burnRespectBatch ? BurnRespectBatch

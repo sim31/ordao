@@ -7,7 +7,7 @@ export { zGroupNum, GroupNum, zRankNum } from "./respect1155.js";
 
 export const PropTypeValues = [
   "respectBreakout", "respectBreakoutX2", "respectAccount", "burnRespect", "burnRespectBatch", "tick",
-  "customSignal", "customCall", "setPeriods", "setMinWeight", "cancelProposal"
+  "customSignal", "customCall", "setPeriods", "setMinWeight", "cancelProposal", "respectAccountBatch"
 ] as const;
 export const zPropType = z.enum(PropTypeValues);
 export type PropType = z.infer<typeof zPropType>;

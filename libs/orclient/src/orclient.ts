@@ -1,5 +1,5 @@
 import { DecodedError, ExecutedEvent, ExecutionFailedEvent, PropId, PropType, ProposalNotCreated, ProposalState, encodeVoteMemo, zBytes, zPropId } from "@ordao/ortypes";
-import { BurnRespectRequest, BurnRespectBatchRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest } from "@ordao/ortypes/orclient.js";
+import { BurnRespectRequest, BurnRespectBatchRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectAccountBatchRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalFull as NProp, ORNodePropStatus } from "@ordao/ortypes/ornode.js";
 import { sleep, stringify } from "@ordao/ts-utils";
 import { ContractTransactionReceipt, ContractTransactionResponse, Signer, toBeHex } from "ethers";
@@ -278,6 +278,19 @@ export class ORClient extends ORClientReader {
     console.debug("transformed proposal")
     return await this._submitProposal(proposal, v);
   }
+
+  /**
+   * Propose to mint multiple Respect awards at once.
+   */
+  async proposeRespectAccountBatch(
+    req: RespectAccountBatchRequest,
+    vote: VoteWithPropRequest = { vote: "Yes" }
+  ): Promise<ProposeRes> {
+    const v = zVoteWithProp.parse(vote);
+    const proposal = await this._clientToNode.transformRespectAccountBatch(req);
+    return await this._submitProposal(proposal, v);
+  }
+
 
   /**
    * Create a proposal to burn a single Respect award.
