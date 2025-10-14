@@ -4,11 +4,12 @@ import { flattenObj } from "@ordao/ts-utils";
 
 export interface ObjectTableProps {
   obj: object
+  ignoreKeys?: string[]
 }
 
-export function ObjectTable({ obj }: ObjectTableProps) {
+export function ObjectTable({ obj, ignoreKeys }: ObjectTableProps) {
 
-  const flattenedObj = flattenObj(obj);
+  const flattenedObj = flattenObj(obj, ignoreKeys ?? []);
 
   const rows = Object.entries(flattenedObj).map(([key, value]) => {
     return (

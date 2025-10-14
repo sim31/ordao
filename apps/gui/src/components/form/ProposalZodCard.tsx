@@ -15,6 +15,7 @@ import { PropType } from "@ordao/ortypes";
 import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 import { toBeHex } from "ethers";
 import { Loading } from "../Loading";
+import { AwardsTable } from "../proposal-view/AwardsTable";
 
 interface ProposalZodCardProps<T extends z.AnyZodObject> {
   schema: T
@@ -61,11 +62,17 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
 
   const renderStep = () => {
     if (step === 'confirm' && propRequest) {
+      let obj: any = { ...propRequest };
+      const ignoreKeys = [];
+      if (propType === 'respectAccountBatch') {
+        obj.awards = <AwardsTable awards={propRequest.awards} />
+        ignoreKeys.push("awards");
+      }
       return <>
         <Fieldset.Root>
           <Fieldset.HelperText fontSize="md" maxWidth="42em">{description}</Fieldset.HelperText>
           <Fieldset.Content borderTop="solid" borderColor="gray.200" pt="1em">
-            <ObjectTable obj={propRequest} />
+            <ObjectTable obj={obj} ignoreKeys={ignoreKeys} />
             <Checkbox.Root mt="1em" checked={withVote} onCheckedChange={(e) => setWithVote(!!e.checked)}>
               <Checkbox.HiddenInput />
               <Checkbox.Control />
@@ -104,7 +111,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
         mb="2em"
         gap={2}
         flexDirection="column"
-        width={{ base: "sm", md: "40em"}}
+        maxWidth="100%"
         boxShadow="sm"
       >
         <Flex gap={2} alignItems="center" mb={2}>

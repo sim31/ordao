@@ -30,8 +30,7 @@ export function DecodedPropTable({ dprop, shortenAddrs }: ProposalContentTablePr
         const amount = schema.zRankNumToValue.parse(i + 1);
         return `${addrStr}    (+${amount} Respect)`;
       })
-    }
-    if (dprop.propType === 'respectAccountBatch' && key === 'awards' && Array.isArray(value)) {
+    } else if (dprop.propType === 'respectAccountBatch' && key === 'awards' && Array.isArray(value)) {
       // Render awards with a dedicated table
       val = <AwardsTable awards={value as any} shortenAddrs={shortenAddrs} shortenTokenIds={shortenAddrs} />
     }

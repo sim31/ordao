@@ -1,18 +1,26 @@
-import { Table, Box, Badge, HStack, Stack, VStack, Text, useBreakpointValue } from "@chakra-ui/react";
+import { Table, Box, HStack, Stack, VStack, Text, useBreakpointValue } from "@chakra-ui/react";
 import { Button } from "../Button";
 import { formatEthAddress } from "eth-address";
-import { RespectAccountBatch } from "@ordao/ortypes/orclient.js";
+import { RespectAccountBatch, RespectAccountBatchRequest } from "@ordao/ortypes/orclient.js";
 import { shortenId } from "../../utils/shortenId";
 import { downloadText } from "../../utils/download";
 
 export interface AwardsTableProps {
-  awards: RespectAccountBatch["awards"];
+  awards: RespectAccountBatch["awards"] | RespectAccountBatchRequest["awards"]
   shortenAddrs?: boolean;
   shortenTokenIds?: boolean;
 }
 
 export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTableProps) {
   const isSmall = useBreakpointValue({ base: true, xl: false });
+
+  const showTokenId = awards.some((a) => 'tokenId' in a);
+  const tokenId = (a: RespectAccountBatch["awards"][number] | RespectAccountBatchRequest["awards"][number]) => {
+    if ('tokenId' in a) {
+      return a.tokenId;
+    }
+    return "";
+  };
 
   const exportCsv = () => {
     const esc = (v: unknown) => {
@@ -34,7 +42,7 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
       a.value,
       (a.title ?? "").replace(/\n/g, " "),
       (a.reason ?? "").replace(/\n/g, " "),
-      a.tokenId,
+      tokenId(a),
       a.meetingNum ?? "",
       a.mintType ?? "",
       a.groupNum ?? "",
@@ -67,8 +75,12 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
                 <Text fontSize="sm" color="fg.muted">Reason</Text>
                 <Text wordBreak="break-word">{a.reason}</Text>
 
-                <Text fontSize="sm" color="fg.muted">Token Id</Text>
-                <Text wordBreak="break-word">{shortenTokenIds ? shortenId(a.tokenId, 2) : a.tokenId}</Text>
+                {showTokenId && 
+                <>
+                    <Text fontSize="sm" color="fg.muted">Token Id</Text>
+                    <Text wordBreak="break-word">{shortenTokenIds ? shortenId(tokenId(a), 2) : tokenId(a)}</Text>
+                </>
+                }
 
                 <HStack wrap="wrap" gap={4} mt={1}>
                   {a.meetingNum !== undefined && (
@@ -100,14 +112,16 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
         <Table.Body>
           {/* header */}
           <Table.Row bg="bg.muted">
-            <Table.Cell fontWeight="bold">Account</Table.Cell>
-            <Table.Cell fontWeight="bold">Value</Table.Cell>
-            <Table.Cell fontWeight="bold">Title</Table.Cell>
-            <Table.Cell fontWeight="bold">Reason</Table.Cell>
-            <Table.Cell fontWeight="bold">Token</Table.Cell>
-            <Table.Cell fontWeight="bold">Meeting</Table.Cell>
-            <Table.Cell fontWeight="bold">Mint Type</Table.Cell>
-            <Table.Cell fontWeight="bold">Group num</Table.Cell>
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Account</Table.Cell>
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Value</Table.Cell>
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Title</Table.Cell>
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Reason</Table.Cell>
+            {showTokenId &&
+              <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Token</Table.Cell>
+            }
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Meeting</Table.Cell>
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Mint Type</Table.Cell>
+            <Table.Cell style={{ wordBreak: "keep-all" }} fontWeight="bold">Group num</Table.Cell>
           </Table.Row>
           {awards.map((a, idx) => (
             <Table.Row key={idx}>
@@ -117,7 +131,9 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
               <Table.Cell>{a.value}</Table.Cell>
               <Table.Cell>{a.title}</Table.Cell>
               <Table.Cell wordBreak="break-word">{a.reason}</Table.Cell>
-              <Table.Cell>{shortenTokenIds ? shortenId(a.tokenId, 2) : a.tokenId}</Table.Cell>
+              {showTokenId &&
+                <Table.Cell>{shortenTokenIds ? shortenId(tokenId(a), 2) : tokenId(a)}</Table.Cell>
+              }
               <Table.Cell>{a.meetingNum}</Table.Cell>
               <Table.Cell>{a.mintType}</Table.Cell>
               <Table.Cell>{a.groupNum}</Table.Cell>

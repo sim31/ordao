@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite --port 5175",
+    "dev-ngrok": "vite --port 5175",
     "dev-erc20": "vite --mode dev-erc20 --port 5175",
     "dev-op-sepolia": "vite --mode dev-op-sepolia --port 5175",
     "dev-op-sepolia-ngrok": "vite --mode dev-op-sepolia-ngrok --port 5175",
