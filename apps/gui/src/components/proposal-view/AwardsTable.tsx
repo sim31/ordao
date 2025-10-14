@@ -1,9 +1,11 @@
 import { Table, Box, HStack, Stack, VStack, Text, useBreakpointValue } from "@chakra-ui/react";
 import { Button } from "../Button";
 import { formatEthAddress } from "eth-address";
-import { RespectAccountBatch, RespectAccountBatchRequest } from "@ordao/ortypes/orclient.js";
+import { RespectAccountBatch, RespectAccountBatchRequest, zRespectAccountFields } from "@ordao/ortypes/orclient.js";
 import { shortenId } from "../../utils/shortenId";
 import { downloadText } from "../../utils/download";
+import { zodObjectFields } from "@ordao/zod-utils";
+import Papa from "papaparse";
 
 export interface AwardsTableProps {
   awards: RespectAccountBatch["awards"] | RespectAccountBatchRequest["awards"]
@@ -24,31 +26,13 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds, awardsStack
   };
 
   const exportCsv = () => {
-    const esc = (v: unknown) => {
-      const s = String(v ?? "");
-      return '"' + s.replace(/\n/g, ' ').replace(/"/g, '""') + '"';
-    };
-    const headers = [
-      "Account",
-      "Value",
-      "Title",
-      "Reason",
-      "Token Id",
-      "Meeting #",
-      "Mint Type",
-      "Group #",
-    ];
-    const rows = awards.map((a) => [
-      a.account,
-      a.value,
-      (a.title ?? "").replace(/\n/g, " "),
-      (a.reason ?? "").replace(/\n/g, " "),
-      tokenId(a),
-      a.meetingNum ?? "",
-      a.mintType ?? "",
-      a.groupNum ?? "",
-    ]);
-    const csv = [headers.join(","), ...rows.map((r) => r.map((x) => esc(x)).join(","))].join("\n");
+    const fields = zodObjectFields(zRespectAccountFields);
+    const headers = Object.keys(fields);
+
+    const csv = Papa.unparse({
+      fields: headers,
+      data: awards
+    });
     downloadText("awards.csv", csv, "text/csv;charset=utf-8");
   };
 

@@ -156,13 +156,13 @@ Mint Respect to an account.
 `
 
 export const zRespectAccountFields = z.object({
-  meetingNum: zMeetingNum,
-  mintType: zMintType,
-  groupNum: zGroupNum.optional(),
   account: zEthAddress.describe(accountDesc),
   value: zUint.describe(valueDesc),
   title: z.string().max(64).describe(titleDesc),
   reason: z.string().describe(reasonDesc),
+  meetingNum: zMeetingNum,
+  mintType: zMintType,
+  groupNum: zGroupNum.optional(),
   tokenId: zTokenId
 });
 
