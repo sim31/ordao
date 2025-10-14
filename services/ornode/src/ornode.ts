@@ -40,7 +40,6 @@ import {
   TypedContractEvent,
   breakoutSchemas,
   BreakoutType,
-  zBreakoutType,
 } from "@ordao/ortypes"
 import { TokenMtCfg, SyncConfig } from "./config.js"
 import { IOrdb } from "./ordb/iordb.js";
@@ -59,10 +58,7 @@ import {
   zMintRespectArgs,
   zTokenIdNum,
   zTokenId,
-  zFungibleTokenIdNum,
-  Factory as Respect1155Factory,
-  zMintRespectGroupArgs,
-  TokenIdNum
+  zFungibleTokenIdNum
 } from "@ordao/ortypes/respect1155.js";
 import { BigNumberish, ContractRunner, EventFragment, EventLog, Log, Provider, toBeHex, toBigInt, TransactionReceipt, ZeroAddress } from "ethers";
 import {
@@ -117,8 +113,6 @@ interface TransferEventData {
   args: TransferBatchEvent.OutputObject;
   log: LogDescription
 }
-
-const respectInterface = Respect1155Factory.createInterface();
 
 export class ORNode implements IORNode {
   private _db: IOrdb;
@@ -595,33 +589,6 @@ export class ORNode implements IORNode {
     return events;
   }
 
-  private async _getTokenIdsFromProp(
-    prop: Proposal
-  ): TokenIdNum[] | undefined {
-    const propType = prop?.attachment?.propType;
-    if (propType === undefined || prop.content === undefined) {
-      console.error("Can't get token ids from prop, because prop type or content is undefined",
-        "Prop type: ", propType, "Content: ", prop.content
-      );
-      return undefined;
-    }
-
-    const breakoutType = zBreakoutType.safeParse(propType);
-    if (!breakoutType.success || propType === "respectAccountBatch") {
-      const data = zBytesLikeToBytes.parse(prop.content.cdata);
-      const tx = respectInterface.parseTransaction({ data });
-      z.literal("mintRespectGroup").parse(tx?.name);
-      const args = zMintRespectGroupArgs.parse(tx?.args);
-      return args.mintRequests.map(req => req.id);
-    } else if (propType === "respectAccount") {
-
-
-    } else if (propType === "burnRespectBatch") {
-
-    }
-
-  }
-
   private async _handleTokenEvents(
     propId: PropId,
     retVal: string,
@@ -639,7 +606,6 @@ export class ORNode implements IORNode {
 
     // check if event being executed is breakout result or individual mint
     const propType = prop?.attachment?.propType;
-    const tokenIds = this._getTokenIdsFromProp(prop);
 
     if (txHash === undefined) {
       // This is a critical error, as it means we can't create awards in ornode.
@@ -660,7 +626,6 @@ export class ORNode implements IORNode {
       const awards: Array<RespectAwardMt> = [];
       const burnRequests: BurnRequest[] = [];
       for (const { args, log } of transferEvs) {
-        if ()
         const op = await this._handleTransferEvent(
           args.operator,
           args.from,
