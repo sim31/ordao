@@ -45,7 +45,7 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
       padding={4}
       gap={2}
       flexDirection="column"
-      maxWidth="4xl"
+      maxWidth="100%"
     >
       <Card.Header pt="0.5em" pl="1em">
         <ProposalStatusLine proposal={proposal}/>

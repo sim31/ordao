@@ -3,6 +3,7 @@ import { Text } from "../Text"
 import { stringify } from "@ordao/ts-utils"
 import { Prose } from "../ui/prose"
 import Markdown from "react-markdown"
+import React from "react"
 
 export function PropValue({ value, markdown }: { value: unknown, markdown?: boolean }) {
   if (typeof value === 'string') {
@@ -11,6 +12,8 @@ export function PropValue({ value, markdown }: { value: unknown, markdown?: bool
         {markdown ? <Markdown>{value}</Markdown> : value}
       </Prose>
     )
+  } else if (React.isValidElement(value)) {
+    return value
   } else {
     return (
       <Text fontSize="md">{stringify(value)}</Text>
