@@ -36,6 +36,8 @@ import {
   zSetMinWeight,
   SetMinWeight,
   zCancelProposal,
+  zSetMaxLiveYesVotes,
+  SetMaxLiveYesVotes,
   RespectBreakoutX2,
   zRespectBreakoutX2,
   RespectAccountBatch,
@@ -64,7 +66,8 @@ import {
   zVoteWeight as zNVoteWeight,
   VoteWeight as NVoteWeight,
   zSetMinWeightAttachment,
-  zCancelProposalAttachment
+  zCancelProposalAttachment,
+  zSetMaxLiveYesVotesAttachment
 } from "../ornode.js";
 import {
   zEthAddress,
@@ -118,6 +121,38 @@ export const voteStatusMap: Record<NVoteStatus, VoteStatus> = {
   [NVoteStatus.Failing]: "Failing",
   [NVoteStatus.Passed]: "Passed",
   [NVoteStatus.Passing]: "Passing"
+}
+
+function mkzNProposalToSetMaxLiveYesVotes(orctx: ORContext) {
+  return zNProposalFull.transform(async (val, ctx) => {
+    try {
+      const attachment = zSetMaxLiveYesVotesAttachment.parse(val.attachment);
+
+      expect(val.content.addr).to.be.equal(
+        await orctx.getOrecAddr(),
+        "set max live yes votes supposed to be addressed to orec"
+      );
+
+      const data = zBytesLikeToBytes.parse(val.content.cdata);
+      const tx = orecInterface.parseTransaction({ data });
+      expect(tx?.name).to.be.equal(
+        orecInterface.getFunction('setMaxLiveVotes').name,
+        "expected setMaxLiveVotes function to be called"
+      );
+
+      const newMaxLiveYesVotes: number = Number((tx?.args as any)?.[0]);
+
+      const r: SetMaxLiveYesVotes = {
+        propType: zPropType.Enum.setMaxLiveYesVotes,
+        newMaxLiveYesVotes,
+        metadata: zNAttachmentToMetadata.parse(attachment)
+      };
+
+      return r;
+    } catch(err) {
+      addCustomIssue(val, ctx, err, "Exception in mkzNProposalToSetMaxLiveYesVotes");
+    }
+  }).pipe(zSetMaxLiveYesVotes);
 }
 
 function mkzNProposalTorespectAccountBatch(orctx: ORContext) {
@@ -615,6 +650,7 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
   const zNProposalToTick = mkzNProposalToTick(orctx);
   const zNProposalToSetPeriods = mkzNProposalToSetPeriods(orctx);
   const zNProposalToSetMinWeight = mkzNProposalToSetMinWeight(orctx);
+  const zNProposalToSetMaxLiveYesVotes = mkzNProposalToSetMaxLiveYesVotes(orctx);
   const zNProposalToCancelProposal = mkzNProposalToCancelProposal(orctx);
   const zNProposalToBurnRespectBatch = mkzNProposalToBurnRespectBatch(orctx);
 
@@ -643,6 +679,8 @@ function mkzNProposalToDecodedProp(orctx: ORContext) {
           return await zNProposalToSetPeriods.parseAsync(val);
         case 'setMinWeight':
           return await zNProposalToSetMinWeight.parseAsync(val);
+        case 'setMaxLiveYesVotes':
+          return await zNProposalToSetMaxLiveYesVotes.parseAsync(val);
         case 'cancelProposal':
           return await zNProposalToCancelProposal.parseAsync(val);
         default: {

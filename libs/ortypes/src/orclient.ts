@@ -422,6 +422,30 @@ export const zSetMinWeightRequest = zSetMinWeight
   .describe(setMinWeightDescription);
 export type SetMinWeightRequest = z.infer<typeof zSetMinWeightRequest>;
 
+const setMaxLiveYesVotesDescription = `
+Set Max Live Yes Votes
+
+Set the maximum number of simultaneous live "Yes" votes allowed per voter. This mitigates proposal spam.
+`;
+
+const newMaxLiveYesVotesDesc = `
+Max Live Yes Votes
+
+Maximum number of concurrent live Yes votes a single voter can have (0-255)
+`;
+
+export const zSetMaxLiveYesVotes = zDecodedPropBase.extend({
+  propType: z.literal(zPropType.Enum.setMaxLiveYesVotes),
+  newMaxLiveYesVotes: z.number().int().gte(0).lte(255).describe(newMaxLiveYesVotesDesc)
+}).describe(setMaxLiveYesVotesDescription);
+export type SetMaxLiveYesVotes = z.infer<typeof zSetMaxLiveYesVotes>;
+
+export const zSetMaxLiveYesVotesRequest = zSetMaxLiveYesVotes
+  .omit({ propType: true })
+  .partial({ metadata: true })
+  .describe(setMaxLiveYesVotesDescription);
+export type SetMaxLiveYesVotesRequest = z.infer<typeof zSetMaxLiveYesVotesRequest>;
+
 export const zDecodedProposal = z.union([
   zCustomCall,
   zTick,
@@ -434,6 +458,7 @@ export const zDecodedProposal = z.union([
   zRespectBreakoutX2,
   zSetPeriods,
   zSetMinWeight,
+  zSetMaxLiveYesVotes,
   zCancelProposal
 ]);
 export type DecodedProposal = z.infer<typeof zDecodedProposal>;
@@ -450,6 +475,7 @@ export const zProposalRequest = z.union([
   zRespectBreakoutX2Request,
   zSetPeriodsRequest,
   zSetMinWeightRequest,
+  zSetMaxLiveYesVotesRequest,
   zCancelProposalRequest
 ]);
 export type ProposalRequest = z.infer<typeof zProposalRequest>;
@@ -466,6 +492,7 @@ export const propSchemaMap: Record<PropType, z.AnyZodObject> = {
   "respectBreakoutX2": zRespectBreakoutX2,
   "setPeriods": zSetPeriods,
   "setMinWeight": zSetMinWeight,
+  "setMaxLiveYesVotes": zSetMaxLiveYesVotes,
   "cancelProposal": zCancelProposal
 }
 
@@ -481,6 +508,7 @@ export const propRequestSchemaMap: Record<PropType, z.AnyZodObject> = {
   "customSignal": zCustomSignalRequest,
   "setPeriods": zSetPeriodsRequest,
   "setMinWeight": zSetMinWeightRequest,
+  "setMaxLiveYesVotes": zSetMaxLiveYesVotesRequest,
   "cancelProposal": zCancelProposalRequest
 }
 
@@ -609,6 +637,7 @@ export type PropOfPropType<T extends PropType> =
   : T extends typeof zPropType.Enum.tick ? Tick
   : T extends typeof zPropType.Enum.setPeriods ? SetPeriods
   : T extends typeof zPropType.Enum.setMinWeight ? SetMinWeight
+  : T extends typeof zPropType.Enum.setMaxLiveYesVotes ? SetMaxLiveYesVotes
   : T extends typeof zPropType.Enum.cancelProposal ? CancelProposal
   : never;
 

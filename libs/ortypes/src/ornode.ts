@@ -91,6 +91,11 @@ export const zSetMinWeightAttachment = zPropAttachmentBase.extend({
 })
 export type SetMinWeightAttachment = z.infer<typeof zSetMinWeightAttachment>;
 
+export const zSetMaxLiveYesVotesAttachment = zPropAttachmentBase.extend({
+  propType: z.literal(zPropType.Enum.setMaxLiveYesVotes),
+})
+export type SetMaxLiveYesVotesAttachment = z.infer<typeof zSetMaxLiveYesVotesAttachment>;
+
 export const zCancelProposalAttachment = zPropAttachmentBase.extend({
   propType: z.literal(zPropType.Enum.cancelProposal)
 });
@@ -108,6 +113,7 @@ export const zPropAttachment = z.union([
   zCustomCallAttachment,
   zSetPeriodsAttachment,
   zSetMinWeightAttachment,
+  zSetMaxLiveYesVotesAttachment,
   zCancelProposalAttachment
 ]);
 export type PropAttachment = z.infer<typeof zPropAttachment>;
@@ -318,6 +324,15 @@ export const zSetMinWeightValid = zSetMinWeight
   .refine(propIdMatchesContent, propIdErr)
   .refine(propMemoMatchesAttachment, memoErr)
 
+export const zSetMaxLiveYesVotes = zProposalBaseFull.extend({
+  attachment: zSetMaxLiveYesVotesAttachment
+});
+export type SetMaxLiveYesVotes = z.infer<typeof zSetMaxLiveYesVotes>;
+
+export const zSetMaxLiveYesVotesValid = zSetMaxLiveYesVotes
+  .refine(propIdMatchesContent, propIdErr)
+  .refine(propMemoMatchesAttachment, memoErr)
+
 export const zCancelProposal = zProposalBaseFull.extend({
   attachment: zCancelProposalAttachment
 });
@@ -341,6 +356,7 @@ export const zProposal = z.union([
   zCustomCall,
   zSetPeriods,
   zSetMinWeight,
+  zSetMaxLiveYesVotes,
   zCancelProposal
 ]);
 export type Proposal = z.infer<typeof zProposal>;
@@ -358,6 +374,7 @@ export const zStoredProposal = z.union([
   zCustomCall.required({ status: true, createTs: true }),
   zSetPeriods.required({ status: true, createTs: true }),
   zSetMinWeight.required({ status: true, createTs: true }),
+  zSetMaxLiveYesVotes.required({ status: true, createTs: true }),
   zCancelProposal.required({ status: true, createTs: true })
 ]);
 export type StoredProposal = z.infer<typeof zStoredProposal>;
@@ -375,6 +392,7 @@ export const zProposalFull = z.union([
   zCustomCall,
   zSetPeriods,
   zSetMinWeight,
+  zSetMaxLiveYesVotes,
   zCancelProposal
 ]);
 export type ProposalFull = z.infer<typeof zProposalFull>;
@@ -509,9 +527,9 @@ export function idOfCustomSignalAttach(attachment: CustomSignalAttachment | Tick
 }
 
 export function idOfBaseAttach(
-  attachment: CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment | CancelProposalAttachment
+  attachment: CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment | SetMaxLiveYesVotesAttachment | CancelProposalAttachment
 ) {
-  const a: Required<CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment | CancelProposalAttachment> = {
+  const a: Required<CustomCallAttachment | SetPeriodsAttachment | SetMinWeightAttachment | SetMaxLiveYesVotesAttachment | CancelProposalAttachment> = {
     ...attachment,
     propTitle: attachment.propTitle ?? "",
     propDescription: attachment.propDescription ?? "",
@@ -565,6 +583,7 @@ export function attachmentId(attachment: PropAttachment) {
     case 'customCall':
     case 'setPeriods':
     case 'setMinWeight':
+    case 'setMaxLiveYesVotes':
     case 'cancelProposal':
       return idOfBaseAttach(attachment);
     default:

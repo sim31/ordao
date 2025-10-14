@@ -1,5 +1,5 @@
 import { DecodedError, ExecutedEvent, ExecutionFailedEvent, PropId, PropType, ProposalNotCreated, ProposalState, encodeVoteMemo, zBytes, zPropId } from "@ordao/ortypes";
-import { BurnRespectRequest, BurnRespectBatchRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectAccountBatchRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest } from "@ordao/ortypes/orclient.js";
+import { BurnRespectRequest, BurnRespectBatchRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectAccountBatchRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest, SetMaxLiveYesVotesRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalFull as NProp, ORNodePropStatus } from "@ordao/ortypes/ornode.js";
 import { sleep, stringify } from "@ordao/ts-utils";
 import { ContractTransactionReceipt, ContractTransactionResponse, Signer, toBeHex } from "ethers";
@@ -448,6 +448,21 @@ export class ORClient extends ORClientReader {
   ): Promise<ProposeRes> {
     const v = zVoteWithProp.parse(vote);
     const proposal = await this._clientToNode.transformSetMinWeight(req);
+    return await this._submitProposal(proposal, v);
+  }
+
+  /**
+   * Propose to set the maximum number of simultaneous live "Yes" votes a voter can have.
+   *
+   * @param req - new max live yes votes (0-255)
+   * @param vote - vote to submit with the result. Default: `{ vote: "Yes" }`.
+   */
+  async proposeSetMaxLiveYesVotes(
+    req: SetMaxLiveYesVotesRequest,
+    vote: VoteWithPropRequest = { vote: "Yes" }
+  ): Promise<ProposeRes> {
+    const v = zVoteWithProp.parse(vote);
+    const proposal = await this._clientToNode.transformSetMaxLiveYesVotes(req);
     return await this._submitProposal(proposal, v);
   }
 

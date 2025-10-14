@@ -21,6 +21,7 @@ import {
   zTickRequest,
   zSetPeriodsRequest,
   zSetMinWeightRequest,
+  zSetMaxLiveYesVotesRequest,
   zVoteType as zCVoteType,
   VoteType as CVoteType,
   zGetProposalsSpec as zCGetProposalsSpec,
@@ -33,6 +34,7 @@ import {
   isGetPropSpecSkip,
   SetPeriodsRequest,
   SetMinWeightRequest,
+  SetMaxLiveYesVotesRequest,
   ProposalRequest,
   CancelProposalRequest,
   zCancelProposalRequest,
@@ -98,6 +100,9 @@ import {
   SetMinWeightAttachment, 
   SetMinWeight, 
   zSetMinWeightValid, 
+  SetMaxLiveYesVotesAttachment,
+  SetMaxLiveYesVotes,
+  zSetMaxLiveYesVotesValid,
   CancelProposal, 
   CancelProposalAttachment, 
   zCancelProposalValid 
@@ -658,6 +663,43 @@ function mkzCSetMinWeightReqToProposal(orctx: ORContext) {
   }).pipe(zSetMinWeightValid);
 }
 
+function mkzCSetMaxLiveYesVotesReqToProposal(orctx: ORContext) {
+  return zSetMaxLiveYesVotesRequest.transform(async (val, ctx) => {
+    try {
+      const newMax: number = val.newMaxLiveYesVotes;
+      const cdata = orecInterface.encodeFunctionData(
+        'setMaxLiveVotes',
+        [newMax]
+      );
+      const addr = await orctx.getOrecAddr();
+
+      const attachment: SetMaxLiveYesVotesAttachment = {
+        propType: zPropType.Enum.setMaxLiveYesVotes,
+        propTitle: val.metadata?.propTitle,
+        propDescription: val.metadata?.propDescription,
+        salt: hexlify(randomBytes(4))
+      };
+
+      const memo = idOfBaseAttach(attachment);
+
+      const content: PropContent = { addr, cdata, memo };
+      const id = propId(content);
+
+      const r: SetMaxLiveYesVotes = {
+        id,
+        content,
+        attachment
+      };
+      return r;
+    } catch (err) {
+      addCustomIssue(val, ctx, {
+        message: 'exception in mkzCSetMaxLiveYesVotesReqToProposal',
+        cause: err
+      });
+    }
+  }).pipe(zSetMaxLiveYesVotesValid);
+}
+
 function mkzCCancelProposalReqToProposal(orctx: ORContext) {
   return zCancelProposalRequest.transform(async (val: CancelProposalRequest, ctx) => {
     try {
@@ -763,6 +805,7 @@ export class ClientToNodeTransformer {
   private _zCCustomCallReqToProposal: ReturnType<typeof mkzCCustomCallReqToProposal>;
   private _zCSetPeriodsReqToProposal: ReturnType<typeof mkzCSetPeriodsReqToProposal>;
   private _zCSetMinWeightReqToProposal: ReturnType<typeof mkzCSetMinWeightReqToProposal>;
+  private _zCSetMaxLiveYesVotesReqToProposal: ReturnType<typeof mkzCSetMaxLiveYesVotesReqToProposal>;
   private _zCCancelProposalReqToProposal: ReturnType<typeof mkzCCancelProposalReqToProposal>;
   private _zCGetVotesSpecToNodeSpec: ReturnType<typeof mkzCGetVotesSpecToNodeSpec>
   private _zCRespectAccountBatchReqToProposal: ReturnType<typeof mkzCRespectAccountBatchReqToProposal>;
@@ -779,6 +822,7 @@ export class ClientToNodeTransformer {
     this._zCCustomCallReqToProposal = mkzCCustomCallReqToProposal(this._ctx);
     this._zCSetPeriodsReqToProposal = mkzCSetPeriodsReqToProposal(this._ctx);
     this._zCSetMinWeightReqToProposal = mkzCSetMinWeightReqToProposal(this._ctx);
+    this._zCSetMaxLiveYesVotesReqToProposal = mkzCSetMaxLiveYesVotesReqToProposal(this._ctx);
     this._zCCancelProposalReqToProposal = mkzCCancelProposalReqToProposal(this._ctx);
     this._zCGetVotesSpecToNodeSpec = mkzCGetVotesSpecToNodeSpec(this._ctx);
     this._zCRespectBreakoutX2ReqToProposal = mkzCRespectBreakoutX2ToProposal(this._ctx);
@@ -842,6 +886,10 @@ export class ClientToNodeTransformer {
     return await this._zCSetMinWeightReqToProposal.parseAsync(req);
   }
 
+  async transformSetMaxLiveYesVotes(req: SetMaxLiveYesVotesRequest): Promise<SetMaxLiveYesVotes> {
+    return await this._zCSetMaxLiveYesVotesReqToProposal.parseAsync(req);
+  }
+
   async transformCancelProposal(req: CancelProposalRequest): Promise<CancelProposal> {
     return await this._zCCancelProposalReqToProposal.parseAsync(req);
   }
@@ -876,6 +924,8 @@ export class ClientToNodeTransformer {
         return await this.transformSetPeriods(req as SetPeriodsRequest);
       case 'setMinWeight':
         return await this.transformSetMinWeight(req as SetMinWeightRequest);
+      case 'setMaxLiveYesVotes':
+        return await this.transformSetMaxLiveYesVotes(req as SetMaxLiveYesVotesRequest);
       case 'cancelProposal':
         return await this.transformCancelProposal(req as CancelProposalRequest);
       default: {

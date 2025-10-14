@@ -110,6 +110,12 @@ type PostV1PutProposalInput = {
               salt?: string | undefined;
             }
           | {
+              propType: "setMaxLiveYesVotes";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+            }
+          | {
               propType: "cancelProposal";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
@@ -445,6 +451,31 @@ type PostV1PutProposalInput = {
           memo: string | any;
         };
         attachment: {
+          propType: "setMaxLiveYesVotes";
+          propTitle?: string | undefined;
+          propDescription?: string | undefined;
+          salt?: string | undefined;
+        };
+        /** Unix timestamp. Should match onchain createTime of proposal */
+        createTs?: number | undefined;
+        /** Hash of transaction which created this proposal */
+        createTxHash?: string | undefined;
+        /** Hash of transaction which executed this proposal */
+        executeTxHash?: string | undefined;
+        /** Hash of transaction which cancelled this proposal */
+        cancelTxHash?: string | undefined;
+        status?:
+          | ("NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled")
+          | undefined;
+      }
+    | {
+        id: string;
+        content: {
+          addr: string;
+          cdata: string | any;
+          memo: string | any;
+        };
+        attachment: {
           propType: "cancelProposal";
           propTitle?: string | undefined;
           propDescription?: string | undefined;
@@ -595,6 +626,12 @@ type PostV1GetProposalResponse =
                   }
                 | {
                     propType: "setMinWeight";
+                    propTitle?: string | undefined;
+                    propDescription?: string | undefined;
+                    salt?: string | undefined;
+                  }
+                | {
+                    propType: "setMaxLiveYesVotes";
                     propTitle?: string | undefined;
                     propDescription?: string | undefined;
                     salt?: string | undefined;
@@ -901,6 +938,28 @@ type PostV1GetProposalResponse =
             memo: string | any;
           };
           attachment: {
+            propType: "setMaxLiveYesVotes";
+            propTitle?: string | undefined;
+            propDescription?: string | undefined;
+            salt?: string | undefined;
+          };
+          createTs: number;
+          /** Hash of transaction which created this proposal */
+          createTxHash?: string | undefined;
+          /** Hash of transaction which executed this proposal */
+          executeTxHash?: string | undefined;
+          /** Hash of transaction which cancelled this proposal */
+          cancelTxHash?: string | undefined;
+          status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+        }
+      | {
+          id: string;
+          content: {
+            addr: any;
+            cdata: string | any;
+            memo: string | any;
+          };
+          attachment: {
             propType: "cancelProposal";
             propTitle?: string | undefined;
             propDescription?: string | undefined;
@@ -1062,6 +1121,12 @@ type PostV1GetProposalsResponse =
                     }
                   | {
                       propType: "setMinWeight";
+                      propTitle?: string | undefined;
+                      propDescription?: string | undefined;
+                      salt?: string | undefined;
+                    }
+                  | {
+                      propType: "setMaxLiveYesVotes";
                       propTitle?: string | undefined;
                       propDescription?: string | undefined;
                       salt?: string | undefined;
@@ -1347,6 +1412,28 @@ type PostV1GetProposalsResponse =
             };
             attachment: {
               propType: "setMinWeight";
+              propTitle?: string | undefined;
+              propDescription?: string | undefined;
+              salt?: string | undefined;
+            };
+            createTs: number;
+            /** Hash of transaction which created this proposal */
+            createTxHash?: string | undefined;
+            /** Hash of transaction which executed this proposal */
+            executeTxHash?: string | undefined;
+            /** Hash of transaction which cancelled this proposal */
+            cancelTxHash?: string | undefined;
+            status: "NotExecuted" | "Executed" | "ExecutionFailed" | "Canceled";
+          }
+        | {
+            id: string;
+            content: {
+              addr: any;
+              cdata: string | any;
+              memo: string | any;
+            };
+            attachment: {
+              propType: "setMaxLiveYesVotes";
               propTitle?: string | undefined;
               propDescription?: string | undefined;
               salt?: string | undefined;
