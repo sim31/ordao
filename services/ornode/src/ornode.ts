@@ -40,6 +40,7 @@ import {
   TypedContractEvent,
   breakoutSchemas,
   BreakoutType,
+  zBreakoutType,
 } from "@ordao/ortypes"
 import { TokenMtCfg, SyncConfig } from "./config.js"
 import { IOrdb } from "./ordb/iordb.js";
@@ -58,7 +59,10 @@ import {
   zMintRespectArgs,
   zTokenIdNum,
   zTokenId,
-  zFungibleTokenIdNum
+  zFungibleTokenIdNum,
+  Factory as Respect1155Factory,
+  zMintRespectGroupArgs,
+  TokenIdNum
 } from "@ordao/ortypes/respect1155.js";
 import { BigNumberish, ContractRunner, EventFragment, EventLog, Log, Provider, toBeHex, toBigInt, TransactionReceipt, ZeroAddress } from "ethers";
 import {
@@ -113,6 +117,8 @@ interface TransferEventData {
   args: TransferBatchEvent.OutputObject;
   log: LogDescription
 }
+
+const respectInterface = Respect1155Factory.createInterface();
 
 export class ORNode implements IORNode {
   private _db: IOrdb;
@@ -589,6 +595,33 @@ export class ORNode implements IORNode {
     return events;
   }
 
+  private async _getTokenIdsFromProp(
+    prop: Proposal
+  ): TokenIdNum[] | undefined {
+    const propType = prop?.attachment?.propType;
+    if (propType === undefined || prop.content === undefined) {
+      console.error("Can't get token ids from prop, because prop type or content is undefined",
+        "Prop type: ", propType, "Content: ", prop.content
+      );
+      return undefined;
+    }
+
+    const breakoutType = zBreakoutType.safeParse(propType);
+    if (!breakoutType.success || propType === "respectAccountBatch") {
+      const data = zBytesLikeToBytes.parse(prop.content.cdata);
+      const tx = respectInterface.parseTransaction({ data });
+      z.literal("mintRespectGroup").parse(tx?.name);
+      const args = zMintRespectGroupArgs.parse(tx?.args);
+      return args.mintRequests.map(req => req.id);
+    } else if (propType === "respectAccount") {
+
+
+    } else if (propType === "burnRespectBatch") {
+
+    }
+
+  }
+
   private async _handleTokenEvents(
     propId: PropId,
     retVal: string,
@@ -601,20 +634,17 @@ export class ORNode implements IORNode {
       ? await this._db.proposals.getByIdAndExecHash(propId, txHash)
       : await this._db.proposals.getLatestById(propId);
     if (!prop) {
-      console.error("Could not find proposal that was executed: ", propId, "txHash: ", txHash);
+      throw new Error(`Could not find proposal that was executed: ${propId}, txHash: ${txHash}`);
     }
 
     // check if event being executed is breakout result or individual mint
     const propType = prop?.attachment?.propType;
+    const tokenIds = this._getTokenIdsFromProp(prop);
 
     if (txHash === undefined) {
-      const msg = "Could not retrieve tx hash needed to handle token events";
-      if (propType === 'respectAccount' || propType === 'respectBreakout') {
-        console.error(msg);
-      } else {
-        console.warn(msg);
-      }
-      return;
+      // This is a critical error, as it means we can't create awards in ornode.
+      const msg = `Could not retrieve tx hash needed to handle token events for prop ${propId}`;
+      throw new Error(msg);
     }
 
     const receipt = await this._ctx.runner.provider?.getTransactionReceipt(txHash);
@@ -626,9 +656,11 @@ export class ORNode implements IORNode {
     console.debug("Found transfer events: ", stringify(transferEvs));
 
     if (transferEvs.length > 0) {
+      // Parse transfer events
       const awards: Array<RespectAwardMt> = [];
       const burnRequests: BurnRequest[] = [];
       for (const { args, log } of transferEvs) {
+        if ()
         const op = await this._handleTransferEvent(
           args.operator,
           args.from,
@@ -654,6 +686,7 @@ export class ORNode implements IORNode {
         return ts;
       }
 
+      // Add metadata from proposals about awards being minted
       if (propType === 'respectBreakout' || propType === 'respectBreakoutX2') {
         for (const award of awards) {
           award.properties = {
