@@ -661,6 +661,19 @@ export class ORNode implements IORNode {
             groupNum: prop?.attachment?.groupNum
           }
         }
+      } else if (propType === 'respectAccountBatch') {
+        for (const [idx, award] of awards.entries()) {
+          // For now assuming 1 proposal execution per tx, which means idx can be used as index here.
+          // But see: https://github.com/sim31/ordao/issues/24
+          const attachment = prop?.attachment?.awards[idx]
+          award.properties = {
+            ...award.properties,
+            mintTs: await getTs(),
+            reason: attachment?.mintReason,
+            title: attachment?.mintTitle,
+            groupNum: attachment?.groupNum
+          }
+        }
       } else if (propType === 'respectAccount') {
         for (const award of awards) {
           award.properties = {
