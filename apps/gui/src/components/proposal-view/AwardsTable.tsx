@@ -9,9 +9,10 @@ export interface AwardsTableProps {
   awards: RespectAccountBatch["awards"] | RespectAccountBatchRequest["awards"]
   shortenAddrs?: boolean;
   shortenTokenIds?: boolean;
+  awardsStackLimit?: number;
 }
 
-export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTableProps) {
+export function AwardsTable({ awards, shortenAddrs, shortenTokenIds, awardsStackLimit }: AwardsTableProps) {
   const isSmall = useBreakpointValue({ base: true, xl: false });
 
   const showTokenId = awards.some((a) => 'tokenId' in a);
@@ -52,6 +53,9 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
   };
 
   if (isSmall) {
+    const limAwards = awardsStackLimit !== undefined
+      ? awards.slice(0, awardsStackLimit)
+      : awards;
     // Card/list layout for small screens
     return (
       <Stack gap={3}>
@@ -60,7 +64,7 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
           <Button size="sm" onClick={exportCsv}>Export CSV</Button>
         </HStack>
         <Stack gap={3}>
-          {awards.map((a, idx) => (
+          {limAwards.map((a, idx) => (
             <Box key={idx} borderWidth="1px" rounded="md" p={3} bg="bg.canvas">
               <VStack align="stretch" gap={1}>
                 <Text fontSize="sm" color="fg.muted">Account</Text>
@@ -97,6 +101,9 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds }: AwardsTab
             </Box>
           ))}
         </Stack>
+        {awardsStackLimit !== undefined && awards.length > awardsStackLimit && (
+          <Text fontSize="sm" color="fg.muted">... and {awards.length - awardsStackLimit} more</Text>
+        )}
       </Stack>
     );
   }

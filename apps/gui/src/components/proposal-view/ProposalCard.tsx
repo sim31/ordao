@@ -30,7 +30,7 @@ export function ProposalCard({ proposal, onExecuteClick, onVoteClick }: Proposal
     if (propKnown) {
       // TODO: do you need to check that this is a custom call?
       if (proposal.decoded) {
-        return <DecodedPropTable dprop={proposal.decoded} shortenAddrs />;
+        return <DecodedPropTable dprop={proposal.decoded} shortenAddrs awardsStackLimit={6} />;
       } else {
         return <PropTable prop={proposal} /> 
       }

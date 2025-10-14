@@ -10,9 +10,10 @@ import { AwardsTable } from "./AwardsTable";
 export interface ProposalContentTableProps {
   dprop: DecodedProposal
   shortenAddrs?: boolean
+  awardsStackLimit?: number 
 }
 
-export function DecodedPropTable({ dprop, shortenAddrs }: ProposalContentTableProps) {
+export function DecodedPropTable({ dprop, shortenAddrs, awardsStackLimit }: ProposalContentTableProps) {
   const zPropSchema = propSchemaMap[dprop.propType]; 
   const fields = zodObjectFields(zPropSchema);
 
@@ -32,7 +33,14 @@ export function DecodedPropTable({ dprop, shortenAddrs }: ProposalContentTablePr
       })
     } else if (dprop.propType === 'respectAccountBatch' && key === 'awards' && Array.isArray(value)) {
       // Render awards with a dedicated table
-      val = <AwardsTable awards={value as any} shortenAddrs={shortenAddrs} shortenTokenIds={shortenAddrs} />
+      val = (
+        <AwardsTable
+          awards={value as any}
+          shortenAddrs={shortenAddrs}
+          shortenTokenIds={shortenAddrs}
+          awardsStackLimit={awardsStackLimit} 
+        />
+      );
     }
     const fieldName = fields[key].title || key;
     return (
