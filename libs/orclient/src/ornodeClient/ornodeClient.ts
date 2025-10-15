@@ -1800,6 +1800,7 @@ type PostV1GetAwardsInput = {
     recipient?: string | undefined;
     burned?: boolean | undefined;
     tokenIdFilter?: string[] | undefined;
+    skip?: number | undefined;
   };
 };
 

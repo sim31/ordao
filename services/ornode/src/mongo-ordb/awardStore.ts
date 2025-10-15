@@ -74,6 +74,7 @@ export class AwardStore implements IAwardStore {
 
     const cursor = await this.awards.find(filter)
       .sort({ "properties.mintTs": -1 })
+      .skip(spec?.skip ?? 0)
       .limit(spec?.limit ?? this._cfg.defaultDocLimit);
 
     const awards = cursor.map(entity => zRespectAwardMt.parse(withoutId(entity)));

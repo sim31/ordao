@@ -14,11 +14,14 @@ import { Route as AppIndexRouteImport } from './routes/_app.index'
 import { Route as AppSubmitBreakoutRouteImport } from './routes/_app.submitBreakout'
 import { Route as AppProposalsRouteImport } from './routes/_app.proposals'
 import { Route as AppNewProposalRouteImport } from './routes/_app.newProposal'
+import { Route as AppChildRespectRouteImport } from './routes/_app.childRespect'
 import { Route as AppAboutRouteImport } from './routes/_app.about'
 import { Route as AppSubmitBreakoutIndexRouteImport } from './routes/_app.submitBreakout/index'
 import { Route as AppProposalsIndexRouteImport } from './routes/_app.proposals/index'
 import { Route as AppNewProposalIndexRouteImport } from './routes/_app.newProposal/index'
 import { Route as AppProposalsPropIdRouteImport } from './routes/_app.proposals/$propId'
+import { Route as AppChildRespectAwardsRouteImport } from './routes/_app.childRespect/awards'
+import { Route as AppChildRespectAccountsRouteImport } from './routes/_app.childRespect/accounts'
 import { Route as AppAboutUserGuideRouteImport } from './routes/_app.about/userGuide'
 import { Route as AppAboutIntentRouteImport } from './routes/_app.about/intent'
 import { Route as AppAboutCommunitiesRouteImport } from './routes/_app.about/communities'
@@ -49,6 +52,11 @@ const AppNewProposalRoute = AppNewProposalRouteImport.update({
   path: '/newProposal',
   getParentRoute: () => AppRoute,
 } as any)
+const AppChildRespectRoute = AppChildRespectRouteImport.update({
+  id: '/childRespect',
+  path: '/childRespect',
+  getParentRoute: () => AppRoute,
+} as any)
 const AppAboutRoute = AppAboutRouteImport.update({
   id: '/about',
   path: '/about',
@@ -73,6 +81,16 @@ const AppProposalsPropIdRoute = AppProposalsPropIdRouteImport.update({
   id: '/$propId',
   path: '/$propId',
   getParentRoute: () => AppProposalsRoute,
+} as any)
+const AppChildRespectAwardsRoute = AppChildRespectAwardsRouteImport.update({
+  id: '/awards',
+  path: '/awards',
+  getParentRoute: () => AppChildRespectRoute,
+} as any)
+const AppChildRespectAccountsRoute = AppChildRespectAccountsRouteImport.update({
+  id: '/accounts',
+  path: '/accounts',
+  getParentRoute: () => AppChildRespectRoute,
 } as any)
 const AppAboutUserGuideRoute = AppAboutUserGuideRouteImport.update({
   id: '/userGuide',
@@ -103,6 +121,7 @@ const AppNewProposalPropTypeIndexRoute =
 
 export interface FileRoutesByFullPath {
   '/about': typeof AppAboutRouteWithChildren
+  '/childRespect': typeof AppChildRespectRouteWithChildren
   '/newProposal': typeof AppNewProposalRouteWithChildren
   '/proposals': typeof AppProposalsRouteWithChildren
   '/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
@@ -111,6 +130,8 @@ export interface FileRoutesByFullPath {
   '/about/communities': typeof AppAboutCommunitiesRoute
   '/about/intent': typeof AppAboutIntentRoute
   '/about/userGuide': typeof AppAboutUserGuideRoute
+  '/childRespect/accounts': typeof AppChildRespectAccountsRoute
+  '/childRespect/awards': typeof AppChildRespectAwardsRoute
   '/proposals/$propId': typeof AppProposalsPropIdRoute
   '/newProposal/': typeof AppNewProposalIndexRoute
   '/proposals/': typeof AppProposalsIndexRoute
@@ -119,11 +140,14 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/about': typeof AppAboutRouteWithChildren
+  '/childRespect': typeof AppChildRespectRouteWithChildren
   '/': typeof AppIndexRoute
   '/about/appState': typeof AppAboutAppStateRoute
   '/about/communities': typeof AppAboutCommunitiesRoute
   '/about/intent': typeof AppAboutIntentRoute
   '/about/userGuide': typeof AppAboutUserGuideRoute
+  '/childRespect/accounts': typeof AppChildRespectAccountsRoute
+  '/childRespect/awards': typeof AppChildRespectAwardsRoute
   '/proposals/$propId': typeof AppProposalsPropIdRoute
   '/newProposal': typeof AppNewProposalIndexRoute
   '/proposals': typeof AppProposalsIndexRoute
@@ -134,6 +158,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_app/about': typeof AppAboutRouteWithChildren
+  '/_app/childRespect': typeof AppChildRespectRouteWithChildren
   '/_app/newProposal': typeof AppNewProposalRouteWithChildren
   '/_app/proposals': typeof AppProposalsRouteWithChildren
   '/_app/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
@@ -142,6 +167,8 @@ export interface FileRoutesById {
   '/_app/about/communities': typeof AppAboutCommunitiesRoute
   '/_app/about/intent': typeof AppAboutIntentRoute
   '/_app/about/userGuide': typeof AppAboutUserGuideRoute
+  '/_app/childRespect/accounts': typeof AppChildRespectAccountsRoute
+  '/_app/childRespect/awards': typeof AppChildRespectAwardsRoute
   '/_app/proposals/$propId': typeof AppProposalsPropIdRoute
   '/_app/newProposal/': typeof AppNewProposalIndexRoute
   '/_app/proposals/': typeof AppProposalsIndexRoute
@@ -152,6 +179,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/about'
+    | '/childRespect'
     | '/newProposal'
     | '/proposals'
     | '/submitBreakout'
@@ -160,6 +188,8 @@ export interface FileRouteTypes {
     | '/about/communities'
     | '/about/intent'
     | '/about/userGuide'
+    | '/childRespect/accounts'
+    | '/childRespect/awards'
     | '/proposals/$propId'
     | '/newProposal/'
     | '/proposals/'
@@ -168,11 +198,14 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
+    | '/childRespect'
     | '/'
     | '/about/appState'
     | '/about/communities'
     | '/about/intent'
     | '/about/userGuide'
+    | '/childRespect/accounts'
+    | '/childRespect/awards'
     | '/proposals/$propId'
     | '/newProposal'
     | '/proposals'
@@ -182,6 +215,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/_app'
     | '/_app/about'
+    | '/_app/childRespect'
     | '/_app/newProposal'
     | '/_app/proposals'
     | '/_app/submitBreakout'
@@ -190,6 +224,8 @@ export interface FileRouteTypes {
     | '/_app/about/communities'
     | '/_app/about/intent'
     | '/_app/about/userGuide'
+    | '/_app/childRespect/accounts'
+    | '/_app/childRespect/awards'
     | '/_app/proposals/$propId'
     | '/_app/newProposal/'
     | '/_app/proposals/'
@@ -238,6 +274,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppNewProposalRouteImport
       parentRoute: typeof AppRoute
     }
+    '/_app/childRespect': {
+      id: '/_app/childRespect'
+      path: '/childRespect'
+      fullPath: '/childRespect'
+      preLoaderRoute: typeof AppChildRespectRouteImport
+      parentRoute: typeof AppRoute
+    }
     '/_app/about': {
       id: '/_app/about'
       path: '/about'
@@ -272,6 +315,20 @@ declare module '@tanstack/react-router' {
       fullPath: '/proposals/$propId'
       preLoaderRoute: typeof AppProposalsPropIdRouteImport
       parentRoute: typeof AppProposalsRoute
+    }
+    '/_app/childRespect/awards': {
+      id: '/_app/childRespect/awards'
+      path: '/awards'
+      fullPath: '/childRespect/awards'
+      preLoaderRoute: typeof AppChildRespectAwardsRouteImport
+      parentRoute: typeof AppChildRespectRoute
+    }
+    '/_app/childRespect/accounts': {
+      id: '/_app/childRespect/accounts'
+      path: '/accounts'
+      fullPath: '/childRespect/accounts'
+      preLoaderRoute: typeof AppChildRespectAccountsRouteImport
+      parentRoute: typeof AppChildRespectRoute
     }
     '/_app/about/userGuide': {
       id: '/_app/about/userGuide'
@@ -329,6 +386,20 @@ const AppAboutRouteWithChildren = AppAboutRoute._addFileChildren(
   AppAboutRouteChildren,
 )
 
+interface AppChildRespectRouteChildren {
+  AppChildRespectAccountsRoute: typeof AppChildRespectAccountsRoute
+  AppChildRespectAwardsRoute: typeof AppChildRespectAwardsRoute
+}
+
+const AppChildRespectRouteChildren: AppChildRespectRouteChildren = {
+  AppChildRespectAccountsRoute: AppChildRespectAccountsRoute,
+  AppChildRespectAwardsRoute: AppChildRespectAwardsRoute,
+}
+
+const AppChildRespectRouteWithChildren = AppChildRespectRoute._addFileChildren(
+  AppChildRespectRouteChildren,
+)
+
 interface AppNewProposalRouteChildren {
   AppNewProposalIndexRoute: typeof AppNewProposalIndexRoute
   AppNewProposalPropTypeIndexRoute: typeof AppNewProposalPropTypeIndexRoute
@@ -370,6 +441,7 @@ const AppSubmitBreakoutRouteWithChildren =
 
 interface AppRouteChildren {
   AppAboutRoute: typeof AppAboutRouteWithChildren
+  AppChildRespectRoute: typeof AppChildRespectRouteWithChildren
   AppNewProposalRoute: typeof AppNewProposalRouteWithChildren
   AppProposalsRoute: typeof AppProposalsRouteWithChildren
   AppSubmitBreakoutRoute: typeof AppSubmitBreakoutRouteWithChildren
@@ -378,6 +450,7 @@ interface AppRouteChildren {
 
 const AppRouteChildren: AppRouteChildren = {
   AppAboutRoute: AppAboutRouteWithChildren,
+  AppChildRespectRoute: AppChildRespectRouteWithChildren,
   AppNewProposalRoute: AppNewProposalRouteWithChildren,
   AppProposalsRoute: AppProposalsRouteWithChildren,
   AppSubmitBreakoutRoute: AppSubmitBreakoutRouteWithChildren,

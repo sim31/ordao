@@ -1,51 +1,13 @@
-import { Flex, VStack } from "@chakra-ui/react";
+import { VStack } from "@chakra-ui/react";
 import { Text } from "../Text";
-import { IconButton } from "../IconButton";
 import { Proposal } from "@ordao/orclient";
 import { ProposalList } from "./ProposalList";
-import { IoIosArrowBack, IoIosArrowForward, IoIosRefresh } from "react-icons/io";
 import { Loading } from "../Loading";
+import { PageControls, PagedControlsProps } from "../PageControls";
 
-export interface PagedProposalListProps {
+export interface PagedProposalListProps extends PagedControlsProps {
   proposals: Proposal[]
-  forwardEnabled: boolean,
-  backEnabled: boolean
-  onForward: () => void
-  onBack: () => void
-  onRefresh: () => void
   isLoading: boolean
-}
-
-
-
-export function PageControls(props: PagedProposalListProps) {
-  const {
-    forwardEnabled,
-    backEnabled,
-    onForward,
-    onBack,
-    onRefresh,
-  } = props;
-
-  return (
-    <Flex
-      alignItems="center"
-      justifyContent="flex-end"
-      w="100%"
-    >
-      <IconButton onClick={onRefresh}>
-        <IoIosRefresh />
-      </IconButton>
-
-      <IconButton disabled={!backEnabled} onClick={onBack}>
-        <IoIosArrowBack />
-      </IconButton>
-      <IconButton disabled={!forwardEnabled} onClick={onForward}>
-        <IoIosArrowForward />
-      </IconButton>
-    </Flex>
-  )
-
 }
 
 export function PagedProposalList(props: PagedProposalListProps) {

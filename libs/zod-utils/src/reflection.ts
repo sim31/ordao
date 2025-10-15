@@ -100,6 +100,10 @@ export function zodOptionalInnerType<T extends z.ZodTypeAny>(optional: z.ZodOpti
   return optional.unwrap();
 }
 
+export function zodNullableInnerType<T extends z.ZodTypeAny>(nullable: z.ZodNullable<T>) {
+  return nullable.unwrap();
+}
+
 export function zodPipelineInnerType<A extends z.ZodTypeAny, B extends z.ZodTypeAny>(pipeline: z.ZodPipeline<A, B>) {
   return pipeline._def.out;
 }
@@ -176,6 +180,11 @@ export function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
       ti.optional = true;
       return overwriteDescription(ti, schema);
     }
+    case 'ZodNullable': {
+      const ti = getTypeInfo(zodNullableInnerType(schema as z.infer<T>));
+      ti.optional = true;
+      return overwriteDescription(ti, schema);
+    }
     case 'ZodPipeline': {
       const ti = getTypeInfo(zodPipelineInnerType(schema as z.infer<T>));
       return overwriteDescription(ti, schema);
@@ -227,3 +236,4 @@ export function getTypeInfo<T extends z.ZodTypeAny>(schema: T): TypeInfo {
       throw new Error(`Unknown type: ${typeStr}`);
   }
 }
+

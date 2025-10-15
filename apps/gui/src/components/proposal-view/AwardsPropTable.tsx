@@ -14,7 +14,7 @@ export interface AwardsTableProps {
   awardsStackLimit?: number;
 }
 
-export function AwardsTable({ awards, shortenAddrs, shortenTokenIds, awardsStackLimit }: AwardsTableProps) {
+export function AwardsPropTable({ awards, shortenAddrs, shortenTokenIds, awardsStackLimit }: AwardsTableProps) {
   const isSmall = useBreakpointValue({ base: true, xl: false });
 
   const showTokenId = awards.some((a) => 'tokenId' in a);
@@ -33,7 +33,7 @@ export function AwardsTable({ awards, shortenAddrs, shortenTokenIds, awardsStack
       fields: headers,
       data: awards
     });
-    downloadText("awards.csv", csv, "text/csv;charset=utf-8");
+    downloadText("awardsProp.csv", csv, "text/csv;charset=utf-8");
   };
 
   if (isSmall) {

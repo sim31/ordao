@@ -604,14 +604,39 @@ export function isGetPropSpecSkip(spec: GetProposalsSpec): spec is GetProposalSp
   return 'skip' in spec;
 }
 
-export const zGetAwardsSpec = z.object({
-  before: z.date().optional(),
+// Awards pagination spec (mirror proposals: base | before | skip)
+export const zGetAwardsSpecBase = z.object({
   limit: z.number().int().gt(0).optional(),
   recipient: zEthAddress.optional(),
   burned: z.boolean().optional(),
   tokenIdFilter: zTokenId.array().optional(),
 }).strict();
+export type GetAwardsSpecBase = z.infer<typeof zGetAwardsSpecBase>;
+
+export const zGetAwardsSpecBefore = zGetAwardsSpecBase.extend({
+  before: z.date().optional(),
+}).strict();
+export type GetAwardsSpecBefore = z.infer<typeof zGetAwardsSpecBefore>;
+
+export const zGetAwardsSpecSkip = zGetAwardsSpecBase.extend({
+  skip: z.number().int().gte(0).optional(),
+}).strict();
+export type GetAwardsSpecSkip = z.infer<typeof zGetAwardsSpecSkip>;
+
+export const zGetAwardsSpec = z.union([
+  zGetAwardsSpecBefore,
+  zGetAwardsSpecSkip,
+  zGetAwardsSpecBase,
+]);
 export type GetAwardsSpec = z.infer<typeof zGetAwardsSpec>;
+
+export function isGetAwardsSpecBefore(spec: GetProposalsSpec): spec is GetAwardsSpecBefore {
+  return 'before' in spec;
+}
+
+export function isGetAwardSpecSkip(spec: GetProposalsSpec): spec is GetAwardsSpecSkip {
+  return 'skip' in spec;
+}
 
 export function isPropMsgFull(prop: Proposal): prop is ProposalMsgFull {
   return prop.addr !== undefined && prop.cdata !== undefined && prop.memo !== undefined;

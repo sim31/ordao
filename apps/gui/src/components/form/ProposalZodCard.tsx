@@ -15,7 +15,7 @@ import { PropType } from "@ordao/ortypes";
 import { useAssertFullOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 import { toBeHex } from "ethers";
 import { Loading } from "../Loading";
-import { AwardsTable } from "../proposal-view/AwardsTable";
+import { AwardsPropTable } from "../proposal-view/AwardsPropTable";
 
 interface ProposalZodCardProps<T extends z.AnyZodObject> {
   schema: T
@@ -65,7 +65,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
       let obj: any = { ...propRequest };
       const ignoreKeys = [];
       if (propType === 'respectAccountBatch') {
-        obj.awards = <AwardsTable awards={propRequest.awards} />
+        obj.awards = <AwardsPropTable awards={propRequest.awards} />
         ignoreKeys.push("awards");
       }
       return <>

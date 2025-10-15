@@ -1,4 +1,5 @@
-import { Box, Heading, SimpleGrid, Spacer } from "@chakra-ui/react";
+import { Box, SimpleGrid, Spacer } from "@chakra-ui/react";
+import { Heading } from "../Heading";
 import { propRequestSchemaMap } from "@ordao/ortypes/orclient.js";
 import { ProposalReqTypeCard } from "./ProposalReqTypeCard";
 import { PropType, PropTypeValues, propTypeCategoryMap } from "@ordao/ortypes";

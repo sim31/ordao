@@ -450,7 +450,8 @@ export const zGetAwardsSpec = z.object({
   limit: z.number().int().gt(0).optional(),
   recipient: zEthAddress.optional(),
   burned: z.boolean().optional(),
-  tokenIdFilter: z.array(zTokenId).optional()
+  tokenIdFilter: z.array(zTokenId).optional(),
+  skip: z.number().int().gte(0).optional(),
 }).strict();
 export type GetAwardsSpec = z.infer<typeof zGetAwardsSpec>;
 

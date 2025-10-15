@@ -22,6 +22,7 @@ export const zConfig = z.object({
   childRespectLink: z.string().url(),
   respectGameLink: z.string().url(),
   defaultPropQuerySize: z.coerce.number().int().gt(0).default(6),
+  defaultAwardsQuerySize: z.coerce.number().int().gt(0).default(50),
   defBreakoutType: zBreakoutType.default(zBreakoutType.Values.respectBreakout),
   fractalDocsUrl: z.string().url().optional()
 });
@@ -40,6 +41,7 @@ const parentRespectLink = import.meta.env.VITE_PARENT_RESPECT_LINK;
 const childRespectLink = import.meta.env.VITE_CHILD_RESPECT_LINK;
 const respectGameLink = import.meta.env.VITE_RESPECT_GAME_LINK;
 const defaultPropQuerySize = import.meta.env.VITE_DEFAULT_PROP_QUERY_SIZE;
+const defaultAwardsQuerySize = import.meta.env.VITE_DEFAULT_AWARDS_QUERY_SIZE;
 const defBreakoutType = import.meta.env.VITE_DEF_BREAKOUT_TYPE;
 const fractalDocsUrl = import.meta.env.VITE_FRACTAL_DOCS_URL;
 
@@ -66,6 +68,7 @@ export const config = zConfig.parse({
   childRespectLink,
   respectGameLink,
   defaultPropQuerySize,
+  defaultAwardsQuerySize,
   fractalDocsUrl,
   defBreakoutType
 });

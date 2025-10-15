@@ -32,6 +32,8 @@ import {
   GetProposalsSpec as CGetProposalsSpec,
   isGetPropSpecBefore,
   isGetPropSpecSkip,
+  isGetAwardsSpecBefore,
+  isGetAwardSpecSkip,
   SetPeriodsRequest,
   SetMinWeightRequest,
   SetMaxLiveYesVotesRequest,
@@ -759,9 +761,18 @@ export const zCGetProposalsSpecToNodeSpec = zCGetProposalsSpec.transform(spec =>
 }).pipe(zGetProposalsSpec);
 
 export const zCGetAwardsSpecToNodeSpec = zCGetAwardsSpec.transform(spec => {
-  const r: GetAwardsSpec = {
-    ...spec,
-    before: spec.before !== undefined ? spec.before.valueOf() / 1000 : undefined
+  console.log("in transformer 1");
+  let r: GetAwardsSpec = {
+    limit: spec.limit,
+    recipient: spec.recipient,
+    burned: spec.burned,
+    tokenIdFilter: spec.tokenIdFilter
+  };
+
+  if (isGetAwardsSpecBefore(spec) && spec.before !== undefined) {
+    r.before = spec.before.valueOf() / 1000;
+  } else if (isGetAwardSpecSkip(spec) && spec.skip !== undefined) {
+    r.skip = spec.skip;
   }
   return r;
 }).pipe(zGetAwardsSpec);

@@ -191,17 +191,17 @@ export const zBurnData = z.object({
 export type BurnData = z.infer<typeof zBurnData>;
 
 export const zRespectAwardProps = z.object({
-  tokenId: zTokenId,
   recipient: zEthAddress,
-  mintType: zMintType,
-  mintTs: zTimestamp.optional(),
-  mintTxHash: zTxHash.optional(),
   denomination: z.number().int().gte(0),
+  mintType: zMintType,
   periodNumber: zPeriodNum,
   groupNum: zGroupNum.optional(),
   level: zRankNum.optional(),
-  reason: z.string().optional(),
   title: z.string().optional(),
+  reason: z.string().optional(),
+  tokenId: zTokenId,
+  mintTs: zTimestamp.optional(),
+  mintTxHash: zTxHash.optional(),
   burn: zBurnData.nullable().optional(),
   mintProposalId: zBytes32.optional()
 });

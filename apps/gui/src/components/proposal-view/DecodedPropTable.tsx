@@ -5,7 +5,7 @@ import { PropTableRow } from "./PropTableRow";
 import { breakoutSchemas, zBreakoutType } from "@ordao/ortypes";
 import { zodObjectFields } from "@ordao/zod-utils";
 import { formatEthAddress } from "eth-address";
-import { AwardsTable } from "./AwardsTable";
+import { AwardsPropTable } from "./AwardsPropTable";
 
 export interface ProposalContentTableProps {
   dprop: DecodedProposal
@@ -34,7 +34,7 @@ export function DecodedPropTable({ dprop, shortenAddrs, awardsStackLimit }: Prop
     } else if (dprop.propType === 'respectAccountBatch' && key === 'awards' && Array.isArray(value)) {
       // Render awards with a dedicated table
       val = (
-        <AwardsTable
+        <AwardsPropTable
           awards={value as any}
           shortenAddrs={shortenAddrs}
           shortenTokenIds={shortenAddrs}
