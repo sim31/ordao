@@ -52,10 +52,11 @@ function AwardsRoute() {
   const onExportCsv = () => {
     const fields = zodObjectFields(zRespectAwardProps);
     const headers = Object.keys(fields);
+    headers.splice(headers.indexOf('periodNumber') + 1, 0, 'meetingNumber');
 
     const csv = Papa.unparse({
       fields: headers,
-      data: awards.map(a => a.properties)
+      data: awards.map(a => { return {...a.properties, meetingNumber: a.properties.periodNumber + 1 }})
     });
     downloadText("awards.csv", csv, "text/csv;charset=utf-8");
   }
