@@ -112,6 +112,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
         gap={2}
         flexDirection="column"
         maxWidth="100%"
+        minWidth="42em"
         boxShadow="sm"
       >
         <Flex gap={2} alignItems="center" mb={2}>

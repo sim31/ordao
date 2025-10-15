@@ -6,11 +6,34 @@ import { zBigNumberish, zEthAddress } from "./eth.js";
 export { zGroupNum, GroupNum, zRankNum } from "./respect1155.js";
 
 export const PropTypeValues = [
-  "respectBreakout", "respectBreakoutX2", "respectAccount", "burnRespect", "burnRespectBatch", "tick",
-  "customSignal", "customCall", "setPeriods", "setMinWeight", "cancelProposal", "respectAccountBatch", "setMaxLiveYesVotes"
+  "respectBreakout", "respectBreakoutX2", "respectAccount", "respectAccountBatch", "burnRespect", "burnRespectBatch", "tick",
+  "customCall", "customSignal", "setPeriods", "setMinWeight", "cancelProposal","setMaxLiveYesVotes"
 ] as const;
 export const zPropType = z.enum(PropTypeValues);
 export type PropType = z.infer<typeof zPropType>;
+
+export const zPropTypeCategory = z.enum([
+  "Respect distribution",
+  "Orec configuration",
+  "Other"
+]);
+export type PropTypeCategory = z.infer<typeof zPropTypeCategory>;
+
+export const propTypeCategoryMap: Record<PropType, PropTypeCategory> = {
+  "respectBreakout": "Respect distribution",
+  "respectBreakoutX2": "Respect distribution",
+  "respectAccount": "Respect distribution",
+  "respectAccountBatch": "Respect distribution",
+  "burnRespect": "Respect distribution",
+  "burnRespectBatch": "Respect distribution",
+  "setMaxLiveYesVotes": "Orec configuration",
+  "setPeriods": "Orec configuration",
+  "setMinWeight": "Orec configuration",
+  "tick": "Other",
+  "customSignal": "Other",
+  "customCall": "Other",
+  "cancelProposal": "Other",
+};
 
 export const zBreakoutType = z.enum([
   zPropType.Values.respectBreakout,

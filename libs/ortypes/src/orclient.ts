@@ -107,7 +107,7 @@ export type RespectBreakout = z.infer<typeof zRespectBreakout>;
 const respectBreakoutX2Desc = `
 Respect Breakout x2
 
-Mint Respect to a breakout group from Respect game, using doubled denominations and mint type 10.
+Mint Respect to a breakout group from Respect game, using doubled values for each level.
 `
 
 export const zRespectBreakoutX2Request = zBreakoutResult.extend({
