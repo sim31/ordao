@@ -698,7 +698,7 @@ function toClientVoteWeight(weight: NVoteWeight, decimals?: number): string {
     Big.DP = decimals ?? 0;
     Big.RM = Big.roundDown;
     const wb = Big(weight).div(10 ** decimals)
-    return wb.toString();
+    return wb.toFixed();
   } else {
     return weight.toString();
   }

@@ -781,7 +781,7 @@ export function toNodeVoteWeight(val: string, decimals?: number): string {
   if (decimals !== undefined && decimals !== 0) {
     Big.DP = decimals;
     Big.RM = Big.roundDown;
-    return Big(val).times(10 ** decimals).toString();
+    return Big(val).times(10 ** decimals).toFixed();
   } else {
     return val;
   }
