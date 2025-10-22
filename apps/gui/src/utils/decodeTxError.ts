@@ -11,5 +11,5 @@ export function decodeTxFailed(error: unknown): TxFailed | undefined {
 
 export function decodeError(error: unknown): DecodedError | undefined {
   const txFailed = decodeTxFailed(error);
-  return txFailed && txFailed.decodedError && txFailed.decodedError;
+  return txFailed && txFailed.decodedError;
 }

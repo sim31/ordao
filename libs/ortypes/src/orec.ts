@@ -169,10 +169,12 @@ export type CProposalState = Omit<
 export const zVoteWeight = z.coerce.bigint().gte(0n);
 export type VoteWeight = z.infer<typeof zVoteWeight>;
 
+Big.RM = Big.roundDown;
+Big.PE = Big.NE = 10**6;
+
 export function voteWeightToStr(weight: VoteWeight, decimals?: number): string {
   if (decimals !== undefined && decimals !== 0) {
     Big.DP = decimals ?? 0;
-    Big.RM = Big.roundDown;
     const wb = Big(weight.toString()).div(10 ** decimals)
     return wb.toString();
   } else {
@@ -183,7 +185,6 @@ export function voteWeightToStr(weight: VoteWeight, decimals?: number): string {
 export function strToVoteWeight(str: string, decimals?: number): VoteWeight {
   if (decimals !== undefined && decimals !== 0) {
     Big.DP = decimals;
-    Big.RM = Big.roundDown;
     return BigInt(Big(str).times(10 ** decimals).toString())
   } else {
     return BigInt(str);

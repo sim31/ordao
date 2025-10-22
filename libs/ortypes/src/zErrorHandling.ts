@@ -1,6 +1,7 @@
 import { RefinementCtx, ZodCustomIssue, z } from "zod";
 import { ORContext } from "./orContext.js";
 import { Optional } from "utility-types";
+import { flattenObj } from "@ordao/ts-utils";
 
 // export type CustomIssueData = {
 //   message?: string,
@@ -50,7 +51,7 @@ export function addCustomIssue(
     } else {
       const customIssue = causeOrCustomOrMsg as CustomIssueArgs;
       const issue = {
-        ...causeOrCustomOrMsg,
+        ...customIssue,
         code: z.ZodIssueCode.custom,
         message: customIssue.message,
         params: {

@@ -1,7 +1,7 @@
 import { ContractTransactionResponse, TransactionReceipt } from "ethers";
 import { DecodedError } from "@ordao/ortypes";
 import { Proposal as NProp } from "@ordao/ortypes/ornode.js"
-import { stringify } from "@ordao/ts-utils";
+import { flatStringify } from "@ordao/ts-utils";
 
 export class NotImplemented extends Error {
   constructor(message: string) {
@@ -25,7 +25,7 @@ export class TxFailed extends Error {
     receiptOrDec: TransactionReceipt | null | DecodedError| undefined,
     message?: string
   ) {
-    const msg = `Transaction failed. Message: ${message}. responseOrCause: ${stringify(responseOrCause)}. receiptOrDecodedError: ${stringify(receiptOrDec)}`;
+    const msg = `Transaction failed. Message: ${message}. responseOrCause: ${flatStringify(responseOrCause)}. receiptOrDecodedError: ${flatStringify(receiptOrDec)}`;
     super(msg);
     this.name = 'TxFailed';
     if (typeof receiptOrDec === 'object' && receiptOrDec !== null) {
@@ -43,7 +43,7 @@ export class TxFailed extends Error {
  */
 export class PutProposalFailure extends Error {
   constructor(nprop: NProp, cause: any, msg?: string) {
-    const m = `Failed submitting proposal to ornode. Proposal: ${stringify(nprop)}. Cause: ${cause}. msg: ${msg}`;
+    const m = `Failed submitting proposal to ornode. Proposal: ${flatStringify(nprop)}. Cause: ${cause}. msg: ${msg}`;
     super(m);
     this.name = 'PutProposalFailure';
   }

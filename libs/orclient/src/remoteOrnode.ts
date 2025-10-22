@@ -2,7 +2,7 @@ import { ContractMetadata, EthAddress, IORNode, OffchainPropId, PropId, Proposal
 import { GetProposalsSpec, GetAwardsSpec, ORNodePropStatus, StoredProposal as Proposal, ProposalFull, zErrorType, Vote, GetVotesSpec } from "@ordao/ortypes/ornode.js";
 import { OrnodeClient, createOrnodeClient } from "./ornodeClient/index.js";
 import { Input, Method, Path, Response } from "./ornodeClient/ornodeClient.js"
-import { stringify } from "@ordao/ts-utils";
+import { flatStringify } from "@ordao/ts-utils";
 import { RespectAwardMt, RespectFungibleMt, TokenId } from "@ordao/ortypes/respect1155.js";
 import { Erc1155Mt } from "@ordao/ortypes/erc1155.js";
 
@@ -126,7 +126,7 @@ export class RemoteOrnode implements IORNode {
         data = response;
       }
     } catch (err) {
-      throw new OrnodeRequestFailed(`Request ${method} ${path} with params: ${stringify(params)} failed! Cause: ${stringify(err)}`, err);
+      throw new OrnodeRequestFailed(`Request ${method} ${path} with params: ${flatStringify(params)} failed! Cause: ${flatStringify(err)}`, err);
     }
 
     if (error !== undefined) {
@@ -135,7 +135,5 @@ export class RemoteOrnode implements IORNode {
       return data;
     }
   }
-
-
 
 }

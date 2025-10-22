@@ -6,11 +6,58 @@ export type SafeRecord<K extends keyof any, V> = Partial<Record<K, V>>;
 
 export const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export const stringify = (obj: any) => JSON.stringify(
+export function flattenObj1X(obj: any, flattenErrors?: boolean) {
+  var result = Object.create(obj);
+  for(var key in result) {
+    Object.defineProperty(result, key, {
+      value: obj[key],
+      enumerable: true
+    });
+  }
+  // 'message' and 'stack' properties are not enumerable in Error objects, but we want to keep them
+  // and make sure they are included in the flattened object
+  if (flattenErrors && 'message' in obj) {
+    Object.defineProperty(result, 'message', {
+      value: obj['message'],
+      enumerable: true
+    });
+  }
+  if (flattenErrors && 'stack' in obj) {
+    Object.defineProperty(result, 'stack', {
+      value: obj['stack'],
+      enumerable: true
+    });
+  }
+  if (flattenErrors && 'cause' in obj) {
+    Object.defineProperty(result, 'cause', {
+      value: obj['cause'],
+      enumerable: true
+    });
+  }
+  return result;
+}
+
+/**
+ * https://stackoverflow.com/questions/8779249/how-to-stringify-inherited-objects-to-json
+ * @param stringifyErrors stringifies errors fully, including non-enumerable properties - message, stack, cause
+ * @returns 
+ */
+export const stringify = (obj: any, flatten?: boolean, stringifyErrors?: boolean) => JSON.stringify(
   obj,
-  (_, v) => typeof v === 'bigint' ? v.toString() : v, 
+  (_, v) => {
+    if (typeof v === 'bigint') {
+      return v.toString();
+    } else if (typeof v === 'object' && v !== null && flatten) {
+      return flattenObj1X(v, stringifyErrors)
+    } else {
+      return v;
+    }
+  },
   2
 );
+
+// Note that this handles only one level of inheritance (prototype chain)
+export const flatStringify = (obj: any) => stringify(obj, true, true);
 
 export const deleteUndefined = (obj: any) => Object.keys(obj).forEach(key => {
   if (typeof obj[key] === 'object') {

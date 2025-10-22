@@ -1,7 +1,7 @@
 import { DecodedError, ExecutedEvent, ExecutionFailedEvent, PropId, PropType, ProposalNotCreated, ProposalState, encodeVoteMemo, zBytes, zPropId } from "@ordao/ortypes";
 import { BurnRespectRequest, BurnRespectBatchRequest, CustomCallRequest, CustomSignalRequest, ExecError, Proposal, ProposalRequest, RespectAccountRequest, RespectAccountBatchRequest, RespectBreakoutRequest, SetPeriodsRequest, SetMinWeightRequest, TickRequest, VoteRequest, VoteType, VoteWithProp, VoteWithPropRequest, zVoteWithProp, CancelProposalRequest, SetMaxLiveYesVotesRequest } from "@ordao/ortypes/orclient.js";
 import { ProposalFull as NProp, ORNodePropStatus } from "@ordao/ortypes/ornode.js";
-import { sleep, stringify } from "@ordao/ts-utils";
+import { sleep, stringify, flatStringify } from "@ordao/ts-utils";
 import { ContractTransactionReceipt, ContractTransactionResponse, Signer, toBeHex } from "ethers";
 import { z } from "zod";
 import { TxFailed } from "./errors.js";
@@ -607,7 +607,7 @@ export class ORClient extends ORClientReader {
     }
 
     if (events.length > 1) {
-      throw new Error(`More than one exec event in tx. Receipt: ${stringify(receipt)}. Events: ${stringify(events)}`);
+      throw new Error(`More than one exec event in tx. Receipt: ${flatStringify(receipt)}. Events: ${flatStringify(events)}`);
     } else if (events.length < 1) {
       throw new Error("Execution did not trigger any exec events");
     } else {
