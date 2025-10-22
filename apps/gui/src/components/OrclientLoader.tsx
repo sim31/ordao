@@ -33,11 +33,20 @@ export default function OrclientLoader({ children, orclient: propsOrclient }: Or
 
   const orclientUnsynced = privyReady && userWallet && !isORClient(orclient);
 
+  console.log("orclientUnsynced: ", orclientUnsynced, "privyReady: ", privyReady, "userWallet: ", userWallet, "orclient: ", orclient);
+
   const [relogin, setRelogin] = useState<boolean>(false);
 
   useEffect(() => {
     if (orclientUnsynced) {
-      const timer = setTimeout(() => setRelogin(true), 1000);
+      const timer = setTimeout(
+        () => {
+          if (orclientUnsynced) {
+            setRelogin(true)
+          }
+        },
+        4000
+      );
       return () => clearTimeout(timer);
     }
   }, [orclientUnsynced, setRelogin])
