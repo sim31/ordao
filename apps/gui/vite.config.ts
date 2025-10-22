@@ -2,6 +2,7 @@ import { defineConfig, loadEnv } from 'vite'
 import react from '@vitejs/plugin-react-swc'
 import { TanStackRouterVite } from '@tanstack/router-plugin/vite'
 import { ngrok } from 'vite-plugin-ngrok'
+import checker from 'vite-plugin-checker'
 
 
 // https://vitejs.dev/config/
@@ -12,6 +13,9 @@ export default defineConfig(({ mode }) => {
       // Please make sure that '@tanstack/router-plugin' is passed before '@vitejs/plugin-react'
       TanStackRouterVite({ target: 'react', autoCodeSplitting: true }),
       react(),
+      checker({
+        typescript: true,
+      }),
     ]
     if (NGROK === 'true' && NGROK_AUTH_TOKEN) {
       console.log("Using ngrok");

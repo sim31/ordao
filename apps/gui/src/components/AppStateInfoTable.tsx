@@ -6,7 +6,7 @@ export interface AppStateInfoTabeProps {
   periodNumber: number;
   voteLength: number;
   vetoLength: number;
-  minVoteWeight: number;
+  minVoteWeight: string;
   maxLiveYesVotes: number;
   parentRespect: EthAddress
 }
