@@ -120,12 +120,12 @@ const AppNewProposalPropTypeIndexRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
+  '/': typeof AppIndexRoute
   '/about': typeof AppAboutRouteWithChildren
   '/childRespect': typeof AppChildRespectRouteWithChildren
   '/newProposal': typeof AppNewProposalRouteWithChildren
   '/proposals': typeof AppProposalsRouteWithChildren
   '/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
-  '/': typeof AppIndexRoute
   '/about/appState': typeof AppAboutAppStateRoute
   '/about/communities': typeof AppAboutCommunitiesRoute
   '/about/intent': typeof AppAboutIntentRoute
@@ -136,7 +136,7 @@ export interface FileRoutesByFullPath {
   '/newProposal/': typeof AppNewProposalIndexRoute
   '/proposals/': typeof AppProposalsIndexRoute
   '/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
-  '/newProposal/$propType': typeof AppNewProposalPropTypeIndexRoute
+  '/newProposal/$propType/': typeof AppNewProposalPropTypeIndexRoute
 }
 export interface FileRoutesByTo {
   '/about': typeof AppAboutRouteWithChildren
@@ -178,12 +178,12 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
+    | '/'
     | '/about'
     | '/childRespect'
     | '/newProposal'
     | '/proposals'
     | '/submitBreakout'
-    | '/'
     | '/about/appState'
     | '/about/communities'
     | '/about/intent'
@@ -194,7 +194,7 @@ export interface FileRouteTypes {
     | '/newProposal/'
     | '/proposals/'
     | '/submitBreakout/'
-    | '/newProposal/$propType'
+    | '/newProposal/$propType/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/about'
@@ -242,7 +242,7 @@ declare module '@tanstack/react-router' {
     '/_app': {
       id: '/_app'
       path: ''
-      fullPath: ''
+      fullPath: '/'
       preLoaderRoute: typeof AppRouteImport
       parentRoute: typeof rootRouteImport
     }
@@ -361,7 +361,7 @@ declare module '@tanstack/react-router' {
     '/_app/newProposal/$propType/': {
       id: '/_app/newProposal/$propType/'
       path: '/$propType'
-      fullPath: '/newProposal/$propType'
+      fullPath: '/newProposal/$propType/'
       preLoaderRoute: typeof AppNewProposalPropTypeIndexRouteImport
       parentRoute: typeof AppNewProposalRoute
     }
