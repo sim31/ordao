@@ -80,6 +80,7 @@
     "@ordao/orec": "^1.4.1",
     "@ordao/respect1155": "^1.4.1",
     "@ordao/ts-utils": "^1.4.1",
+    "big.js": "^6.2.2",
     "chai": "^4.3.0",
     "ethers": "^6.13.0",
     "op-fractal-sc": "^0.1.1",
