@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "cd $npm_package_config_orclient && npx typedoc ./src/orclient.ts --out $npm_package_config_build_from_orclient",
-    "start": "npx http-server -p 5174 -o ./dist"
+    "start": "npx http-server -p 5174 -o ./dist",
+    "clean": "rm -rf dist"
   },
   "repository": {
     "type": "git",
