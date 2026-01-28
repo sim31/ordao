@@ -1,6 +1,6 @@
 {
   "name": "@ordao/orec",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Optimistic Executive Respect-based Contract",
   "type": "commonjs",
   "files": [

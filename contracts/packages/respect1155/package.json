@@ -1,6 +1,6 @@
 {
   "name": "@ordao/respect1155",
-  "version": "1.4.1",
+  "version": "1.4.2",
   "description": "Solidity smart contract for Respect non-transferrable token. Based on ERC1155 standard.",
   "type": "commonjs",
   "files": [
@@ -76,7 +76,7 @@
   },
   "dependencies": {
     "@openzeppelin/contracts": "^5.1.0",
-    "@ordao/orec": "^1.4.1",
+    "@ordao/orec": "^1.4.2",
     "ethers": "^6.13.4"
   },
   "publishConfig": {
