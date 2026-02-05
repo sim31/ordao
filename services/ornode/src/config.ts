@@ -77,7 +77,7 @@ const configPathVar = process.env.ORNODE_CFG_PATH;
 let configPath = configPathVar !== undefined ? configPathVar : './dev-config.json';
 
 const configObj = jsonfile.readFileSync(configPath);
-console.log("Loaded config object: ", configObj);
+// console.log("Loaded config object: ", configObj);
 export const config = zConfig.parse(configObj);
 console.log("Loaded config: ", config);
 
