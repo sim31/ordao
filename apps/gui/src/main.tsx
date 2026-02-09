@@ -49,7 +49,9 @@ ReactDOM.createRoot(document.getElementById('root')!).render((
         embeddedWallets: {
           // IMPORTANT: use this option if you don't want to deal with multiple wallets per user account
           // and you want to prefer external wallet if user has one.
-          createOnLogin: "users-without-wallets",
+          ethereum: {
+            createOnLogin: "users-without-wallets",
+          },
         },
       }}
     >
