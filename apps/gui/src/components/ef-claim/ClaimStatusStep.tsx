@@ -21,7 +21,7 @@ function ClaimStatusStep({ input, onComplete, onBack }: ClaimStatusStepProps) {
       const table = input.efContract.table("accounts", input.session.actor);
 
       // FOR TESTING
-      if (eosAccount === "tadastadas24") {
+      if (import.meta.env.DEV && eosAccount === "tadastadas24") {
         setBalance(100);
         return;
       }
