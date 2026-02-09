@@ -8,314 +8,422 @@
 // You should NOT make any changes in this file as it will be overwritten.
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
-// Import Routes
+import { Route as rootRouteImport } from './routes/__root'
+import { Route as AppRouteImport } from './routes/_app'
+import { Route as AppIndexRouteImport } from './routes/_app.index'
+import { Route as AppSubmitBreakoutRouteImport } from './routes/_app.submitBreakout'
+import { Route as AppProposalsRouteImport } from './routes/_app.proposals'
+import { Route as AppNewProposalRouteImport } from './routes/_app.newProposal'
+import { Route as AppEfRouteImport } from './routes/_app.ef'
+import { Route as AppAboutRouteImport } from './routes/_app.about'
+import { Route as AppSubmitBreakoutIndexRouteImport } from './routes/_app.submitBreakout/index'
+import { Route as AppProposalsIndexRouteImport } from './routes/_app.proposals/index'
+import { Route as AppNewProposalIndexRouteImport } from './routes/_app.newProposal/index'
+import { Route as AppProposalsPropIdRouteImport } from './routes/_app.proposals/$propId'
+import { Route as AppEfOriginalRouteImport } from './routes/_app.ef/original'
+import { Route as AppEfConfirmRouteImport } from './routes/_app.ef/confirm'
+import { Route as AppEfClaimRouteImport } from './routes/_app.ef/claim'
+import { Route as AppEfAwardsRouteImport } from './routes/_app.ef/awards'
+import { Route as AppEfAccountsRouteImport } from './routes/_app.ef/accounts'
+import { Route as AppAboutUserGuideRouteImport } from './routes/_app.about/userGuide'
+import { Route as AppAboutIntentRouteImport } from './routes/_app.about/intent'
+import { Route as AppAboutCommunitiesRouteImport } from './routes/_app.about/communities'
+import { Route as AppAboutAppStateRouteImport } from './routes/_app.about/appState'
+import { Route as AppNewProposalPropTypeIndexRouteImport } from './routes/_app.newProposal/$propType.index'
 
-import { Route as rootRoute } from './routes/__root'
-import { Route as AppImport } from './routes/_app'
-import { Route as AppIndexImport } from './routes/_app.index'
-import { Route as AppSubmitBreakoutImport } from './routes/_app.submitBreakout'
-import { Route as AppProposalsImport } from './routes/_app.proposals'
-import { Route as AppNewProposalImport } from './routes/_app.newProposal'
-import { Route as AppEfImport } from './routes/_app.ef'
-import { Route as AppAboutImport } from './routes/_app.about'
-import { Route as AppSubmitBreakoutIndexImport } from './routes/_app.submitBreakout/index'
-import { Route as AppProposalsIndexImport } from './routes/_app.proposals/index'
-import { Route as AppNewProposalIndexImport } from './routes/_app.newProposal/index'
-import { Route as AppProposalsPropIdImport } from './routes/_app.proposals/$propId'
-import { Route as AppEfOriginalImport } from './routes/_app.ef/original'
-import { Route as AppEfConfirmImport } from './routes/_app.ef/confirm'
-import { Route as AppEfClaimImport } from './routes/_app.ef/claim'
-import { Route as AppEfAwardsImport } from './routes/_app.ef/awards'
-import { Route as AppEfAccountsImport } from './routes/_app.ef/accounts'
-import { Route as AppAboutUserGuideImport } from './routes/_app.about/userGuide'
-import { Route as AppAboutIntentImport } from './routes/_app.about/intent'
-import { Route as AppAboutCommunitiesImport } from './routes/_app.about/communities'
-import { Route as AppAboutAppStateImport } from './routes/_app.about/appState'
-import { Route as AppNewProposalPropTypeIndexImport } from './routes/_app.newProposal/$propType.index'
-
-// Create/Update Routes
-
-const AppRoute = AppImport.update({
+const AppRoute = AppRouteImport.update({
   id: '/_app',
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => rootRouteImport,
 } as any)
-
-const AppIndexRoute = AppIndexImport.update({
+const AppIndexRoute = AppIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppSubmitBreakoutRoute = AppSubmitBreakoutImport.update({
+const AppSubmitBreakoutRoute = AppSubmitBreakoutRouteImport.update({
   id: '/submitBreakout',
   path: '/submitBreakout',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppProposalsRoute = AppProposalsImport.update({
+const AppProposalsRoute = AppProposalsRouteImport.update({
   id: '/proposals',
   path: '/proposals',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppNewProposalRoute = AppNewProposalImport.update({
+const AppNewProposalRoute = AppNewProposalRouteImport.update({
   id: '/newProposal',
   path: '/newProposal',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppEfRoute = AppEfImport.update({
+const AppEfRoute = AppEfRouteImport.update({
   id: '/ef',
   path: '/ef',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppAboutRoute = AppAboutImport.update({
+const AppAboutRoute = AppAboutRouteImport.update({
   id: '/about',
   path: '/about',
   getParentRoute: () => AppRoute,
 } as any)
-
-const AppSubmitBreakoutIndexRoute = AppSubmitBreakoutIndexImport.update({
+const AppSubmitBreakoutIndexRoute = AppSubmitBreakoutIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppSubmitBreakoutRoute,
 } as any)
-
-const AppProposalsIndexRoute = AppProposalsIndexImport.update({
+const AppProposalsIndexRoute = AppProposalsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppProposalsRoute,
 } as any)
-
-const AppNewProposalIndexRoute = AppNewProposalIndexImport.update({
+const AppNewProposalIndexRoute = AppNewProposalIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AppNewProposalRoute,
 } as any)
-
-const AppProposalsPropIdRoute = AppProposalsPropIdImport.update({
+const AppProposalsPropIdRoute = AppProposalsPropIdRouteImport.update({
   id: '/$propId',
   path: '/$propId',
   getParentRoute: () => AppProposalsRoute,
 } as any)
-
-const AppEfOriginalRoute = AppEfOriginalImport.update({
+const AppEfOriginalRoute = AppEfOriginalRouteImport.update({
   id: '/original',
   path: '/original',
   getParentRoute: () => AppEfRoute,
 } as any)
-
-const AppEfConfirmRoute = AppEfConfirmImport.update({
+const AppEfConfirmRoute = AppEfConfirmRouteImport.update({
   id: '/confirm',
   path: '/confirm',
   getParentRoute: () => AppEfRoute,
 } as any)
-
-const AppEfClaimRoute = AppEfClaimImport.update({
+const AppEfClaimRoute = AppEfClaimRouteImport.update({
   id: '/claim',
   path: '/claim',
   getParentRoute: () => AppEfRoute,
 } as any)
-
-const AppEfAwardsRoute = AppEfAwardsImport.update({
+const AppEfAwardsRoute = AppEfAwardsRouteImport.update({
   id: '/awards',
   path: '/awards',
   getParentRoute: () => AppEfRoute,
 } as any)
-
-const AppEfAccountsRoute = AppEfAccountsImport.update({
+const AppEfAccountsRoute = AppEfAccountsRouteImport.update({
   id: '/accounts',
   path: '/accounts',
   getParentRoute: () => AppEfRoute,
 } as any)
-
-const AppAboutUserGuideRoute = AppAboutUserGuideImport.update({
+const AppAboutUserGuideRoute = AppAboutUserGuideRouteImport.update({
   id: '/userGuide',
   path: '/userGuide',
   getParentRoute: () => AppAboutRoute,
 } as any)
-
-const AppAboutIntentRoute = AppAboutIntentImport.update({
+const AppAboutIntentRoute = AppAboutIntentRouteImport.update({
   id: '/intent',
   path: '/intent',
   getParentRoute: () => AppAboutRoute,
 } as any)
-
-const AppAboutCommunitiesRoute = AppAboutCommunitiesImport.update({
+const AppAboutCommunitiesRoute = AppAboutCommunitiesRouteImport.update({
   id: '/communities',
   path: '/communities',
   getParentRoute: () => AppAboutRoute,
 } as any)
-
-const AppAboutAppStateRoute = AppAboutAppStateImport.update({
+const AppAboutAppStateRoute = AppAboutAppStateRouteImport.update({
   id: '/appState',
   path: '/appState',
   getParentRoute: () => AppAboutRoute,
 } as any)
-
 const AppNewProposalPropTypeIndexRoute =
-  AppNewProposalPropTypeIndexImport.update({
+  AppNewProposalPropTypeIndexRouteImport.update({
     id: '/$propType/',
     path: '/$propType/',
     getParentRoute: () => AppNewProposalRoute,
   } as any)
 
-// Populate the FileRoutesByPath interface
+export interface FileRoutesByFullPath {
+  '/': typeof AppIndexRoute
+  '/about': typeof AppAboutRouteWithChildren
+  '/ef': typeof AppEfRouteWithChildren
+  '/newProposal': typeof AppNewProposalRouteWithChildren
+  '/proposals': typeof AppProposalsRouteWithChildren
+  '/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
+  '/about/appState': typeof AppAboutAppStateRoute
+  '/about/communities': typeof AppAboutCommunitiesRoute
+  '/about/intent': typeof AppAboutIntentRoute
+  '/about/userGuide': typeof AppAboutUserGuideRoute
+  '/ef/accounts': typeof AppEfAccountsRoute
+  '/ef/awards': typeof AppEfAwardsRoute
+  '/ef/claim': typeof AppEfClaimRoute
+  '/ef/confirm': typeof AppEfConfirmRoute
+  '/ef/original': typeof AppEfOriginalRoute
+  '/proposals/$propId': typeof AppProposalsPropIdRoute
+  '/newProposal/': typeof AppNewProposalIndexRoute
+  '/proposals/': typeof AppProposalsIndexRoute
+  '/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
+  '/newProposal/$propType/': typeof AppNewProposalPropTypeIndexRoute
+}
+export interface FileRoutesByTo {
+  '/about': typeof AppAboutRouteWithChildren
+  '/ef': typeof AppEfRouteWithChildren
+  '/': typeof AppIndexRoute
+  '/about/appState': typeof AppAboutAppStateRoute
+  '/about/communities': typeof AppAboutCommunitiesRoute
+  '/about/intent': typeof AppAboutIntentRoute
+  '/about/userGuide': typeof AppAboutUserGuideRoute
+  '/ef/accounts': typeof AppEfAccountsRoute
+  '/ef/awards': typeof AppEfAwardsRoute
+  '/ef/claim': typeof AppEfClaimRoute
+  '/ef/confirm': typeof AppEfConfirmRoute
+  '/ef/original': typeof AppEfOriginalRoute
+  '/proposals/$propId': typeof AppProposalsPropIdRoute
+  '/newProposal': typeof AppNewProposalIndexRoute
+  '/proposals': typeof AppProposalsIndexRoute
+  '/submitBreakout': typeof AppSubmitBreakoutIndexRoute
+  '/newProposal/$propType': typeof AppNewProposalPropTypeIndexRoute
+}
+export interface FileRoutesById {
+  __root__: typeof rootRouteImport
+  '/_app': typeof AppRouteWithChildren
+  '/_app/about': typeof AppAboutRouteWithChildren
+  '/_app/ef': typeof AppEfRouteWithChildren
+  '/_app/newProposal': typeof AppNewProposalRouteWithChildren
+  '/_app/proposals': typeof AppProposalsRouteWithChildren
+  '/_app/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
+  '/_app/': typeof AppIndexRoute
+  '/_app/about/appState': typeof AppAboutAppStateRoute
+  '/_app/about/communities': typeof AppAboutCommunitiesRoute
+  '/_app/about/intent': typeof AppAboutIntentRoute
+  '/_app/about/userGuide': typeof AppAboutUserGuideRoute
+  '/_app/ef/accounts': typeof AppEfAccountsRoute
+  '/_app/ef/awards': typeof AppEfAwardsRoute
+  '/_app/ef/claim': typeof AppEfClaimRoute
+  '/_app/ef/confirm': typeof AppEfConfirmRoute
+  '/_app/ef/original': typeof AppEfOriginalRoute
+  '/_app/proposals/$propId': typeof AppProposalsPropIdRoute
+  '/_app/newProposal/': typeof AppNewProposalIndexRoute
+  '/_app/proposals/': typeof AppProposalsIndexRoute
+  '/_app/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
+  '/_app/newProposal/$propType/': typeof AppNewProposalPropTypeIndexRoute
+}
+export interface FileRouteTypes {
+  fileRoutesByFullPath: FileRoutesByFullPath
+  fullPaths:
+    | '/'
+    | '/about'
+    | '/ef'
+    | '/newProposal'
+    | '/proposals'
+    | '/submitBreakout'
+    | '/about/appState'
+    | '/about/communities'
+    | '/about/intent'
+    | '/about/userGuide'
+    | '/ef/accounts'
+    | '/ef/awards'
+    | '/ef/claim'
+    | '/ef/confirm'
+    | '/ef/original'
+    | '/proposals/$propId'
+    | '/newProposal/'
+    | '/proposals/'
+    | '/submitBreakout/'
+    | '/newProposal/$propType/'
+  fileRoutesByTo: FileRoutesByTo
+  to:
+    | '/about'
+    | '/ef'
+    | '/'
+    | '/about/appState'
+    | '/about/communities'
+    | '/about/intent'
+    | '/about/userGuide'
+    | '/ef/accounts'
+    | '/ef/awards'
+    | '/ef/claim'
+    | '/ef/confirm'
+    | '/ef/original'
+    | '/proposals/$propId'
+    | '/newProposal'
+    | '/proposals'
+    | '/submitBreakout'
+    | '/newProposal/$propType'
+  id:
+    | '__root__'
+    | '/_app'
+    | '/_app/about'
+    | '/_app/ef'
+    | '/_app/newProposal'
+    | '/_app/proposals'
+    | '/_app/submitBreakout'
+    | '/_app/'
+    | '/_app/about/appState'
+    | '/_app/about/communities'
+    | '/_app/about/intent'
+    | '/_app/about/userGuide'
+    | '/_app/ef/accounts'
+    | '/_app/ef/awards'
+    | '/_app/ef/claim'
+    | '/_app/ef/confirm'
+    | '/_app/ef/original'
+    | '/_app/proposals/$propId'
+    | '/_app/newProposal/'
+    | '/_app/proposals/'
+    | '/_app/submitBreakout/'
+    | '/_app/newProposal/$propType/'
+  fileRoutesById: FileRoutesById
+}
+export interface RootRouteChildren {
+  AppRoute: typeof AppRouteWithChildren
+}
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
     '/_app': {
       id: '/_app'
       path: ''
-      fullPath: ''
-      preLoaderRoute: typeof AppImport
-      parentRoute: typeof rootRoute
-    }
-    '/_app/about': {
-      id: '/_app/about'
-      path: '/about'
-      fullPath: '/about'
-      preLoaderRoute: typeof AppAboutImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/ef': {
-      id: '/_app/ef'
-      path: '/ef'
-      fullPath: '/ef'
-      preLoaderRoute: typeof AppEfImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/newProposal': {
-      id: '/_app/newProposal'
-      path: '/newProposal'
-      fullPath: '/newProposal'
-      preLoaderRoute: typeof AppNewProposalImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/proposals': {
-      id: '/_app/proposals'
-      path: '/proposals'
-      fullPath: '/proposals'
-      preLoaderRoute: typeof AppProposalsImport
-      parentRoute: typeof AppImport
-    }
-    '/_app/submitBreakout': {
-      id: '/_app/submitBreakout'
-      path: '/submitBreakout'
-      fullPath: '/submitBreakout'
-      preLoaderRoute: typeof AppSubmitBreakoutImport
-      parentRoute: typeof AppImport
+      fullPath: '/'
+      preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/_app/': {
       id: '/_app/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof AppIndexImport
-      parentRoute: typeof AppImport
+      preLoaderRoute: typeof AppIndexRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_app/about/appState': {
-      id: '/_app/about/appState'
-      path: '/appState'
-      fullPath: '/about/appState'
-      preLoaderRoute: typeof AppAboutAppStateImport
-      parentRoute: typeof AppAboutImport
+    '/_app/submitBreakout': {
+      id: '/_app/submitBreakout'
+      path: '/submitBreakout'
+      fullPath: '/submitBreakout'
+      preLoaderRoute: typeof AppSubmitBreakoutRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_app/about/communities': {
-      id: '/_app/about/communities'
-      path: '/communities'
-      fullPath: '/about/communities'
-      preLoaderRoute: typeof AppAboutCommunitiesImport
-      parentRoute: typeof AppAboutImport
+    '/_app/proposals': {
+      id: '/_app/proposals'
+      path: '/proposals'
+      fullPath: '/proposals'
+      preLoaderRoute: typeof AppProposalsRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_app/about/intent': {
-      id: '/_app/about/intent'
-      path: '/intent'
-      fullPath: '/about/intent'
-      preLoaderRoute: typeof AppAboutIntentImport
-      parentRoute: typeof AppAboutImport
+    '/_app/newProposal': {
+      id: '/_app/newProposal'
+      path: '/newProposal'
+      fullPath: '/newProposal'
+      preLoaderRoute: typeof AppNewProposalRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_app/about/userGuide': {
-      id: '/_app/about/userGuide'
-      path: '/userGuide'
-      fullPath: '/about/userGuide'
-      preLoaderRoute: typeof AppAboutUserGuideImport
-      parentRoute: typeof AppAboutImport
+    '/_app/ef': {
+      id: '/_app/ef'
+      path: '/ef'
+      fullPath: '/ef'
+      preLoaderRoute: typeof AppEfRouteImport
+      parentRoute: typeof AppRoute
     }
-    '/_app/ef/accounts': {
-      id: '/_app/ef/accounts'
-      path: '/accounts'
-      fullPath: '/ef/accounts'
-      preLoaderRoute: typeof AppEfAccountsImport
-      parentRoute: typeof AppEfImport
-    }
-    '/_app/ef/awards': {
-      id: '/_app/ef/awards'
-      path: '/awards'
-      fullPath: '/ef/awards'
-      preLoaderRoute: typeof AppEfAwardsImport
-      parentRoute: typeof AppEfImport
-    }
-    '/_app/ef/claim': {
-      id: '/_app/ef/claim'
-      path: '/claim'
-      fullPath: '/ef/claim'
-      preLoaderRoute: typeof AppEfClaimImport
-      parentRoute: typeof AppEfImport
-    }
-    '/_app/ef/confirm': {
-      id: '/_app/ef/confirm'
-      path: '/confirm'
-      fullPath: '/ef/confirm'
-      preLoaderRoute: typeof AppEfConfirmImport
-      parentRoute: typeof AppEfImport
-    }
-    '/_app/ef/original': {
-      id: '/_app/ef/original'
-      path: '/original'
-      fullPath: '/ef/original'
-      preLoaderRoute: typeof AppEfOriginalImport
-      parentRoute: typeof AppEfImport
-    }
-    '/_app/proposals/$propId': {
-      id: '/_app/proposals/$propId'
-      path: '/$propId'
-      fullPath: '/proposals/$propId'
-      preLoaderRoute: typeof AppProposalsPropIdImport
-      parentRoute: typeof AppProposalsImport
-    }
-    '/_app/newProposal/': {
-      id: '/_app/newProposal/'
-      path: '/'
-      fullPath: '/newProposal/'
-      preLoaderRoute: typeof AppNewProposalIndexImport
-      parentRoute: typeof AppNewProposalImport
-    }
-    '/_app/proposals/': {
-      id: '/_app/proposals/'
-      path: '/'
-      fullPath: '/proposals/'
-      preLoaderRoute: typeof AppProposalsIndexImport
-      parentRoute: typeof AppProposalsImport
+    '/_app/about': {
+      id: '/_app/about'
+      path: '/about'
+      fullPath: '/about'
+      preLoaderRoute: typeof AppAboutRouteImport
+      parentRoute: typeof AppRoute
     }
     '/_app/submitBreakout/': {
       id: '/_app/submitBreakout/'
       path: '/'
       fullPath: '/submitBreakout/'
-      preLoaderRoute: typeof AppSubmitBreakoutIndexImport
-      parentRoute: typeof AppSubmitBreakoutImport
+      preLoaderRoute: typeof AppSubmitBreakoutIndexRouteImport
+      parentRoute: typeof AppSubmitBreakoutRoute
+    }
+    '/_app/proposals/': {
+      id: '/_app/proposals/'
+      path: '/'
+      fullPath: '/proposals/'
+      preLoaderRoute: typeof AppProposalsIndexRouteImport
+      parentRoute: typeof AppProposalsRoute
+    }
+    '/_app/newProposal/': {
+      id: '/_app/newProposal/'
+      path: '/'
+      fullPath: '/newProposal/'
+      preLoaderRoute: typeof AppNewProposalIndexRouteImport
+      parentRoute: typeof AppNewProposalRoute
+    }
+    '/_app/proposals/$propId': {
+      id: '/_app/proposals/$propId'
+      path: '/$propId'
+      fullPath: '/proposals/$propId'
+      preLoaderRoute: typeof AppProposalsPropIdRouteImport
+      parentRoute: typeof AppProposalsRoute
+    }
+    '/_app/ef/original': {
+      id: '/_app/ef/original'
+      path: '/original'
+      fullPath: '/ef/original'
+      preLoaderRoute: typeof AppEfOriginalRouteImport
+      parentRoute: typeof AppEfRoute
+    }
+    '/_app/ef/confirm': {
+      id: '/_app/ef/confirm'
+      path: '/confirm'
+      fullPath: '/ef/confirm'
+      preLoaderRoute: typeof AppEfConfirmRouteImport
+      parentRoute: typeof AppEfRoute
+    }
+    '/_app/ef/claim': {
+      id: '/_app/ef/claim'
+      path: '/claim'
+      fullPath: '/ef/claim'
+      preLoaderRoute: typeof AppEfClaimRouteImport
+      parentRoute: typeof AppEfRoute
+    }
+    '/_app/ef/awards': {
+      id: '/_app/ef/awards'
+      path: '/awards'
+      fullPath: '/ef/awards'
+      preLoaderRoute: typeof AppEfAwardsRouteImport
+      parentRoute: typeof AppEfRoute
+    }
+    '/_app/ef/accounts': {
+      id: '/_app/ef/accounts'
+      path: '/accounts'
+      fullPath: '/ef/accounts'
+      preLoaderRoute: typeof AppEfAccountsRouteImport
+      parentRoute: typeof AppEfRoute
+    }
+    '/_app/about/userGuide': {
+      id: '/_app/about/userGuide'
+      path: '/userGuide'
+      fullPath: '/about/userGuide'
+      preLoaderRoute: typeof AppAboutUserGuideRouteImport
+      parentRoute: typeof AppAboutRoute
+    }
+    '/_app/about/intent': {
+      id: '/_app/about/intent'
+      path: '/intent'
+      fullPath: '/about/intent'
+      preLoaderRoute: typeof AppAboutIntentRouteImport
+      parentRoute: typeof AppAboutRoute
+    }
+    '/_app/about/communities': {
+      id: '/_app/about/communities'
+      path: '/communities'
+      fullPath: '/about/communities'
+      preLoaderRoute: typeof AppAboutCommunitiesRouteImport
+      parentRoute: typeof AppAboutRoute
+    }
+    '/_app/about/appState': {
+      id: '/_app/about/appState'
+      path: '/appState'
+      fullPath: '/about/appState'
+      preLoaderRoute: typeof AppAboutAppStateRouteImport
+      parentRoute: typeof AppAboutRoute
     }
     '/_app/newProposal/$propType/': {
       id: '/_app/newProposal/$propType/'
       path: '/$propType'
-      fullPath: '/newProposal/$propType'
-      preLoaderRoute: typeof AppNewProposalPropTypeIndexImport
-      parentRoute: typeof AppNewProposalImport
+      fullPath: '/newProposal/$propType/'
+      preLoaderRoute: typeof AppNewProposalPropTypeIndexRouteImport
+      parentRoute: typeof AppNewProposalRoute
     }
   }
 }
-
-// Create and export the route tree
 
 interface AppAboutRouteChildren {
   AppAboutAppStateRoute: typeof AppAboutAppStateRoute
@@ -412,280 +520,9 @@ const AppRouteChildren: AppRouteChildren = {
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
 
-export interface FileRoutesByFullPath {
-  '': typeof AppRouteWithChildren
-  '/about': typeof AppAboutRouteWithChildren
-  '/ef': typeof AppEfRouteWithChildren
-  '/newProposal': typeof AppNewProposalRouteWithChildren
-  '/proposals': typeof AppProposalsRouteWithChildren
-  '/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
-  '/': typeof AppIndexRoute
-  '/about/appState': typeof AppAboutAppStateRoute
-  '/about/communities': typeof AppAboutCommunitiesRoute
-  '/about/intent': typeof AppAboutIntentRoute
-  '/about/userGuide': typeof AppAboutUserGuideRoute
-  '/ef/accounts': typeof AppEfAccountsRoute
-  '/ef/awards': typeof AppEfAwardsRoute
-  '/ef/claim': typeof AppEfClaimRoute
-  '/ef/confirm': typeof AppEfConfirmRoute
-  '/ef/original': typeof AppEfOriginalRoute
-  '/proposals/$propId': typeof AppProposalsPropIdRoute
-  '/newProposal/': typeof AppNewProposalIndexRoute
-  '/proposals/': typeof AppProposalsIndexRoute
-  '/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
-  '/newProposal/$propType': typeof AppNewProposalPropTypeIndexRoute
-}
-
-export interface FileRoutesByTo {
-  '/about': typeof AppAboutRouteWithChildren
-  '/ef': typeof AppEfRouteWithChildren
-  '/': typeof AppIndexRoute
-  '/about/appState': typeof AppAboutAppStateRoute
-  '/about/communities': typeof AppAboutCommunitiesRoute
-  '/about/intent': typeof AppAboutIntentRoute
-  '/about/userGuide': typeof AppAboutUserGuideRoute
-  '/ef/accounts': typeof AppEfAccountsRoute
-  '/ef/awards': typeof AppEfAwardsRoute
-  '/ef/claim': typeof AppEfClaimRoute
-  '/ef/confirm': typeof AppEfConfirmRoute
-  '/ef/original': typeof AppEfOriginalRoute
-  '/proposals/$propId': typeof AppProposalsPropIdRoute
-  '/newProposal': typeof AppNewProposalIndexRoute
-  '/proposals': typeof AppProposalsIndexRoute
-  '/submitBreakout': typeof AppSubmitBreakoutIndexRoute
-  '/newProposal/$propType': typeof AppNewProposalPropTypeIndexRoute
-}
-
-export interface FileRoutesById {
-  __root__: typeof rootRoute
-  '/_app': typeof AppRouteWithChildren
-  '/_app/about': typeof AppAboutRouteWithChildren
-  '/_app/ef': typeof AppEfRouteWithChildren
-  '/_app/newProposal': typeof AppNewProposalRouteWithChildren
-  '/_app/proposals': typeof AppProposalsRouteWithChildren
-  '/_app/submitBreakout': typeof AppSubmitBreakoutRouteWithChildren
-  '/_app/': typeof AppIndexRoute
-  '/_app/about/appState': typeof AppAboutAppStateRoute
-  '/_app/about/communities': typeof AppAboutCommunitiesRoute
-  '/_app/about/intent': typeof AppAboutIntentRoute
-  '/_app/about/userGuide': typeof AppAboutUserGuideRoute
-  '/_app/ef/accounts': typeof AppEfAccountsRoute
-  '/_app/ef/awards': typeof AppEfAwardsRoute
-  '/_app/ef/claim': typeof AppEfClaimRoute
-  '/_app/ef/confirm': typeof AppEfConfirmRoute
-  '/_app/ef/original': typeof AppEfOriginalRoute
-  '/_app/proposals/$propId': typeof AppProposalsPropIdRoute
-  '/_app/newProposal/': typeof AppNewProposalIndexRoute
-  '/_app/proposals/': typeof AppProposalsIndexRoute
-  '/_app/submitBreakout/': typeof AppSubmitBreakoutIndexRoute
-  '/_app/newProposal/$propType/': typeof AppNewProposalPropTypeIndexRoute
-}
-
-export interface FileRouteTypes {
-  fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | ''
-    | '/about'
-    | '/ef'
-    | '/newProposal'
-    | '/proposals'
-    | '/submitBreakout'
-    | '/'
-    | '/about/appState'
-    | '/about/communities'
-    | '/about/intent'
-    | '/about/userGuide'
-    | '/ef/accounts'
-    | '/ef/awards'
-    | '/ef/claim'
-    | '/ef/confirm'
-    | '/ef/original'
-    | '/proposals/$propId'
-    | '/newProposal/'
-    | '/proposals/'
-    | '/submitBreakout/'
-    | '/newProposal/$propType'
-  fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/about'
-    | '/ef'
-    | '/'
-    | '/about/appState'
-    | '/about/communities'
-    | '/about/intent'
-    | '/about/userGuide'
-    | '/ef/accounts'
-    | '/ef/awards'
-    | '/ef/claim'
-    | '/ef/confirm'
-    | '/ef/original'
-    | '/proposals/$propId'
-    | '/newProposal'
-    | '/proposals'
-    | '/submitBreakout'
-    | '/newProposal/$propType'
-  id:
-    | '__root__'
-    | '/_app'
-    | '/_app/about'
-    | '/_app/ef'
-    | '/_app/newProposal'
-    | '/_app/proposals'
-    | '/_app/submitBreakout'
-    | '/_app/'
-    | '/_app/about/appState'
-    | '/_app/about/communities'
-    | '/_app/about/intent'
-    | '/_app/about/userGuide'
-    | '/_app/ef/accounts'
-    | '/_app/ef/awards'
-    | '/_app/ef/claim'
-    | '/_app/ef/confirm'
-    | '/_app/ef/original'
-    | '/_app/proposals/$propId'
-    | '/_app/newProposal/'
-    | '/_app/proposals/'
-    | '/_app/submitBreakout/'
-    | '/_app/newProposal/$propType/'
-  fileRoutesById: FileRoutesById
-}
-
-export interface RootRouteChildren {
-  AppRoute: typeof AppRouteWithChildren
-}
-
 const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRouteWithChildren,
 }
-
-export const routeTree = rootRoute
+export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-/* ROUTE_MANIFEST_START
-{
-  "routes": {
-    "__root__": {
-      "filePath": "__root.tsx",
-      "children": [
-        "/_app"
-      ]
-    },
-    "/_app": {
-      "filePath": "_app.tsx",
-      "children": [
-        "/_app/about",
-        "/_app/ef",
-        "/_app/newProposal",
-        "/_app/proposals",
-        "/_app/submitBreakout",
-        "/_app/"
-      ]
-    },
-    "/_app/about": {
-      "filePath": "_app.about.tsx",
-      "parent": "/_app",
-      "children": [
-        "/_app/about/appState",
-        "/_app/about/communities",
-        "/_app/about/intent",
-        "/_app/about/userGuide"
-      ]
-    },
-    "/_app/ef": {
-      "filePath": "_app.ef.tsx",
-      "parent": "/_app",
-      "children": [
-        "/_app/ef/accounts",
-        "/_app/ef/awards",
-        "/_app/ef/claim",
-        "/_app/ef/confirm",
-        "/_app/ef/original"
-      ]
-    },
-    "/_app/newProposal": {
-      "filePath": "_app.newProposal.tsx",
-      "parent": "/_app",
-      "children": [
-        "/_app/newProposal/",
-        "/_app/newProposal/$propType/"
-      ]
-    },
-    "/_app/proposals": {
-      "filePath": "_app.proposals.tsx",
-      "parent": "/_app",
-      "children": [
-        "/_app/proposals/$propId",
-        "/_app/proposals/"
-      ]
-    },
-    "/_app/submitBreakout": {
-      "filePath": "_app.submitBreakout.tsx",
-      "parent": "/_app",
-      "children": [
-        "/_app/submitBreakout/"
-      ]
-    },
-    "/_app/": {
-      "filePath": "_app.index.tsx",
-      "parent": "/_app"
-    },
-    "/_app/about/appState": {
-      "filePath": "_app.about/appState.tsx",
-      "parent": "/_app/about"
-    },
-    "/_app/about/communities": {
-      "filePath": "_app.about/communities.tsx",
-      "parent": "/_app/about"
-    },
-    "/_app/about/intent": {
-      "filePath": "_app.about/intent.tsx",
-      "parent": "/_app/about"
-    },
-    "/_app/about/userGuide": {
-      "filePath": "_app.about/userGuide.tsx",
-      "parent": "/_app/about"
-    },
-    "/_app/ef/accounts": {
-      "filePath": "_app.ef/accounts.tsx",
-      "parent": "/_app/ef"
-    },
-    "/_app/ef/awards": {
-      "filePath": "_app.ef/awards.tsx",
-      "parent": "/_app/ef"
-    },
-    "/_app/ef/claim": {
-      "filePath": "_app.ef/claim.tsx",
-      "parent": "/_app/ef"
-    },
-    "/_app/ef/confirm": {
-      "filePath": "_app.ef/confirm.tsx",
-      "parent": "/_app/ef"
-    },
-    "/_app/ef/original": {
-      "filePath": "_app.ef/original.tsx",
-      "parent": "/_app/ef"
-    },
-    "/_app/proposals/$propId": {
-      "filePath": "_app.proposals/$propId.tsx",
-      "parent": "/_app/proposals"
-    },
-    "/_app/newProposal/": {
-      "filePath": "_app.newProposal/index.tsx",
-      "parent": "/_app/newProposal"
-    },
-    "/_app/proposals/": {
-      "filePath": "_app.proposals/index.tsx",
-      "parent": "/_app/proposals"
-    },
-    "/_app/submitBreakout/": {
-      "filePath": "_app.submitBreakout/index.tsx",
-      "parent": "/_app/submitBreakout"
-    },
-    "/_app/newProposal/$propType/": {
-      "filePath": "_app.newProposal/$propType.index.tsx",
-      "parent": "/_app/newProposal"
-    }
-  }
-}
-ROUTE_MANIFEST_END */
