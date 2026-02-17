@@ -9,6 +9,7 @@
     "dev-erc20": "vite --mode dev-erc20 --port 5175",
     "dev-op-sepolia": "vite --mode dev-op-sepolia --port 5175",
     "dev-zaof": "vite --mode dev-zaof --port 5175",
+    "dev-of2": "vite --mode dev-of2 --port 5175",
     "dev-op-sepolia-ngrok": "vite --mode dev-op-sepolia-ngrok --port 5175",
     "build": "vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",

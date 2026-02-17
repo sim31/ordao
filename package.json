@@ -40,6 +40,8 @@
     "dev-op-sepolia:gui": "npm run -w @ordao/gui dev-op-sepolia",
     "dev-zaof:ornode": "npm run -w @ordao/ornode dev:zaof",
     "dev-zaof:gui": "npm run -w @ordao/gui dev-zaof",
+    "dev-of2:ornode": "npm run -w @ordao/ornode dev:of2",
+    "dev-of2:gui": "npm run -w @ordao/gui dev-of2",
     "op-sepolia-ngrok:gui": "npm run -w @ordao/gui dev-op-sepolia-ngrok",
     "dev:run": "",
     "version": "echo \"TODO: 1) create a file for this script, 2) add commands to read version and tag with it the commit being made here.\" && lerna version --no-private --no-push --no-git-tag-version && lerna run prebuild && git add . && git commit -m \"Prepare release\"",

@@ -23,6 +23,7 @@
     "dev-erc20-clean": "npm run dev-mongod-clean && npm run dev-erc20",
     "dev:op-sepolia": "ORNODE_CFG_PATH=./op-sepolia-config.private.json nodemon --delay 2 dist/index.js",
     "dev:zaof": "ORNODE_CFG_PATH=./zaof-config.private.json nodemon --delay 2 dist/index.js",
+    "dev:of2": "ORNODE_CFG_PATH=./of2-config.private.json nodemon --delay 2 dist/index.js",
     "start:op-sepolia": "ORNODE_CFG_PATH=./op-sepolia-config.private.json node dist/index.js",
     "dev-clean": "npm run dev-mongod-clean && npm run dev",
     "swagger-ui": "nodemon dist/swagger-ui/index.js",
