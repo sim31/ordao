@@ -35,8 +35,10 @@ export const Route = createFileRoute('/_app/childRespect/accounts')({
 
     const totalOnchain = await orclient.context.newRespect.totalRespect();
 
+    let mismatchWarning: string | undefined;
     if (totalOnchain !== sumActiveAwards) {
-      throw new Error(`Mismatch between on-chain totalRespect (${totalOnchain}) and ORNode active awards sum (${sumActiveAwards}).`);
+      mismatchWarning = `Mismatch between on-chain totalRespect (${totalOnchain}) and ORNode active awards sum (${sumActiveAwards}).`;
+      console.warn(mismatchWarning);
     }
 
     const total = Number(sumActiveAwards);
@@ -44,12 +46,12 @@ export const Route = createFileRoute('/_app/childRespect/accounts')({
       .map(([account, value]) => ({ account, value, pct: total > 0 ? (value / total) * 100 : 0 }))
       .sort((a, b) => b.value - a.value);
 
-    return { rows, total };
+    return { rows, total, mismatchWarning };
   }
 });
 
 function AccountsRoute() {
-  const { rows, total } = Route.useLoaderData();
+  const { rows, total, mismatchWarning } = Route.useLoaderData();
 
   const onExportCsv = () => {
     const headers = ['account','value','pct'];
@@ -62,6 +64,11 @@ function AccountsRoute() {
 
   return (
     <>
+      {mismatchWarning && (
+        <Text color="orange.500" fontWeight="bold" mb={2} ml="1em">
+          Warning: {mismatchWarning}
+        </Text>
+      )}
       <Flex alignItems="center" justifyContent="flex-end" w="100%" mb={2} gap={3}>
         <Text ml="1em" mr="1em">Total Respect: {total}</Text>
         <Button size="sm" onClick={onExportCsv}>Export as CSV</Button>
