@@ -60,6 +60,13 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
     setActionPromise(orclient.propose(propType, propRequest, vote));
   }
 
+  const handleActionModalClose = (success: boolean) => {
+  setActionPromise(undefined);
+    if (success) {
+      onComplete();
+    }
+  }
+
   const renderStep = () => {
     if (step === 'confirm' && propRequest) {
       let obj: any = { ...propRequest };
@@ -101,7 +108,7 @@ export function ProposalZodCard<T extends z.AnyZodObject>({ schema, onComplete, 
     <Center>
       <OnchainActionModal
         title={"Creating a proposal"}
-        onClose={() => { setActionPromise(undefined); onComplete() } }
+        onClose={handleActionModalClose}
         action={actionPromise}
       />
       <Card.Root

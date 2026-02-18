@@ -98,7 +98,14 @@ export default function OnchainActionModal(props: OnchainActionModalProps) {
               <Center>
                 <VStack>
 
-                  {txProgressStatus === 'submitting' && <Loading/>}
+                  {txProgressStatus === 'submitting'
+                    && (
+                      <div>
+                        <Text>Check your wallet...</Text>
+                        <Loading/>
+                      </div>
+                    )
+                  }
 
                   <Text>{txProgressStr}</Text>
 
