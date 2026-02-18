@@ -6,6 +6,7 @@ import { CreateOrclientConfig, DeploymentSpec } from '@ordao/orclient/createOrcl
 
 export interface OrclientContextType {
   orclient?: ORClientType;
+  rpcError?: unknown;
 }
 
 export const OrclientContext = createContext<OrclientContextType>({ orclient: undefined });
@@ -27,7 +28,7 @@ export function OrclientProvider({
 }: OrclientProviderProps) {
   const userWallet = useUserWallet();
 
-  const value = useOrclientWithBackup(
+  const { orclient, rpcError } = useOrclientWithBackup(
     backupProviderURLs,
     deployment,
     userWallet,
@@ -38,7 +39,7 @@ export function OrclientProvider({
   const Provider = OrclientContext.Provider;
 
   return (
-    <Provider value={{ orclient: value }}>
+    <Provider value={{ orclient, rpcError }}>
       {children}
     </Provider>
   );

@@ -2,7 +2,7 @@ import { VStack } from "@chakra-ui/react";
 import { Text } from "./Text";
 import { Button } from "./Button.js";
 import { isORClient, ORClientType } from "@ordao/orclient";
-import { useOrclient } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
+import { useOrclient, useRpcError } from "@ordao/privy-react-orclient/backup-provider/useOrclient.js";
 import { usePrivy } from "@privy-io/react-auth";
 import { useEffect, useState } from "react";
 import { Loading } from "./Loading";
@@ -22,11 +22,13 @@ export default function OrclientLoader({ children, orclient: propsOrclient }: Or
   const {
     logout: privyLogout,
     ready: privyReady,
+    login,
   } = usePrivy();
 
   const userWallet = useUserWallet();
 
   const ctxOrclient = useOrclient();
+  const rpcError = useRpcError();
   const orclient = propsOrclient !== undefined
     ? (propsOrclient === null ? undefined : propsOrclient)
     : ctxOrclient;
@@ -57,12 +59,23 @@ export default function OrclientLoader({ children, orclient: propsOrclient }: Or
     }
   }, [relogin, orclientUnsynced])
 
-  if (orclient === undefined) {
+  if (rpcError && orclient === undefined) {
+    return (
+      <VStack>
+        <Text m="2em">
+          Could not connect to any RPC endpoint. Try logging in — your wallet provider's endpoint may work.
+        </Text>
+        <Button onClick={login}>
+          Login
+        </Button>
+      </VStack>
+    );
+  } else if (orclient === undefined) {
     return <Loading />;
   } else if (relogin) {
     return (
       <VStack>
-        <Text>
+        <Text m="2em">
           Something went wrong with wallet connection. Please try refreshing or logging in again.
         </Text>
         <Button onClick={privyLogout}>

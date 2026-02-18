@@ -20,6 +20,12 @@ export function useOrclient() {
   return orclient;
 }
 
+export function useRpcError() {
+  const { rpcError } = useContext(OrclientContext);
+
+  return rpcError;
+}
+
 export function useAssertOrclient(): ORClientType {
   const orclient = useOrclient();
   if (orclient === undefined) {

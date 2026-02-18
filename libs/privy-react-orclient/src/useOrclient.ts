@@ -80,6 +80,7 @@ export function useOrclientWithBackup(
   timeout: number = 3000
 ) {
   const [orclient, setOrclient] = useState<ORClientReader | undefined>(undefined);
+  const [rpcError, setRpcError] = useState<unknown>(undefined);
 
   const { ready: privyReady } = usePrivy();
 
@@ -90,9 +91,13 @@ export function useOrclientWithBackup(
       createReader(deployment!, backupProviderURLs, orclientConfig).then(
         orclient => {
           setOrclient(orclient);
+          setRpcError(undefined);
           (window as any).orclient = orclient;
         },
-        err => console.error(err)
+        err => {
+          console.error("All RPC URLs failed: ", err);
+          setRpcError(err);
+        }
       )      
     }
 
@@ -101,8 +106,9 @@ export function useOrclientWithBackup(
       return () => clearTimeout(timer);
     } else {
       setOrclient(fullOrclient);
+      setRpcError(undefined);
     }
   }, [fullOrclient, deployment, backupProviderURLs, orclientConfig]);
 
-  return orclient;
+  return { orclient, rpcError };
 }
