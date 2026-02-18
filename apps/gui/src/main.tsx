@@ -59,7 +59,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render((
         backupProviderURLs={config.chainInfo.rpcUrls}
         orclientConfig={orclientConfig}
         deployment={deploymentInfo}
-        timeout={3000}
+        timeout={4000}
       >
         <ChakraProvider>
           <Main />
