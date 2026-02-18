@@ -11,7 +11,7 @@ export interface OrclientContextType {
 export const OrclientContext = createContext<OrclientContextType>({ orclient: undefined });
 
 export interface OrclientProviderProps {
-  backupProviderURL: string;
+  backupProviderURLs: string[];
   deployment: DeploymentSpec;
   orclientConfig: CreateOrclientConfig;
   timeout?: number;
@@ -21,14 +21,14 @@ export interface OrclientProviderProps {
 export function OrclientProvider({
   children,
   deployment,
-  backupProviderURL,
+  backupProviderURLs,
   orclientConfig,
   timeout
 }: OrclientProviderProps) {
   const userWallet = useUserWallet();
 
   const value = useOrclientWithBackup(
-    backupProviderURL,
+    backupProviderURLs,
     deployment,
     userWallet,
     orclientConfig,

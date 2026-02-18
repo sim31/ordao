@@ -56,7 +56,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render((
       }}
     >
       <OrclientProvider
-        backupProviderURL={config.chainInfo.rpcUrls[0]}
+        backupProviderURLs={config.chainInfo.rpcUrls}
         orclientConfig={orclientConfig}
         deployment={deploymentInfo}
         timeout={3000}

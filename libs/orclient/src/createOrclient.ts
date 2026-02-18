@@ -239,3 +239,24 @@ export async function createOrclientReader(
   return orclient;
 }
 
+export async function createOrclientReaderWithFallback(
+  deployment: DeploymentSpec,
+  providerURLs: string[],
+  config?: CreateOrclientConfig
+): Promise<ORClientReader> {
+  if (providerURLs.length === 0) {
+    throw new Error("No provider URLs provided");
+  }
+  let lastError: unknown;
+  for (const url of providerURLs) {
+    try {
+      console.log("Trying RPC URL: ", url);
+      return await createOrclientReader(deployment, url, config);
+    } catch (err) {
+      console.warn("RPC URL failed, trying next: ", url, err);
+      lastError = err;
+    }
+  }
+  throw lastError;
+}
+

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { DeploymentSpec, createOrclient, CreateOrclientConfig, createOrclientReader } from "@ordao/orclient/createOrclient.js";
+import { DeploymentSpec, createOrclient, CreateOrclientConfig, createOrclientReaderWithFallback } from "@ordao/orclient/createOrclient.js";
 import { ORClient } from "@ordao/orclient";
 import { ConnectedWallet, usePrivy } from "@privy-io/react-auth";
 import { ordaoLibVersions } from "./libVersions.js";
@@ -28,11 +28,11 @@ export async function create(
 
 export async function createReader(
   deployment: DeploymentSpec,
-  providerUrl: string,
+  providerUrls: string[],
   orclientCfg?: CreateOrclientConfig
 ): Promise<ORClientReader> {
   console.log("Creating orclient reader");
-  const orclient = await createOrclientReader(deployment, providerUrl, orclientCfg);
+  const orclient = await createOrclientReaderWithFallback(deployment, providerUrls, orclientCfg);
   attachVersion(orclient);
   return orclient;
 }
@@ -73,7 +73,7 @@ export function useOrclient(
  * @returns {ORClientReader | undefined}
  */
 export function useOrclientWithBackup(
-  backupProviderURL: string,
+  backupProviderURLs: string[],
   deployment?: DeploymentSpec,
   wallet?: ConnectedWallet,
   orclientConfig?: CreateOrclientConfig,
@@ -87,7 +87,7 @@ export function useOrclientWithBackup(
 
   useEffect(() => {
     const createBackup = () => {
-      createReader(deployment!, backupProviderURL, orclientConfig).then(
+      createReader(deployment!, backupProviderURLs, orclientConfig).then(
         orclient => {
           setOrclient(orclient);
           (window as any).orclient = orclient;
@@ -102,7 +102,7 @@ export function useOrclientWithBackup(
     } else {
       setOrclient(fullOrclient);
     }
-  }, [fullOrclient, deployment, backupProviderURL, orclientConfig]);
+  }, [fullOrclient, deployment, backupProviderURLs, orclientConfig]);
 
   return orclient;
 }
